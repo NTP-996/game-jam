@@ -248,6 +248,54 @@ main {
   animation-delay: 2s;
 }
 
+.star-3 {
+  top: 71%;
+  right: 7%;
+  animation-delay: 2s;
+}
+
+.star-4 {
+  top: 13%;
+  right: 12%;
+  animation-delay: 2s;
+}
+
+.star-5 {
+  top: 60%;
+  left: 16%;
+  animation-delay: 2s;
+}
+
+.star-6 {
+  top: 25%;
+  left: 25%;
+  animation-delay: 2s;
+}
+
+.star-7 {
+  top: 46%;
+  right: 71%;
+  animation-delay: 2s;
+}
+
+.star-8 {
+  top: 34%;
+  left: 34%;
+  animation-delay: 2s;
+}
+
+.star-9 {
+  top: 20%;
+  right: 60%;
+  animation-delay: 2s;
+}
+
+.star-10 {
+  top: 72%;
+  right: 27%;
+  animation-delay: 2s;
+}
+
 .floating-spaceship {
   position: absolute;
   width: 725px; /* Increased from 100px */
@@ -282,6 +330,28 @@ main {
   background-color: var(--dark-purple);
 }
 
+@keyframes floatUpDown {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.section-title {
+  animation: floatUpDown 3s ease-in-out infinite;
+}
+
+.about-svg {
+  width: 100%;
+  max-width: 1138px;
+  height: auto;
+}
+
 .stats-container {
   display: flex;
   justify-content: space-around;
@@ -295,20 +365,30 @@ main {
   text-align: center;
   flex: 1;
   min-width: 250px;
-  padding: 2rem;
-  background-color: var(--purple);
+  padding: 0rem;
   border-radius: 8px;
 }
 
 .stat-title {
   font-size: 1.2rem;
-  color: var(--yellow);
+}
+
+.stat-title-svg {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
 }
 
 /* Tracks Section */
 .tracks-section {
   padding: 5rem 2rem;
   background-color: var(--purple);
+}
+
+.track-svg {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
 }
 
 .tracks-container {
