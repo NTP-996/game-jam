@@ -18,7 +18,10 @@
 
 body {
   font-family: "Pixelify Sans", sans-serif;
-  background-color: var(--dark-purple);
+  background-image: url("assets/banner/full-bg.svg");
+  background-size: 100% auto;
+  background-position: top center;
+  background-repeat: no-repeat;
   color: var(--white);
   line-height: 1.6;
   overflow-x: hidden;
@@ -147,17 +150,11 @@ main {
 
 /* Hero Section */
 .hero-section {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  background-image: url("assets/banner/Header.svg");
-  background-size: cover; /* Cover the entire section */
-  background-position: center;
+  padding: 5rem 2rem;
+  background-size: 100% auto;
+  background-position: top center;
   background-repeat: no-repeat;
-  overflow: hidden;
-  padding: 2rem;
+  justify-content: center; /* This ensures content stays centered */
 }
 
 .hero-content {
@@ -165,6 +162,8 @@ main {
   max-width: 800px;
   position: relative;
   z-index: 2;
+  margin: 0 auto; /* Ensure horizontal centering */
+  width: 100%; /* Take full width of container */
 }
 
 .event-date {
@@ -327,8 +326,9 @@ main {
 /* About Section */
 .about-section {
   padding: 5rem 2rem;
-  background-image: url("assets/banner/About.svg");
-  background-size: cover;
+  background-size: 100% auto;
+  background-position: top center;
+  background-repeat: no-repeat;
 }
 
 @keyframes floatUpDown {
@@ -382,9 +382,10 @@ main {
 
 /* Tracks Section */
 .tracks-section {
-  background-image: url("assets/banner/Track.svg");
   padding: 5rem 2rem;
-  background-size: cover;
+  background-size: 100% auto;
+  background-position: top center;
+  background-repeat: no-repeat;
 }
 
 .track-svg {
@@ -420,8 +421,9 @@ main {
 /* Prizes Section */
 .prizes-section {
   padding: 5rem 2rem;
-  background-image: url("assets/banner/prize.svg");
-  background-size: cover;
+  background-size: 100% auto;
+  background-position: top center;
+  background-repeat: no-repeat;
 }
 
 .prizes-svg {
@@ -491,8 +493,9 @@ main {
 /* Schedule Section */
 .schedule-section {
   padding: 5rem 2rem;
-  background-image: url("assets/banner/Schedule.svg");
-  background-size: cover;
+  background-size: 100% auto;
+  background-position: top center;
+  background-repeat: no-repeat;
 }
 
 .schedule-description {
@@ -552,8 +555,9 @@ main {
 /* Mentors Section */
 .mentors-section {
   padding: 5rem 2rem;
-  background-image: url("assets/banner/Mentor.svg");
-  background-size: cover;
+  background-size: 100% auto;
+  background-position: top center;
+  background-repeat: no-repeat;
 }
 
 .mentor-svg {
@@ -615,9 +619,9 @@ main {
 /* CTA Section */
 .cta-section {
   padding: 5rem 2rem;
-  text-align: center;
-  background-image: url("assets/banner/Banner.svg");
-  background-size: cover;
+  background-size: 100% auto;
+  background-position: top center;
+  background-repeat: no-repeat;
 }
 
 .cta-content {
@@ -661,8 +665,6 @@ main {
 /* FAQ Section */
 .faq-section {
   padding: 5rem 2rem;
-  background-image: url("assets/banner/FAQ.svg");
-  background-size: cover;
 }
 
 .faq-container {
@@ -691,8 +693,6 @@ main {
 /* Footer */
 footer {
   padding: 3rem 2rem;
-  background-image: url("assets/banner/Footer.svg");
-  background-size: cover;
 }
 
 .footer-container {
