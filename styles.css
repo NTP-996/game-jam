@@ -152,7 +152,7 @@ main {
   align-items: center;
   justify-content: center;
   position: relative;
-  background-image: url("assets/banner/hero-banner.svg");
+  background-image: url("assets/banner/Header.svg");
   background-size: cover; /* Cover the entire section */
   background-position: center;
   background-repeat: no-repeat;
@@ -327,7 +327,8 @@ main {
 /* About Section */
 .about-section {
   padding: 5rem 2rem;
-  background-color: var(--dark-purple);
+  background-image: url("assets/banner/About.svg");
+  background-size: cover;
 }
 
 @keyframes floatUpDown {
@@ -381,8 +382,9 @@ main {
 
 /* Tracks Section */
 .tracks-section {
+  background-image: url("assets/banner/Track.svg");
   padding: 5rem 2rem;
-  background-color: var(--purple);
+  background-size: cover;
 }
 
 .track-svg {
@@ -418,7 +420,14 @@ main {
 /* Prizes Section */
 .prizes-section {
   padding: 5rem 2rem;
-  background-color: var(--dark-purple);
+  background-image: url("assets/banner/prize.svg");
+  background-size: cover;
+}
+
+.prizes-svg {
+  width: 100%;
+  height: auto;
+  max-width: 78%;
 }
 
 .prizes-container {
@@ -428,21 +437,27 @@ main {
   gap: 2rem;
   max-width: 1000px;
   margin: 0 auto 3rem;
+  align-items: center;
 }
 
 .prize-item {
-  background-color: var(--purple);
-  padding: 2rem;
+  background-color: #ffcc2d;
+  padding: 1.5rem;
   border-radius: 8px;
   text-align: center;
   flex: 1;
   min-width: 250px;
 }
 
+.prize-svg {
+  width: 100%;
+  height: auto;
+  max-width: 80%;
+}
+
 .prize-title {
   font-size: 1.2rem;
   margin-bottom: 1rem;
-  color: var(--yellow);
 }
 
 .prize-description {
@@ -476,7 +491,8 @@ main {
 /* Schedule Section */
 .schedule-section {
   padding: 5rem 2rem;
-  background-color: var(--purple);
+  background-image: url("assets/banner/Schedule.svg");
+  background-size: cover;
 }
 
 .schedule-description {
@@ -495,11 +511,26 @@ main {
 }
 
 .schedule-item {
-  background-color: var(--dark-purple);
-  padding: 2rem;
   border-radius: 8px;
   flex: 1;
   min-width: 250px;
+  padding: 1.5rem;
+}
+
+/* Items positioned at the top */
+.schedule-item-up {
+  transform: translateY(-20px);
+}
+
+/* Items positioned at the bottom */
+.schedule-item-down {
+  transform: translateY(20px);
+}
+
+.schedule-item-svg {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
 }
 
 .schedule-title {
@@ -521,7 +552,8 @@ main {
 /* Mentors Section */
 .mentors-section {
   padding: 5rem 2rem;
-  background-color: var(--dark-purple);
+  background-image: url("assets/banner/Mentor.svg");
+  background-size: cover;
 }
 
 .mentors-container {
@@ -573,8 +605,9 @@ main {
 /* CTA Section */
 .cta-section {
   padding: 5rem 2rem;
-  background-color: var(--purple);
   text-align: center;
+  background-image: url("assets/banner/Banner.svg");
+  background-size: cover;
 }
 
 .cta-content {
@@ -618,7 +651,8 @@ main {
 /* FAQ Section */
 .faq-section {
   padding: 5rem 2rem;
-  background-color: var(--dark-purple);
+  background-image: url("assets/banner/FAQ.svg");
+  background-size: cover;
 }
 
 .faq-container {
