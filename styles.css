@@ -637,6 +637,7 @@ main {
   background-size: 100% auto;
   background-position: top center;
   background-repeat: no-repeat;
+  position: relative;
 }
 
 .mentor-svg {
@@ -660,6 +661,23 @@ main {
   width: 288px;
   height: 100px;
   transition: transform 0.3s;
+}
+
+.right-mountain-svg {
+  position: absolute;
+  width: 41%;
+  height: auto;
+  right: 0;
+  bottom: 80px;
+}
+
+.left-mountain-svg {
+  position: absolute;
+  width: 30%;
+  height: auto;
+  left: 0;
+  bottom: 80px;
+  z-index: 1;
 }
 
 .judge-svg {
