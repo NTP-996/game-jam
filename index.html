@@ -22,29 +22,41 @@
             <img src="assets/logos/logo.svg" alt="Superteam VN Logo" />
           </div>
         </div>
-        <nav>
-          <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#overview">Overview</a></li>
-            <li><a href="#prizes">Prizes</a></li>
-            <li><a href="#schedule">Schedule</a></li>
-            <li><a href="#judging">Judging</a></li>
-            <li><a href="#criteria">Criteria</a></li>
-            <li><a href="#faq">FAQ</a></li>
-          </ul>
-        </nav>
-        <div class="header-right">
-          <div class="language-selector">
-            <span>🇺🇸 ENG</span>
-            <div class="dropdown-arrow"></div>
+
+        <!-- Mobile menu toggle button -->
+        <div class="mobile-menu-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <!-- Navigation wrapper with all menu items -->
+        <div class="nav-wrapper">
+          <nav>
+            <ul class="nav-links">
+              <li><a href="#home">Home</a></li>
+              <li><a href="#overview">Overview</a></li>
+              <li><a href="#prizes">Prizes</a></li>
+              <li><a href="#schedule">Schedule</a></li>
+              <li><a href="#judging">Judging</a></li>
+              <li><a href="#criteria">Criteria</a></li>
+              <li><a href="#faq">FAQ</a></li>
+            </ul>
+          </nav>
+
+          <div class="header-right">
+            <div class="language-selector">
+              <span>🇺🇸 ENG</span>
+              <div class="dropdown-arrow"></div>
+            </div>
+            <a href="#register" class="register-btn">
+              <img
+                src="assets/Buttons/register.svg"
+                alt="REGISTER NOW"
+                class="register-svg"
+              />
+            </a>
           </div>
-          <a href="#register" class="register-btn">
-            <img
-              src="assets/Buttons/register.svg"
-              alt="REGISTER NOW"
-              class="register-svg"
-            />
-          </a>
         </div>
       </div>
     </header>
@@ -458,5 +470,28 @@
         </div>
       </div>
     </footer>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const menuToggle = document.querySelector(".mobile-menu-toggle");
+        const navWrapper = document.querySelector(".nav-wrapper");
+
+        // Toggle mobile menu
+        menuToggle.addEventListener("click", function () {
+          menuToggle.classList.toggle("active");
+          navWrapper.classList.toggle("active");
+          document.body.classList.toggle("menu-open");
+        });
+
+        // Close menu when clicking a link
+        const navLinks = document.querySelectorAll(".nav-links a");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            menuToggle.classList.remove("active");
+            navWrapper.classList.remove("active");
+            document.body.classList.remove("menu-open");
+          });
+        });
+      });
+    </script>
   </body>
 </html>
