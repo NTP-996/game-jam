@@ -556,6 +556,11 @@ main {
   background-size: cover;
 }
 
+.mentor-svg {
+  max-width: 1138px;
+  height: auto;
+}
+
 .mentors-container {
   display: flex;
   flex-wrap: wrap;
@@ -566,12 +571,17 @@ main {
 }
 
 .mentor-card {
-  background-color: var(--purple);
-  padding: 1.5rem;
   border-radius: 8px;
   text-align: center;
-  width: 250px;
+  width: 288px;
+  height: 100px;
   transition: transform 0.3s;
+}
+
+.judge-svg {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
 }
 
 .mentor-card:hover {
@@ -680,9 +690,9 @@ main {
 
 /* Footer */
 footer {
-  background-color: var(--dark-purple);
   padding: 3rem 2rem;
-  border-top: 1px solid var(--light-purple);
+  background-image: url("assets/banner/Footer.svg");
+  background-size: cover;
 }
 
 .footer-container {
