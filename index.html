@@ -3,10 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Join the largest Solana Game Jam in APAC region with over $100,000 in prizes. Build Web3 games and get mentorship from industry experts."
+    />
+    <meta
+      name="keywords"
+      content="Solana, Game Jam, APAC, Blockchain, Web3, Gaming, Hackathon"
+    />
     <title>Solana Game Jam: APAC</title>
     <link rel="icon" type="image/x-icon" href="/assets/logos/favicon.ico" />
     <link rel="stylesheet" href="styles.css" />
-    <!-- Google Fonts Import -->
+    <!-- Preload critical assets -->
+    <link rel="preload" href="assets/banner/full-bg.svg" as="image" />
+    <link rel="preload" href="assets/logos/logo.svg" as="image" />
+    <!-- Google Fonts Import with display=swap for better performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -18,21 +29,25 @@
     <header>
       <div class="header-container">
         <div class="logo-container">
-          <div class="logo superteam-logo">
+          <a href="#" class="logo superteam-logo">
             <img src="assets/logos/logo.svg" alt="Superteam VN Logo" />
-          </div>
+          </a>
         </div>
 
-        <!-- Mobile menu toggle button -->
-        <div class="mobile-menu-toggle">
+        <!-- Mobile menu toggle button with ARIA attributes -->
+        <button
+          class="mobile-menu-toggle"
+          aria-label="Toggle menu"
+          aria-expanded="false"
+        >
           <span></span>
           <span></span>
           <span></span>
-        </div>
+        </button>
 
         <!-- Navigation wrapper with all menu items -->
         <div class="nav-wrapper">
-          <nav>
+          <nav aria-label="Main navigation">
             <ul class="nav-links">
               <li><a href="#home">Home</a></li>
               <li><a href="#overview">Overview</a></li>
@@ -45,7 +60,12 @@
           </nav>
 
           <div class="header-right">
-            <div class="language-selector">
+            <div
+              class="language-selector"
+              role="button"
+              tabindex="0"
+              aria-label="Change language"
+            >
               <span>🇺🇸 ENG</span>
               <div class="dropdown-arrow"></div>
             </div>
@@ -63,42 +83,43 @@
 
     <main>
       <section id="hero" class="hero-section">
-        <div class="floating-elements">
+        <div class="floating-elements" aria-hidden="true">
+          <!-- Decorative elements only, using aria-hidden -->
           <div class="floating-star star-1">
-            <img src="assets/decorations/blue-star.svg" alt="BlueStar" />
+            <img src="assets/decorations/blue-star.svg" alt="" />
           </div>
           <div class="floating-star star-2">
-            <img src="assets/decorations/purple-star.svg" alt="PurpleStar" />
+            <img src="assets/decorations/purple-star.svg" alt="" />
           </div>
           <div class="floating-star star-3">
-            <img src="assets/decorations/blue-star.svg" alt="BlueStar" />
+            <img src="assets/decorations/blue-star.svg" alt="" />
           </div>
           <div class="floating-star star-4">
-            <img src="assets/decorations/purple-star.svg" alt="PurpleStar" />
+            <img src="assets/decorations/purple-star.svg" alt="" />
           </div>
           <div class="floating-star star-5">
-            <img src="assets/decorations/blue-star.svg" alt="BlueStar" />
+            <img src="assets/decorations/blue-star.svg" alt="" />
           </div>
           <div class="floating-star star-6">
-            <img src="assets/decorations/purple-star.svg" alt="PurpleStar" />
+            <img src="assets/decorations/purple-star.svg" alt="" />
           </div>
           <div class="floating-star star-7">
-            <img src="assets/decorations/blue-star.svg" alt="BlueStar" />
+            <img src="assets/decorations/blue-star.svg" alt="" />
           </div>
           <div class="floating-star star-8">
-            <img src="assets/decorations/purple-star.svg" alt="PurpleStar" />
+            <img src="assets/decorations/purple-star.svg" alt="" />
           </div>
           <div class="floating-star star-9">
-            <img src="assets/decorations/blue-star.svg" alt="BlueStar" />
+            <img src="assets/decorations/blue-star.svg" alt="" />
           </div>
           <div class="floating-star star-10">
-            <img src="assets/decorations/purple-star.svg" alt="PurpleStar" />
+            <img src="assets/decorations/purple-star.svg" alt="" />
           </div>
           <div class="floating-spaceship">
-            <img src="assets/decorations/spaceship.svg" alt="Spaceship" />
+            <img src="assets/decorations/spaceship.svg" alt="" />
           </div>
           <div class="floating-starship">
-            <img src="assets/decorations/starship.svg" alt="Starship" />
+            <img src="assets/decorations/starship.svg" alt="" />
           </div>
         </div>
 
@@ -117,8 +138,6 @@
               alt="SOLANA GAME JAM"
               class="title-svg"
             />
-          </h1>
-          <h1 class="hero-title">
             <img src="assets/text/APAC.svg" alt="APAC" class="title-apac-svg" />
           </h1>
           <p class="hero-description">
@@ -148,7 +167,7 @@
         </p>
         <p class="section-description">
           Estimate of 200-400 projects to submit and over 2000 participants are
-          estimated.
+          expected.
         </p>
 
         <div class="stats-container">
@@ -156,7 +175,7 @@
             <h3 class="stat-title">
               <img
                 src="assets/highlight/cashprize.svg"
-                alt="cash prize"
+                alt="$100,000+ in Cash Prizes"
                 class="stat-title-svg"
               />
             </h3>
@@ -165,7 +184,7 @@
             <h3 class="stat-title">
               <img
                 src="assets/highlight/country.svg"
-                alt="cash prize"
+                alt="10+ Countries Participating"
                 class="stat-title-svg"
               />
             </h3>
@@ -174,7 +193,7 @@
             <h3 class="stat-title">
               <img
                 src="assets/highlight/open.svg"
-                alt="cash prize"
+                alt="Open to All Skill Levels"
                 class="stat-title-svg"
               />
             </h3>
@@ -186,7 +205,7 @@
         <div class="section-title">
           <img
             src="assets/highlight/tracks.svg"
-            alt="tracks"
+            alt="Game Development Tracks"
             class="track-svg"
           />
         </div>
@@ -194,54 +213,58 @@
 
       <section id="prizes" class="prizes-section">
         <h2 class="section-title">
-          <img src="assets/text/prizes.svg" alt="prizes" class="prizes-svg" />
+          <img src="assets/text/prizes.svg" alt="PRIZES" class="prizes-svg" />
         </h2>
 
         <div class="prizes-container">
           <div class="prize-item">
             <img
               src="assets/prize/1st-prize.svg"
-              alt="1st prize"
+              alt="1st prize: $30,000"
               class="prize-svg"
             />
           </div>
           <div class="prize-item">
             <img
               src="assets/prize/2st-prize.svg"
-              alt="2st prize"
+              alt="2nd prize: $20,000"
               class="prize-svg"
             />
           </div>
           <div class="prize-item">
             <img
               src="assets/prize/3st-prize.svg"
-              alt="3st prize"
+              alt="3rd prize: $10,000"
               class="prize-svg"
             />
           </div>
           <div class="prize-item">
             <img
               src="assets/prize/4st-prize.svg"
-              alt="4st prize"
+              alt="4th prize: $7,500"
               class="prize-svg"
             />
           </div>
           <div class="prize-item">
             <img
               src="assets/prize/5st-prize.svg"
-              alt="5st prize"
+              alt="5th prize: $5,000"
               class="prize-svg"
             />
           </div>
           <div class="prize-item">
             <img
               src="assets/prize/mentions.svg"
-              alt="mentions"
+              alt="Honorable mentions: $2,500 each"
               class="prize-svg"
             />
           </div>
           <div class="prize-item">
-            <img src="assets/prize/meme.svg" alt="meme" class="prize-svg" />
+            <img
+              src="assets/prize/meme.svg"
+              alt="Meme prize: $2,000"
+              class="prize-svg"
+            />
           </div>
         </div>
 
@@ -254,17 +277,25 @@
             </li>
             <li>Free RPC in Hack plan From Shyft.to</li>
             <li>
-              1K credits all participants and give 10k credits for winners to
-              using Feed Protocol
+              1K credits for all participants and 10k credits for winners to use
+              Feed Protocol
             </li>
           </ul>
         </div>
 
-        <img src="assets/decorations/cloud.svg" alt="cloud" class="cloud-svg" />
+        <img
+          src="assets/decorations/cloud.svg"
+          alt=""
+          class="cloud-svg"
+          aria-hidden="true"
+        />
 
         <div class="moving-text-container">
           <div class="moving-text-svg">
-            <img src="assets/text/Solana Game Jam_ APAC.svg" />
+            <img
+              src="assets/text/Solana Game Jam_ APAC.svg"
+              alt="Solana Game Jam APAC"
+            />
           </div>
         </div>
       </section>
@@ -272,13 +303,14 @@
       <section id="schedule" class="schedule-section">
         <img
           src="assets/decorations/right-cloud.svg"
-          alt="cloud"
+          alt=""
           class="schedule-cloud-svg"
+          aria-hidden="true"
         />
         <h2 class="section-title">
           <img
             src="assets/text/schedule.svg"
-            alt="schedule"
+            alt="SCHEDULE"
             class="schedule-svg"
           />
         </h2>
@@ -290,28 +322,28 @@
           <div class="schedule-item schedule-item-up">
             <img
               src="assets/schedule/schedule-1.svg"
-              alt="schedule-1"
+              alt="June 23: Kick-off and team formation"
               class="schedule-item-svg"
             />
           </div>
           <div class="schedule-item schedule-item-down">
             <img
               src="assets/schedule/schedule-2.svg"
-              alt="schedule-2"
+              alt="June 30: Development workshops"
               class="schedule-item-svg"
             />
           </div>
           <div class="schedule-item schedule-item-up">
             <img
               src="assets/schedule/schedule-3.svg"
-              alt="schedule-3"
+              alt="July 15: Submission deadline"
               class="schedule-item-svg"
             />
           </div>
           <div class="schedule-item schedule-item-down">
             <img
               src="assets/schedule/schedule-4.svg"
-              alt="schedule-4"
+              alt="July 25: Final event and awards"
               class="schedule-item-svg"
             />
           </div>
@@ -320,83 +352,107 @@
 
       <section id="mentors" class="mentors-section">
         <h2 class="section-title">
-          <img src="assets/text/mentor.svg" alt="mentor" class="mentor-svg" />
+          <img src="assets/text/mentor.svg" alt="MENTORS" class="mentor-svg" />
         </h2>
 
         <div class="mentors-container">
           <div class="mentor-card">
             <img
               src="assets/mentors/longleo.svg"
-              alt="mentor"
+              alt="Mentor: Long Leo"
               class="judge-svg"
             />
           </div>
           <div class="mentor-card">
             <img
               src="assets/mentors/nomad.svg"
-              alt="mentor"
+              alt="Mentor: Nomad"
               class="judge-svg"
             />
           </div>
           <div class="mentor-card">
-            <img src="assets/mentors/han.svg" alt="mentor" class="judge-svg" />
+            <img
+              src="assets/mentors/han.svg"
+              alt="Mentor: Han"
+              class="judge-svg"
+            />
           </div>
           <div class="mentor-card">
             <img
               src="assets/mentors/anhtran.svg"
-              alt="mentor"
+              alt="Mentor: Anh Tran"
               class="judge-svg"
             />
           </div>
           <div class="mentor-card">
             <img
               src="assets/mentors/karthik.svg"
-              alt="mentor"
+              alt="Mentor: Karthik"
               class="judge-svg"
             />
           </div>
           <div class="mentor-card">
             <img
               src="assets/mentors/jonas.svg"
-              alt="mentor"
+              alt="Mentor: Jonas"
               class="judge-svg"
             />
           </div>
           <div class="mentor-card">
-            <img src="assets/mentors/zhu.svg" alt="mentor" class="judge-svg" />
+            <img
+              src="assets/mentors/zhu.svg"
+              alt="Mentor: Zhu"
+              class="judge-svg"
+            />
           </div>
           <div class="mentor-card">
-            <img src="assets/mentors/ish.svg" alt="mentor" class="judge-svg" />
+            <img
+              src="assets/mentors/ish.svg"
+              alt="Mentor: Ish"
+              class="judge-svg"
+            />
           </div>
           <div class="mentor-card">
-            <img src="assets/mentors/tiep.svg" alt="mentor" class="judge-svg" />
+            <img
+              src="assets/mentors/tiep.svg"
+              alt="Mentor: Tiep"
+              class="judge-svg"
+            />
           </div>
           <div class="mentor-card">
-            <img src="assets/mentors/nam.svg" alt="mentor" class="judge-svg" />
+            <img
+              src="assets/mentors/nam.svg"
+              alt="Mentor: Nam"
+              class="judge-svg"
+            />
           </div>
           <div class="mentor-card">
             <img
               src="assets/mentors/teddy.svg"
-              alt="mentor"
+              alt="Mentor: Teddy"
               class="judge-svg"
             />
           </div>
         </div>
-        <br />
-        <br />
+
         <img
           src="assets/decorations/right-mountain.svg"
-          alt="mountain"
+          alt=""
           class="right-mountain-svg"
+          aria-hidden="true"
         />
         <img
           src="assets/decorations/left-mountain.svg"
-          alt="mountain"
+          alt=""
           class="left-mountain-svg"
+          aria-hidden="true"
         />
         <div class="moving-text-container">
           <div class="moving-text-svg">
-            <img src="assets/text/Solana Game Jam_ APAC.svg" />
+            <img
+              src="assets/text/Solana Game Jam_ APAC.svg"
+              alt="Solana Game Jam APAC"
+            />
           </div>
         </div>
       </section>
@@ -416,8 +472,6 @@
               alt="SOLANA GAME JAM"
               class="title-svg"
             />
-          </h2>
-          <h2 class="hero-title">
             <img src="assets/text/APAC.svg" alt="APAC" class="title-apac-svg" />
           </h2>
           <p class="hero-description">
@@ -448,40 +502,39 @@
 
         <div class="faq-container">
           <div class="faq-item">
-            <h3 class="faq-question">HOW I CAN JOIN THE HACK?</h3>
+            <h3 class="faq-question">How can I join the hack?</h3>
             <p class="faq-answer">
-              PLEASE CLICK TO THE REGISTER BUTTON IN THE TOP OF THE WEBSITE AND
-              FILL THE FORM
+              Please click the register button at the top of the website and
+              fill out the form.
             </p>
           </div>
           <div class="faq-item">
-            <h3 class="faq-question">CAN I APPLY FROM OUTSIDE VIETNAM?</h3>
+            <h3 class="faq-question">Can I apply from outside Vietnam?</h3>
             <p class="faq-answer">
-              THIS HACKATHON WAS ELIGIBLE FOR THE TEAMS FROM VIETNAM AND JAPAN
+              This hackathon is eligible for teams from Vietnam and Japan.
             </p>
           </div>
           <div class="faq-item">
-            <h3 class="faq-question">HOW ABOUT THE PRIZE DISTRIBUTION?</h3>
+            <h3 class="faq-question">How about the prize distribution?</h3>
             <p class="faq-answer">
-              THE PRIZES WAS DISTRIBUTED IN TWO MILESTONE OF THE GAME IN POST
-              HACK AND FULLY DISTRIBUTED AT THE END OF THE SECOND MILESTONE
+              The prizes will be distributed in two milestones: during post-hack
+              and fully distributed at the end of the second milestone.
             </p>
           </div>
           <div class="faq-item">
-            <h3 class="faq-question">CODE AND ASSETS REUSE</h3>
+            <h3 class="faq-question">Code and assets reuse</h3>
             <p class="faq-answer">
-              IF A PRE-EXISTING MATERIAL IS USED - THEN JUDGING WILL THEN BE ON
-              THE NEW WEB3 & WEB3 FUNCTIONALITIES THAT ARE BUILT OR WILL BE
-              ADDED OPEN-SOURCE ASSETS OR 3RD PARTY ASSETS - CLEARLY STATE THE
-              LIBRARY AND CODE-SNIPPETS USED - MUST PROPERLY LICENSE AND CREDIT
-              SOURCE
+              If pre-existing material is used, judging will focus on the new
+              Web3 functionalities that are built or added. For open-source
+              assets or 3rd party assets, clearly state the library and code
+              snippets used and properly license and credit sources.
             </p>
           </div>
           <div class="faq-item">
-            <h3 class="faq-question">INTELLECTUAL PROPERTIES (IPS)</h3>
+            <h3 class="faq-question">Intellectual Properties (IPs)</h3>
             <p class="faq-answer">
-              ALL PARTICIPANTS RETAIN IP RIGHTS BUT GRANT ORGANIZERS THE RIGHT
-              TO SHOWCASE OR FEATURE THE GAME
+              All participants retain IP rights but grant organizers the right
+              to showcase or feature the game.
             </p>
           </div>
         </div>
@@ -490,49 +543,82 @@
 
     <footer>
       <div class="footer-container">
-        <nav class="footer-nav">
+        <nav class="footer-nav" aria-label="Footer navigation">
           <ul class="footer-links">
-            <li><a href="#home">HOME</a></li>
-            <li><a href="#overview">OVERVIEW</a></li>
-            <li><a href="#prizes">PRIZES</a></li>
-            <li><a href="#schedule">SCHEDULE</a></li>
-            <li><a href="#judging">JUDGING CRITERIA</a></li>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#prizes">Prizes</a></li>
+            <li><a href="#schedule">Schedule</a></li>
+            <li><a href="#judging">Judging Criteria</a></li>
             <li><a href="#faq">FAQ</a></li>
           </ul>
         </nav>
 
         <div class="footer-logos">
-          <div class="logo superteam-logo">
-            <!-- Placeholder for superteamvn logo -->
+          <a href="#" class="logo superteam-logo">
             <img src="assets/logos/logo.svg" alt="Superteam VN Logo" />
-          </div>
+          </a>
         </div>
 
         <div class="copyright">
-          &copy; 2025 SUPERTEAM VIETNAM. ALL RIGHTS RESERVED.
+          &copy; 2025 Superteam Vietnam. All rights reserved.
         </div>
       </div>
     </footer>
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        // Get elements
         const menuToggle = document.querySelector(".mobile-menu-toggle");
         const navWrapper = document.querySelector(".nav-wrapper");
+        const navLinks = document.querySelectorAll(".nav-links a");
 
-        // Toggle mobile menu
-        menuToggle.addEventListener("click", function () {
+        // Toggle mobile menu function
+        function toggleMobileMenu() {
+          const isExpanded =
+            menuToggle.getAttribute("aria-expanded") === "true" || false;
+          menuToggle.setAttribute("aria-expanded", !isExpanded);
+
           menuToggle.classList.toggle("active");
           navWrapper.classList.toggle("active");
           document.body.classList.toggle("menu-open");
-        });
+        }
+
+        // Close mobile menu function
+        function closeMobileMenu() {
+          menuToggle.setAttribute("aria-expanded", "false");
+          menuToggle.classList.remove("active");
+          navWrapper.classList.remove("active");
+          document.body.classList.remove("menu-open");
+        }
+
+        // Event listeners
+        menuToggle.addEventListener("click", toggleMobileMenu);
 
         // Close menu when clicking a link
-        const navLinks = document.querySelectorAll(".nav-links a");
         navLinks.forEach((link) => {
-          link.addEventListener("click", function () {
-            menuToggle.classList.remove("active");
-            navWrapper.classList.remove("active");
-            document.body.classList.remove("menu-open");
-          });
+          link.addEventListener("click", closeMobileMenu);
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener("click", function (event) {
+          if (
+            navWrapper.classList.contains("active") &&
+            !navWrapper.contains(event.target) &&
+            !menuToggle.contains(event.target)
+          ) {
+            closeMobileMenu();
+          }
+        });
+
+        // Handle keyboard navigation (Escape key)
+        document.addEventListener("keydown", function (event) {
+          if (
+            event.key === "Escape" &&
+            navWrapper.classList.contains("active")
+          ) {
+            closeMobileMenu();
+          }
         });
       });
     </script>
