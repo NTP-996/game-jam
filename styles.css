@@ -830,13 +830,14 @@ section {
 
 /* New wrapper to contain both title and container */
 .faq-wrapper {
+  background-color: #ffcc2d;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  max-width: var(--container-width-narrow);
+  width: 60%;
   padding: var(--spacing-lg) var(--spacing-md);
+  border-radius: calc(var(--border-radius) * 3); /* Rounded corners */
 }
 
 /* Position title inside the wrapper */
@@ -844,22 +845,6 @@ section {
   position: relative;
   z-index: 5; /* Above the background */
   margin-bottom: var(--spacing-lg);
-}
-
-/* Background SVG positioned to cover both title and container */
-.faq-bg-svg {
-  position: absolute;
-  width: calc(
-    100% + 40px
-  ); /* Slightly wider than container to provide padding */
-  height: calc(100% + 40px); /* Slightly taller than container */
-  top: -20px; /* Half of the extra height */
-  left: -20px; /* Half of the extra width */
-  z-index: 1; /* Behind the content */
-  opacity: 0.8;
-  pointer-events: none;
-  border-radius: var(--border-radius);
-  object-fit: fill; /* Scales to fill the area */
 }
 
 /* Container styling */
@@ -877,6 +862,14 @@ section {
   z-index: var(--z-index-overlay);
 }
 
+.faq-svg-title {
+  width: 80%;
+  max-width: 1138px;
+  height: auto;
+  position: relative;
+  z-index: var(--z-index-overlay);
+}
+
 .faq-container {
   max-width: var(--container-width-narrow);
   margin: 0 auto;
@@ -884,26 +877,24 @@ section {
 
 .faq-item {
   margin-bottom: var(--spacing-lg);
-  background-color: var(--purple);
   border-radius: var(--border-radius);
-  box-shadow: var(--elevation-1);
   transition: transform var(--transition-medium);
 }
 
 .faq-item:hover {
   transform: translateY(-3px);
-  box-shadow: var(--elevation-2);
 }
 
 .faq-question {
   font-size: var(--font-size-base);
   margin-bottom: var(--spacing-sm);
-  color: var(--yellow);
+  color: var(--white);
 }
 
 .faq-answer {
   font-size: var(--font-size-small);
   white-space: pre-line;
+  color: #222256;
 }
 
 /* FAQ Question Button Styling */
@@ -942,7 +933,7 @@ section {
 .faq-icon::after {
   content: "";
   position: absolute;
-  background-color: var(--yellow);
+  background-color: #222256;
   transition: all var(--transition-medium);
 }
 
