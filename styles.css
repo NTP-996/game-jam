@@ -849,9 +849,6 @@ section {
 
 /* Container styling */
 .faq-container {
-  position: relative;
-  width: 100%;
-  z-index: 2;
 }
 
 .faq-svg {
@@ -863,11 +860,9 @@ section {
 }
 
 .faq-svg-title {
-  width: 80%;
-  max-width: 1138px;
+  width: 1000%;
   height: auto;
   position: relative;
-  z-index: var(--z-index-overlay);
 }
 
 .faq-container {
@@ -888,7 +883,6 @@ section {
 .faq-question {
   font-size: var(--font-size-base);
   margin-bottom: var(--spacing-sm);
-  color: var(--white);
 }
 
 .faq-answer {
@@ -934,7 +928,6 @@ section {
   content: "";
   position: absolute;
   background-color: #222256;
-  transition: all var(--transition-medium);
 }
 
 /* Horizontal line */
