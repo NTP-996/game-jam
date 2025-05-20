@@ -498,44 +498,83 @@
       </section>
 
       <section id="faq" class="faq-section">
-        <h2 class="section-title">FAQ</h2>
+        <div class="faq-wrapper">
+          <img
+            src="assets/banner/faq.svg"
+            alt=""
+            class="faq-bg-svg"
+            aria-hidden="true"
+          />
+          <h2 class="section-title">
+            <img src="assets/text/faq.svg" alt="faq" class="faq-svg" />
+          </h2>
+          <div class="faq-container">
+            <div class="faq-item">
+              <button class="faq-question" aria-expanded="false">
+                How can I join the hack?
+                <span class="faq-icon"></span>
+              </button>
+              <div class="faq-answer">
+                <p>
+                  Please click the register button at the top of the website and
+                  fill out the form.
+                </p>
+              </div>
+            </div>
 
-        <div class="faq-container">
-          <div class="faq-item">
-            <h3 class="faq-question">How can I join the hack?</h3>
-            <p class="faq-answer">
-              Please click the register button at the top of the website and
-              fill out the form.
-            </p>
+            <div class="faq-item">
+              <button class="faq-question" aria-expanded="false">
+                Can I apply from outside Vietnam?
+                <span class="faq-icon"></span>
+              </button>
+              <div class="faq-answer">
+                <p>
+                  This hackathon is eligible for teams from Vietnam and Japan.
+                </p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question" aria-expanded="false">
+                How about the prize distribution?
+                <span class="faq-icon"></span>
+              </button>
+              <div class="faq-answer">
+                <p>
+                  The prizes will be distributed in two milestones: during
+                  post-hack and fully distributed at the end of the second
+                  milestone.
+                </p>
+              </div>
+            </div>
           </div>
+
           <div class="faq-item">
-            <h3 class="faq-question">Can I apply from outside Vietnam?</h3>
-            <p class="faq-answer">
-              This hackathon is eligible for teams from Vietnam and Japan.
-            </p>
+            <button class="faq-question" aria-expanded="false">
+              Code and assets reuse
+              <span class="faq-icon"></span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                If pre-existing material is used, judging will focus on the new
+                Web3 functionalities that are built or added. For open-source
+                assets or 3rd party assets, clearly state the library and code
+                snippets used and properly license and credit sources.
+              </p>
+            </div>
           </div>
+
           <div class="faq-item">
-            <h3 class="faq-question">How about the prize distribution?</h3>
-            <p class="faq-answer">
-              The prizes will be distributed in two milestones: during post-hack
-              and fully distributed at the end of the second milestone.
-            </p>
-          </div>
-          <div class="faq-item">
-            <h3 class="faq-question">Code and assets reuse</h3>
-            <p class="faq-answer">
-              If pre-existing material is used, judging will focus on the new
-              Web3 functionalities that are built or added. For open-source
-              assets or 3rd party assets, clearly state the library and code
-              snippets used and properly license and credit sources.
-            </p>
-          </div>
-          <div class="faq-item">
-            <h3 class="faq-question">Intellectual Properties (IPs)</h3>
-            <p class="faq-answer">
-              All participants retain IP rights but grant organizers the right
-              to showcase or feature the game.
-            </p>
+            <button class="faq-question" aria-expanded="false">
+              Intellectual Properties (IPs)
+              <span class="faq-icon"></span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                All participants retain IP rights but grant organizers the right
+                to showcase or feature the game.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -572,6 +611,33 @@
         const menuToggle = document.querySelector(".mobile-menu-toggle");
         const navWrapper = document.querySelector(".nav-wrapper");
         const navLinks = document.querySelectorAll(".nav-links a");
+        const faqQuestions = document.querySelectorAll(".faq-question");
+
+        // Add click event listeners to each FAQ question
+        faqQuestions.forEach((question) => {
+          question.addEventListener("click", function () {
+            // Toggle the aria-expanded attribute
+            const isExpanded = this.getAttribute("aria-expanded") === "true";
+            this.setAttribute("aria-expanded", !isExpanded);
+
+            // Close other FAQ items when opening a new one (accordion behavior)
+            if (!isExpanded) {
+              faqQuestions.forEach((otherQuestion) => {
+                if (otherQuestion !== question) {
+                  otherQuestion.setAttribute("aria-expanded", "false");
+                }
+              });
+            }
+          });
+
+          // Add keyboard support for accessibility
+          question.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              question.click();
+            }
+          });
+        });
 
         // Toggle mobile menu function
         function toggleMobileMenu() {
