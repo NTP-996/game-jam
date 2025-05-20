@@ -443,8 +443,8 @@ section {
   width: clamp(300px, 40vw, 725px);
   height: auto;
   aspect-ratio: 725/616;
-  bottom: -300%; /* Positioning extremely low on the screen */
-  right: -3%;
+  bottom: -100%; /* Positioning extremely low on the screen */
+  right: 0;
   animation: float 8s ease-in-out infinite;
   animation-delay: 1s;
   z-index: var(--z-index-base);
