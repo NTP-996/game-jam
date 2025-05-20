@@ -835,7 +835,7 @@ section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 60%;
+  width: 50%;
   padding: var(--spacing-lg) var(--spacing-md);
   border-radius: calc(var(--border-radius) * 3); /* Rounded corners */
 }
@@ -860,8 +860,8 @@ section {
 }
 
 .faq-svg-title {
-  width: 1000%;
-  height: auto;
+  width: auto;
+  height: 100%;
   position: relative;
 }
 
@@ -1237,7 +1237,16 @@ footer {
   }
 
   .faq-item {
-    padding: var(--spacing-sm);
+  }
+
+  .faq-wrapper {
+    background-color: #ffcc2d;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    border-radius: calc(var(--border-radius) * 3); /* Rounded corners */
   }
 }
 
