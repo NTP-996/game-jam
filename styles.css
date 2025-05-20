@@ -561,7 +561,7 @@ section {
 }
 
 .track-svg {
-  width: clamp(300px, 60%, 800px);
+  width: clamp(300px, 100%, 800px);
   height: auto;
 }
 
