@@ -17,6 +17,8 @@
     <!-- Preload critical assets -->
     <link rel="preload" href="assets/banner/full-bg.svg" as="image" />
     <link rel="preload" href="assets/logos/logo.svg" as="image" />
+    <link rel="preload" href="assets/text/event-date.svg" as="image" />
+    <link rel="preload" href="assets/text/Solana Game Jam_.svg" as="image" />
     <!-- Google Fonts Import with display=swap for better performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -505,11 +507,10 @@
           <div class="faq-container">
             <div class="faq-item">
               <button class="faq-question" aria-expanded="false">
-                <img
-                  src="assets/text/faq1.svg"
-                  alt="faq-title"
-                  class="faq-svg-title"
-                />
+                <span class="question-arrow">▶</span>
+                <span class="question-text"
+                  >HOW DO I REGISTER FOR THIS HACKATHON?</span
+                >
               </button>
               <div class="faq-answer">
                 <p>
@@ -521,11 +522,10 @@
 
             <div class="faq-item">
               <button class="faq-question" aria-expanded="false">
-                <img
-                  src="assets/text/faq2.svg"
-                  alt="faq-title"
-                  class="faq-svg-title"
-                />
+                <span class="question-arrow">▶</span>
+                <span class="question-text"
+                  >WHO CAN PARTICIPATE IN THIS HACKATHON?</span
+                >
               </button>
               <div class="faq-answer">
                 <p>
@@ -536,11 +536,10 @@
 
             <div class="faq-item">
               <button class="faq-question" aria-expanded="false">
-                <img
-                  src="assets/text/faq3.svg"
-                  alt="faq-title"
-                  class="faq-svg-title"
-                />
+                <span class="question-arrow">▶</span>
+                <span class="question-text"
+                  >HOW DOES THE PRIZES DISTRIBUTED?</span
+                >
               </button>
               <div class="faq-answer">
                 <p>
@@ -552,11 +551,8 @@
             </div>
             <div class="faq-item">
               <button class="faq-question" aria-expanded="false">
-                <img
-                  src="assets/text/faq4.svg"
-                  alt="faq-title"
-                  class="faq-svg-title"
-                />
+                <span class="question-arrow">▶</span>
+                <span class="question-text">CAN I USE PRE-EXISTING CODE?</span>
               </button>
               <div class="faq-answer">
                 <p>
@@ -571,11 +567,8 @@
 
             <div class="faq-item">
               <button class="faq-question" aria-expanded="false">
-                <img
-                  src="assets/text/faq5.svg"
-                  alt="faq-title"
-                  class="faq-svg-title"
-                />
+                <span class="question-arrow">▶</span>
+                <span class="question-text">INTELLECTUAL PROPERTY RIGHTS</span>
               </button>
               <div class="faq-answer">
                 <p>
@@ -651,9 +644,8 @@
         // Toggle mobile menu function
         function toggleMobileMenu() {
           const isExpanded =
-            menuToggle.getAttribute("aria-expanded") === "true" || false;
+            menuToggle.getAttribute("aria-expanded") === "true";
           menuToggle.setAttribute("aria-expanded", !isExpanded);
-
           menuToggle.classList.toggle("active");
           navWrapper.classList.toggle("active");
           document.body.classList.toggle("menu-open");

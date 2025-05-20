@@ -822,7 +822,6 @@ section {
 /* FAQ Section */
 .faq-section {
   position: relative;
-  padding: var(--spacing-xl) var(--spacing-lg);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -835,7 +834,7 @@ section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 50%;
+  width: 80%;
   padding: var(--spacing-lg) var(--spacing-md);
   border-radius: calc(var(--border-radius) * 3); /* Rounded corners */
 }
@@ -893,8 +892,6 @@ section {
 
 /* FAQ Question Button Styling */
 .faq-question {
-  width: 100%;
-  text-align: left;
   background: none;
   border: none;
   padding: var(--spacing-sm) 0;
@@ -905,8 +902,45 @@ section {
   justify-content: space-between;
   align-items: center;
   transition: color var(--transition-medium);
-  font-family: "Pixelify Sans", sans-serif;
-  font-weight: 500;
+}
+
+.question-text {
+  /* Typography settings */
+  font-family: "Kemco Pixel", monospace;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 5%;
+  color: #ffffff;
+  text-transform: uppercase;
+  vertical-align: middle;
+
+  /* Text border effect with #222256 color */
+  text-shadow: -2px -2px 0 #222256, 2px -2px 0 #222256, -2px 2px 0 #222256,
+    2px 2px 0 #222256, -1px 0 0 #222256, 1px 0 0 #222256, 0 -1px 0 #222256,
+    0 1px 0 #222256;
+
+  /* For better pixel rendering */
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+}
+
+.question-arrow {
+  color: #ffffff;
+  font-size: 0.8rem;
+  margin-right: 8px;
+  text-shadow: -2px -2px 0 #222256, 2px -2px 0 #222256, -2px 2px 0 #222256,
+    2px 2px 0 #222256, -1px 0 0 #222256, 1px 0 0 #222256, 0 -1px 0 #222256,
+    0 1px 0 #222256;
+
+  /* For better pixel rendering */
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+}
+
+/* Expanded state */
+.faq-question[aria-expanded="true"] .question-arrow {
+  transform: rotate(90deg);
 }
 
 .faq-question:hover,
