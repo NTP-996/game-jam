@@ -73,15 +73,6 @@ a {
   transition: color var(--transition-medium);
 }
 
-a:hover {
-  color: var(--yellow);
-}
-
-a:focus {
-  outline: 2px solid var(--yellow);
-  outline-offset: 2px;
-}
-
 img {
   max-width: 100%;
   height: auto;
@@ -348,7 +339,7 @@ section {
 }
 
 .title-apac-svg {
-  width: 100%;
+  width: 25%;
   max-width: 272px;
   height: auto;
   animation: fadeIn 1s ease-out 0.2s both;
@@ -583,7 +574,7 @@ section {
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--spacing-lg);
-  max-width: 1000px;
+  max-width: 1300px;
   margin: 0 auto var(--spacing-xl);
   align-items: center;
 }
@@ -594,7 +585,7 @@ section {
   border-radius: var(--border-radius);
   text-align: center;
   flex: 1;
-  min-width: 250px;
+  min-width: 319px;
   box-shadow: var(--elevation-1);
   transition: transform var(--transition-medium),
     box-shadow var(--transition-medium);
@@ -696,8 +687,8 @@ section {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--spacing-lg);
-  max-width: 1200px;
+  gap: 0px 0px;
+  max-width: 1366px;
   margin: 0 auto;
 }
 
@@ -762,10 +753,11 @@ section {
 .mentor-card {
   border-radius: var(--border-radius);
   text-align: center;
-  width: 288px;
-  height: 100px;
+  width: 370px;
+  height: auto;
   transition: transform var(--transition-medium),
     box-shadow var(--transition-medium);
+  z-index: 2;
 }
 
 .mentor-card:hover {
