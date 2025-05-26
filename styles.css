@@ -552,7 +552,7 @@ section {
 }
 
 .track-svg {
-  width: clamp(300px, 100%, 800px);
+  width: 100%;
   height: auto;
 }
 
@@ -829,6 +829,7 @@ section {
   width: 80%;
   padding: var(--spacing-lg) var(--spacing-md);
   border-radius: calc(var(--border-radius) * 3); /* Rounded corners */
+  max-width: 900px; /* Add this line */
 }
 
 /* Position title inside the wrapper */
