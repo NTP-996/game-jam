@@ -618,15 +618,46 @@ section {
   text-align: center;
 }
 
-.all-participants ul {
-  padding-left: var(--spacing-md);
-  list-style-type: disc;
+.svg-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
 }
 
-.all-participants li {
-  margin-bottom: var(--spacing-sm);
-  font-size: var(--font-size-small);
-  color: var(--white);
+.svg-gallery {
+  display: grid;
+  grid-template-columns: repeat(10, 60px);
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+}
+
+.svg-item {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  border: 2px solid #e0e0e0;
+  border-radius: 50%;
+  padding: 6px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  overflow: hidden;
+}
+
+.svg-item:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-color: #007bff;
+}
+
+.svg-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .cloud-svg {
@@ -1338,5 +1369,23 @@ footer {
 
   .section {
     page-break-inside: avoid;
+  }
+}
+/* Responsive breakpoints */
+@media (max-width: 768px) {
+  .svg-gallery {
+    grid-template-columns: repeat(5, 60px);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .svg-gallery {
+    grid-template-columns: repeat(3, 60px);
+    gap: 10px;
+  }
+
+  .svg-container {
+    padding: 15px;
   }
 }
