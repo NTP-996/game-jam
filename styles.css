@@ -776,15 +776,22 @@ button {
 }
 
 .faq__arrow {
-  color: var(--color-white);
-  font-size: 0.8rem;
-  text-shadow: -2px -2px 0 var(--color-dark-text),
-    2px -2px 0 var(--color-dark-text), -2px 2px 0 var(--color-dark-text),
-    2px 2px 0 var(--color-dark-text), -1px 0 0 var(--color-dark-text),
-    1px 0 0 var(--color-dark-text), 0 -1px 0 var(--color-dark-text),
-    0 1px 0 var(--color-dark-text);
+  width: 0;
+  height: 0;
+  border-left: 8px solid var(--color-white);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  filter: drop-shadow(-2px -2px 0 var(--color-dark-text))
+    drop-shadow(2px -2px 0 var(--color-dark-text))
+    drop-shadow(-2px 2px 0 var(--color-dark-text))
+    drop-shadow(2px 2px 0 var(--color-dark-text))
+    drop-shadow(-1px 0 0 var(--color-dark-text))
+    drop-shadow(1px 0 0 var(--color-dark-text))
+    drop-shadow(0 -1px 0 var(--color-dark-text))
+    drop-shadow(0 1px 0 var(--color-dark-text));
   transition: transform var(--transition);
   flex-shrink: 0;
+  margin-left: 8px;
 }
 
 .faq__question[aria-expanded="true"] .faq__arrow {
