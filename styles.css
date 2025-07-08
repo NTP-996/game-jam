@@ -926,6 +926,61 @@ button {
   transform: scale(1.05);
 }
 
+.footer__sponsors {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.footer__sponsors-title {
+  display: flex;
+  justify-content: center;
+}
+
+.footer__sponsors-title img {
+  max-width: 200px;
+  height: auto;
+}
+
+.footer__sponsors-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.footer__sponsor-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  min-width: 120px;
+  padding: var(--space-xs);
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+.footer__sponsor-item:hover {
+  transform: scale(1.05);
+  opacity: 0.8;
+}
+
+.footer__sponsor-item img {
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: brightness(0.9);
+  transition: filter var(--transition);
+}
+
+.footer__sponsor-item:hover img {
+  filter: brightness(1);
+}
+
 .footer__copyright {
   font-size: var(--font-size-sm);
   text-align: center;
@@ -1144,6 +1199,25 @@ button {
     max-width: 100vw;
     overflow-x: hidden;
   }
+
+  .footer__sponsors-grid {
+    gap: var(--space-lg);
+  }
+
+  .footer__sponsor-item {
+    height: 50px;
+    min-width: 100px;
+  }
+
+  .footer__sponsors-title img {
+    max-width: 160px;
+  }
+
+  .footer__nav {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+  }
 }
 
 @media (max-width: 480px) {
@@ -1193,12 +1267,6 @@ button {
     padding: var(--space-sm);
   }
 
-  .footer__nav {
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-sm);
-  }
-
   .btn--register .btn__image {
     width: 90px;
   }
@@ -1209,6 +1277,20 @@ button {
 
   .faq__question-text {
     font-size: 14px;
+  }
+
+  .footer__sponsors-grid {
+    gap: var(--space-md);
+    flex-direction: column;
+  }
+
+  .footer__sponsor-item {
+    height: 40px;
+    min-width: 80px;
+  }
+
+  .footer__sponsors-title img {
+    max-width: 140px;
   }
 }
 
