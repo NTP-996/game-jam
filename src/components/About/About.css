@@ -1,0 +1,48 @@
+/* ===== STATS SECTION ===== */
+.stats {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  max-width: 1000px;
+  margin: 0 auto;
+  gap: var(--space-lg);
+}
+
+.stats__item {
+  text-align: center;
+  flex: 1;
+  min-width: 250px;
+  padding: 0;
+  border-radius: var(--border-radius);
+  transition: transform var(--transition);
+}
+
+.stats__item:hover {
+  transform: translateY(-5px);
+}
+
+.stats__item img {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .stats {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .stats__item {
+    min-width: auto;
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats__item {
+    max-width: 280px;
+  }
+} 

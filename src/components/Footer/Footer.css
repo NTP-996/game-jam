@@ -1,0 +1,117 @@
+/* ===== FOOTER ===== */
+.footer {
+  background-color: var(--color-dark-purple);
+  padding: var(--space-2xl) 0 var(--space-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer__container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-sm);
+  text-align: center;
+}
+
+.footer__nav {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.footer__nav a {
+  font-size: var(--font-size-sm);
+  color: var(--color-white);
+  transition: color var(--transition);
+  padding: var(--space-xs);
+}
+
+.footer__nav a:hover {
+  color: var(--color-yellow);
+}
+
+.footer__logos {
+  margin-bottom: var(--space-xl);
+}
+
+.footer__logos .logo img {
+  transition: transform var(--transition);
+}
+
+.footer__logos .logo:hover img {
+  transform: scale(1.05);
+}
+
+.footer__sponsors {
+  margin-bottom: var(--space-xl);
+}
+
+.footer__sponsors-title {
+  margin-bottom: var(--space-lg);
+}
+
+.footer__sponsors-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.footer__sponsor-item {
+  transition: transform var(--transition);
+}
+
+.footer__sponsor-item:hover {
+  transform: scale(1.05);
+}
+
+.footer__sponsor-item img {
+  filter: brightness(0.8);
+  transition: filter var(--transition);
+}
+
+.footer__sponsor-item:hover img {
+  filter: brightness(1);
+}
+
+.footer__copyright {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.7);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: var(--space-lg);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .footer {
+    padding: var(--space-lg) 0;
+  }
+
+  .footer__nav {
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+  }
+
+  .footer__sponsors-grid {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .footer__logos,
+  .footer__sponsors {
+    margin-bottom: var(--space-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .footer__nav a {
+    font-size: var(--font-size-xs);
+  }
+
+  .footer__sponsors-grid {
+    gap: var(--space-sm);
+  }
+} 
