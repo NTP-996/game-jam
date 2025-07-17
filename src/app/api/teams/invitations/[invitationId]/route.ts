@@ -4,16 +4,13 @@ import { NextRequest, NextResponse } from 'next/server'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-interface RouteParams {
-  params: {
-    invitationId: string
-  }
-}
-
 // PUT /api/teams/invitations/[invitationId] - Respond to invitation (accept/decline)
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(
+  request: NextRequest, 
+  { params }: { params: Promise<{ invitationId: string }> }
+) {
   try {
-    const { invitationId } = params
+    const { invitationId } = await params
 
     // Get auth token
     const authHeader = request.headers.get('authorization')
@@ -117,9 +114,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 }
 
 // DELETE /api/teams/invitations/[invitationId] - Cancel invitation
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  request: NextRequest, 
+  { params }: { params: Promise<{ invitationId: string }> }
+) {
   try {
-    const { invitationId } = params
+    const { invitationId } = await params
 
     // Get auth token
     const authHeader = request.headers.get('authorization')

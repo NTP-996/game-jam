@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
       .eq('status', 'active')
       .single()
 
-    if (!membership || (!membership.can_manage_submissions && membership.team.leader_id !== user.id)) {
+    if (!membership || (!membership.can_manage_submissions && (membership.team as any)?.leader_id !== user.id)) {
       return NextResponse.json(
         { error: 'You do not have permission to manage submissions for this team' }, 
         { status: 403 }

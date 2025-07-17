@@ -150,7 +150,7 @@ const ResourcesPage = () => {
     }
   ];
 
-  const getDifficultyColor = (difficulty) => {
+  const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'Beginner': return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'Intermediate': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';

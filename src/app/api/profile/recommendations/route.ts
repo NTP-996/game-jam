@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
 
       // Shared skills bonus
       if (userProfile.skills && candidate.skills) {
-        const sharedSkills = userProfile.skills.filter(skill => 
+        const sharedSkills = userProfile.skills.filter((skill: string) => 
           candidate.skills.includes(skill)
         )
         score += sharedSkills.length * 2
@@ -101,15 +101,15 @@ export async function POST(request: NextRequest) {
 
       // Shared programming languages bonus
       if (userProfile.programming_languages && candidate.programming_languages) {
-        const sharedLangs = userProfile.programming_languages.filter(lang => 
+        const sharedLangs = userProfile.programming_languages.filter((lang: string) => 
           candidate.programming_languages.includes(lang)
         )
         score += sharedLangs.length * 1.5
       }
 
-      // Shared frameworks bonus
+            // Shared frameworks bonus
       if (userProfile.frameworks && candidate.frameworks) {
-        const sharedFrameworks = userProfile.frameworks.filter(framework => 
+        const sharedFrameworks = userProfile.frameworks.filter((framework: string) =>
           candidate.frameworks.includes(framework)
         )
         score += sharedFrameworks.length * 1.5
