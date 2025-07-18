@@ -152,10 +152,13 @@ export async function PUT(
     // Don't allow updates to final submissions unless it's just status change
     const body = await request.json()
     if (existingProject.is_final && existingProject.status !== 'draft' && !body.statusOnly) {
-      return NextResponse.json(
-        { error: 'Cannot modify final submissions' },
-        { status: 403 }
-      )
+      // Allow team assignment changes even for final submissions (administrative fix)
+      if (!body.convertToTeamProject) {
+        return NextResponse.json(
+          { error: 'Cannot modify final submissions' },
+          { status: 403 }
+        )
+      }
     }
 
     // Prepare update data
@@ -195,6 +198,31 @@ export async function PUT(
     // Handle status changes
     if (body.status !== undefined) {
       updateData.status = body.status
+    }
+
+    // Handle team assignment - if user is in a team and project doesn't have team_id, assign it
+    if (body.convertToTeamProject === true && !existingProject.team_id) {
+      const { data: userMemberships } = await supabase
+        .from('team_memberships')
+        .select('team_id, can_manage_submissions, team:teams!inner(leader_id)')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .single()
+
+      // If user is in a team and can manage submissions or is the leader
+      if (userMemberships && (userMemberships.can_manage_submissions || (userMemberships.team as any)?.leader_id === user.id)) {
+        // Check if team already has a different project
+        const { data: existingTeamProject } = await supabase
+          .from('projects')
+          .select('id')
+          .eq('team_id', userMemberships.team_id)
+          .neq('id', projectId)
+          .single()
+
+        if (!existingTeamProject) {
+          updateData.team_id = userMemberships.team_id
+        }
+      }
     }
 
     const { data: project, error } = await supabase

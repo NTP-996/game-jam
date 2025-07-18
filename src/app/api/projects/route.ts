@@ -163,9 +163,37 @@ export async function POST(request: NextRequest) {
       tech_stack = tech_stack.split(',').map(tech => tech.trim()).filter(tech => tech.length > 0)
     }
 
+    // Check if user is part of a team to determine project type
+    let team_id = null
+    const { data: userMemberships } = await supabase
+      .from('team_memberships')
+      .select('team_id, can_manage_submissions, team:teams!inner(leader_id)')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .single()
+
+    // If user is in a team and can manage submissions or is the leader, make it a team project
+    if (userMemberships && (userMemberships.can_manage_submissions || (userMemberships.team as any)?.leader_id === user.id)) {
+      team_id = userMemberships.team_id
+      
+      // Check if team already has a project
+      const { data: existingTeamProject } = await supabase
+        .from('projects')
+        .select('id')
+        .eq('team_id', team_id)
+        .single()
+
+      if (existingTeamProject) {
+        return NextResponse.json(
+          { error: 'Team already has a project submission. Use the team submissions API to update it.' },
+          { status: 400 }
+        )
+      }
+    }
+
     const projectData = {
       creator_id: user.id,
-      team_id: null, // Individual project
+      team_id, // Will be team ID if user is in a team, null for individual
       project_name: body.project_name,
       project_description: body.project_description,
       category: body.category,
@@ -200,7 +228,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       project,
-      message: 'Project created successfully' 
+      message: `${team_id ? 'Team' : 'Individual'} project created successfully` 
     })
 
   } catch (error) {

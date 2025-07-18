@@ -30,6 +30,7 @@ interface Team {
   created_at: string
   member_count: number
   members?: TeamMember[]
+  leader_id?: string // Added leader_id
 }
 
 interface TeamSubmission {
@@ -148,8 +149,10 @@ export default function TeamPage() {
     try {
       // First try to get teams where user is a member
       const response = await ApiClient.get('/api/teams?mode=my')
+      
       if (response.ok) {
         const data = await response.json()
+        
         // API returns { teams: [...] }, get the first team for user
         const team = data.teams?.[0] || null
         setUserTeam(team)
@@ -168,6 +171,7 @@ export default function TeamPage() {
   const loadTeamSubmission = async (teamId: string) => {
     try {
       const response = await ApiClient.get(`/api/teams/submissions?team_id=${teamId}`)
+      
       if (response.ok) {
         const data = await response.json()
         setTeamSubmission(data.submissions?.[0] || null)
@@ -175,6 +179,50 @@ export default function TeamPage() {
     } catch (err) {
       console.error('Error loading team submission:', err)
       // Don't set error here as submission might not exist yet
+    }
+  }
+
+  // Temporary fix function to convert individual project to team project
+  const fixProjectTeamAssignment = async () => {
+    try {
+      setError(null)
+      console.log('🔧 Attempting to fix project team assignment...')
+      
+      // First, get user's individual projects
+      const response = await ApiClient.get('/api/projects?view=user')
+      if (response.ok) {
+        const data = await response.json()
+        const individualProjects = data.projects || []
+        
+        console.log('📄 Found individual projects:', individualProjects.length)
+        
+        if (individualProjects.length > 0) {
+          const project = individualProjects[0]
+          console.log('🎯 Converting project to team project:', project.project_name)
+          
+          // Update the project to assign it to the team
+          const updateResponse = await ApiClient.put(`/api/projects/${project.id}`, {
+            convertToTeamProject: true
+          })
+          
+          if (updateResponse.ok) {
+            console.log('✅ Project successfully converted to team project!')
+            alert('✅ Project successfully converted to team project! Refreshing...')
+            // Reload the team data
+            loadInitialData()
+          } else {
+            const errorData = await updateResponse.json()
+            console.error('❌ Failed to convert project:', errorData)
+            setError(`Failed to convert project: ${errorData.error}`)
+          }
+        } else {
+          console.log('❌ No individual projects found to convert')
+          setError('No individual projects found to convert')
+        }
+      }
+    } catch (err) {
+      console.error('Error fixing project team assignment:', err)
+      setError('Failed to fix project team assignment')
     }
   }
 
@@ -370,6 +418,31 @@ export default function TeamPage() {
     } catch (err) {
       console.error('Error sending invitation:', err)
       setError('Failed to send invitation')
+    }
+  }
+
+  // Remove team member
+  const handleRemoveMember = async (userId: string, userName: string) => {
+    try {
+      setError(null)
+      
+      if (!confirm(`Are you sure you want to remove ${userName} from the team?`)) {
+        return
+      }
+      
+      const response = await ApiClient.delete(`/api/teams/members/${userId}`)
+      
+      if (response.ok) {
+        alert(`${userName} has been removed from the team.`)
+        // Refresh team data
+        loadUserTeam()
+      } else {
+        const errorData = await response.json()
+        setError(errorData.error || 'Failed to remove team member')
+      }
+    } catch (err) {
+      console.error('Error removing team member:', err)
+      setError('Failed to remove team member')
     }
   }
 
@@ -769,9 +842,6 @@ export default function TeamPage() {
               </div>
             </div>
             <div className="flex space-x-3">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
-                Manage Team
-              </button>
               <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
                 Leave Team
               </button>
@@ -790,27 +860,38 @@ export default function TeamPage() {
             {userTeam.members && userTeam.members.length > 0 ? (
               <div className="space-y-4">
                 {userTeam.members.map((member) => (
-                  <div key={member.user_id} className="flex items-center space-x-4 p-4 bg-purple-700/30 rounded-lg">
-                    <div className="w-12 h-12 rounded-full bg-purple-600 overflow-hidden">
-                      {member.avatar_url ? (
-                        <Image
-                          src={member.avatar_url}
-                          alt={member.name}
-                          width={48}
-                          height={48}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-white font-bold">
-                          {member.name ? member.name.charAt(0).toUpperCase() : '?'}
-                        </div>
-                      )}
+                  <div key={member.user_id} className="flex items-center justify-between p-4 bg-purple-700/30 rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 rounded-full bg-purple-600 overflow-hidden">
+                        {member.avatar_url ? (
+                          <Image
+                            src={member.avatar_url}
+                            alt={member.name}
+                            width={48}
+                            height={48}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-white font-bold">
+                            {member.name ? member.name.charAt(0).toUpperCase() : '?'}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-white">{member.name || 'Unknown Member'}</h3>
+                        <p className="text-purple-300 text-sm">{member.role || 'Member'}</p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-white">{member.name || 'Unknown Member'}</h3>
-                      <p className="text-purple-300 text-sm">{member.role || 'Member'}</p>
-
-                    </div>
+                    
+                    {/* Show remove button only if current user is team leader and member is not the leader */}
+                    {userTeam.leader_id === user?.id && member.user_id !== user?.id && (
+                      <button 
+                        onClick={() => handleRemoveMember(member.user_id, member.name)}
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+                      >
+                        Remove
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
@@ -823,9 +904,7 @@ export default function TeamPage() {
             {userTeam.member_count < userTeam.max_members && (
               <button 
                 onClick={() => {
-                  console.log('Invite button clicked, current modal state:', showInviteModal)
                   setShowInviteModal(true)
-                  console.log('Modal state set to true')
                 }}
                 className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition-colors"
               >
@@ -841,16 +920,18 @@ export default function TeamPage() {
                 Team Actions
               </h2>
               <div className="space-y-3">
-                <Link
-                  href="/dashboard/project"
-                  className="flex items-center justify-between p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"
-                >
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xl">🎮</span>
-                    <span className="font-semibold">Project Submission</span>
-                  </div>
-                  <span>→</span>
-                </Link>
+                {!teamSubmission && (
+                  <Link
+                    href="/dashboard/project"
+                    className="flex items-center justify-between p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <span className="text-xl">🎮</span>
+                      <span className="font-semibold">Project Submission</span>
+                    </div>
+                    <span>→</span>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
@@ -859,176 +940,114 @@ export default function TeamPage() {
         {/* Project Submission Status */}
         <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-8">
           <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">
-            Project Submission
+            Team Project Submission
           </h2>
 
           {teamSubmission ? (
             <div className="space-y-6">
-              {/* Submission Status Banner */}
-              <div className={`backdrop-blur-sm border rounded-lg p-6 ${
-                teamSubmission.status === 'submitted' 
-                  ? 'bg-green-500/20 border-green-500/30' 
-                  : teamSubmission.status === 'approved'
-                  ? 'bg-blue-500/20 border-blue-500/30'
-                  : teamSubmission.status === 'featured'
-                  ? 'bg-purple-500/20 border-purple-500/30'
-                  : teamSubmission.status === 'rejected'
-                  ? 'bg-red-500/20 border-red-500/30'
-                  : 'bg-yellow-500/20 border-yellow-500/30'
-              }`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="text-3xl">
-                      {teamSubmission.status === 'submitted' ? '✅' 
-                       : teamSubmission.status === 'approved' ? '🏆'
-                       : teamSubmission.status === 'featured' ? '🌟'
-                       : teamSubmission.status === 'rejected' ? '❌'
-                       : '📝'}
-                    </div>
-                    <div>
-                      <h3 className={`text-xl font-bold pixelify-sans ${
-                        teamSubmission.status === 'submitted' 
-                          ? 'text-green-400' 
-                          : teamSubmission.status === 'approved'
-                          ? 'text-blue-400'
-                          : teamSubmission.status === 'featured'
-                          ? 'text-purple-400'
-                          : teamSubmission.status === 'rejected'
-                          ? 'text-red-400'
-                          : 'text-yellow-400'
-                      }`}>
-                        {teamSubmission.status === 'draft' ? 'Draft Saved'
-                         : teamSubmission.status === 'submitted' ? 'Submission Complete'
-                         : teamSubmission.status === 'approved' ? 'Approved!'
-                         : teamSubmission.status === 'featured' ? 'Featured!'
-                         : 'Rejected'}
-                      </h3>
-                      <p className={`${
-                        teamSubmission.status === 'submitted' 
-                          ? 'text-green-200' 
-                          : teamSubmission.status === 'approved'
-                          ? 'text-blue-200'
-                          : teamSubmission.status === 'featured'
-                          ? 'text-purple-200'
-                          : teamSubmission.status === 'rejected'
-                          ? 'text-red-200'
-                          : 'text-yellow-200'
-                      }`}>
-                        {teamSubmission.submitted_at 
-                          ? `Submitted ${new Date(teamSubmission.submitted_at).toLocaleDateString()}`
-                          : `Last updated ${new Date(teamSubmission.updated_at).toLocaleDateString()}`
-                        }
-                      </p>
-                    </div>
-                  </div>
-                  <Link
-                    href="/dashboard/project"
-                    className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
-                  >
-                    {teamSubmission.status === 'draft' ? 'Continue Editing' : 'View Details'}
-                  </Link>
-                </div>
-              </div>
-
-              {/* Project Details */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="text-lg font-semibold text-white mb-3">Project Info</h4>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-purple-300 text-sm">Project Name</p>
-                      <p className="text-white font-semibold">{teamSubmission.project_name}</p>
-                    </div>
-                    {teamSubmission.category && (
-                      <div>
-                        <p className="text-purple-300 text-sm">Category</p>
-                        <p className="text-white">{teamSubmission.category}</p>
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-purple-300 text-sm">Description</p>
-                      <p className="text-white text-sm line-clamp-3">{teamSubmission.project_description}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-lg font-semibold text-white mb-3">Links & Resources</h4>
-                  <div className="space-y-2">
-                    {teamSubmission.github_url && (
-                      <a 
-                        href={teamSubmission.github_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center space-x-2 text-blue-400 hover:text-blue-300 text-sm"
-                      >
-                        <span>📂</span>
-                        <span>GitHub Repository</span>
-                      </a>
-                    )}
-                    {teamSubmission.demo_url && (
-                      <a 
-                        href={teamSubmission.demo_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center space-x-2 text-blue-400 hover:text-blue-300 text-sm"
-                      >
-                        <span>🌐</span>
-                        <span>Live Demo</span>
-                      </a>
-                    )}
-                    {teamSubmission.video_url && (
-                      <a 
-                        href={teamSubmission.video_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center space-x-2 text-blue-400 hover:text-blue-300 text-sm"
-                      >
-                        <span>🎥</span>
-                        <span>Demo Video</span>
-                      </a>
-                    )}
-                  </div>
-
-                  {teamSubmission.tech_stack && Array.isArray(teamSubmission.tech_stack) && teamSubmission.tech_stack.length > 0 && (
-                    <div className="mt-4">
-                      <p className="text-purple-300 text-sm mb-2">Technologies</p>
-                      <div className="flex flex-wrap gap-2">
-                        {teamSubmission.tech_stack.map((tech, index) => (
-                          <span key={index} className="bg-purple-600/50 text-purple-200 px-2 py-1 rounded text-xs">
-                            {tech || 'Unknown Tech'}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {teamSubmission.features && Array.isArray(teamSubmission.features) && teamSubmission.features.length > 0 && (
-                    <div className="mt-4">
-                      <p className="text-purple-300 text-sm mb-2">Features</p>
-                      <div className="flex flex-wrap gap-2">
-                        {teamSubmission.features.map((feature, index) => (
-                          <span key={index} className="bg-orange-600/50 text-orange-200 px-2 py-1 rounded text-xs">
-                            {feature || 'Unknown Feature'}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">🚀</div>
-              <h3 className="text-xl font-bold text-white mb-3">Ready to Submit Your Project?</h3>
-              <p className="text-purple-200 mb-6">
-                Upload your game, provide project details, and showcase your Solana integration.
-              </p>
+              {/* Simple Project Card */}
               <Link
                 href="/dashboard/project"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors inline-block"
+                className="block bg-white/10 hover:bg-white/15 backdrop-blur-sm border border-white/20 hover:border-white/30 rounded-xl p-6 transition-all duration-200 hover:transform hover:scale-[1.02]"
               >
+                <div className="flex items-center gap-6">
+                  {/* Project Logo */}
+                  {teamSubmission.logo_url && (
+                    <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/10 border border-purple-500/30 p-2 flex-shrink-0">
+                      <Image
+                        src={teamSubmission.logo_url}
+                        alt={`${teamSubmission.project_name} logo`}
+                        width={64}
+                        height={64}
+                        className="w-full object-contain"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {/* Project Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-2xl font-bold text-white pixelify-sans">
+                        {teamSubmission.project_name}
+                      </h3>
+                      {/* Status Badge */}
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        teamSubmission.status === 'submitted' 
+                          ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                          : teamSubmission.status === 'approved'
+                          ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                          : teamSubmission.status === 'featured'
+                          ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                          : teamSubmission.status === 'rejected'
+                          ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                          : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                      }`}>
+                        {teamSubmission.status === 'draft' ? 'Draft'
+                         : teamSubmission.status === 'submitted' ? 'Submitted'
+                         : teamSubmission.status === 'approved' ? 'Approved'
+                         : teamSubmission.status === 'featured' ? 'Featured'
+                         : 'Rejected'}
+                      </span>
+                    </div>
+                    <p className="text-purple-200 text-lg mb-3 line-clamp-2">
+                      {teamSubmission.project_description}
+                    </p>
+                    <div className="flex items-center gap-3 text-sm text-purple-300">
+                      <span className="bg-purple-600/30 px-2 py-1 rounded">
+                        {teamSubmission.category}
+                      </span>
+                      {teamSubmission.tech_stack && teamSubmission.tech_stack.length > 0 && (
+                        <span>
+                          {teamSubmission.tech_stack.length} technologies
+                        </span>
+                      )}
+                      <span>
+                        {teamSubmission.submitted_at 
+                          ? `Submitted ${new Date(teamSubmission.submitted_at).toLocaleDateString()}`
+                          : `Updated ${new Date(teamSubmission.updated_at).toLocaleDateString()}`
+                        }
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Arrow Icon */}
+                  <div className="text-purple-300 text-2xl flex-shrink-0">
+                    →
+                  </div>
+                </div>
+              </Link>
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="text-8xl mb-6">🚀</div>
+              <h3 className="text-3xl font-bold text-white mb-4 pixelify-sans">Ready to Submit Your Project?</h3>
+              <p className="text-xl text-purple-200 mb-8 max-w-2xl mx-auto">
+                Upload your game, provide project details, and showcase your Solana integration to compete for amazing prizes!
+              </p>
+              
+              {/* Temporary fix button */}
+              <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-6 mb-8 max-w-2xl mx-auto">
+                <h4 className="text-yellow-400 font-semibold mb-2">🔧 Already have a project?</h4>
+                <p className="text-yellow-200 text-sm mb-4">
+                  If you already submitted a project but it's not showing here, it might be linked as an individual project instead of a team project. Click below to fix this:
+                </p>
+                <button
+                  onClick={fixProjectTeamAssignment}
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors mr-4"
+                >
+                  🔧 Convert Individual Project to Team Project
+                </button>
+              </div>
+              
+              <Link
+                href="/dashboard/project"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all transform hover:scale-105 inline-flex items-center gap-3"
+              >
+                <span>🎮</span>
                 Start Project Submission
               </Link>
             </div>
@@ -1187,4 +1206,4 @@ export default function TeamPage() {
       </div>
     </div>
   )
-} 
+}
