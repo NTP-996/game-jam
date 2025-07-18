@@ -46,9 +46,11 @@ export async function GET(request: NextRequest) {
       
       if (view === 'featured') {
         const { data, error } = await supabase
-          .rpc('get_featured_projects', { 
-            limit_count: limit ? parseInt(limit) : 6 
-          })
+          .from('project_catalogue')
+          .select('*')
+          .eq('status', 'featured')
+          .order('submitted_at', { ascending: false })
+          .limit(limit ? parseInt(limit) : 6)
         
         if (error) {
           console.error('Featured projects fetch error:', error)
@@ -97,10 +99,12 @@ export async function GET(request: NextRequest) {
     // For user's own projects, auth required
     const { supabase, user } = await createAuthenticatedClient(request)
 
+    // Get individual projects (not team projects)
     const { data: projects, error } = await supabase
-      .from('project_submissions')
+      .from('projects')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('creator_id', user.id)
+      .is('team_id', null) // Only individual projects
       .order('updated_at', { ascending: false })
 
     if (error) {
@@ -160,7 +164,8 @@ export async function POST(request: NextRequest) {
     }
 
     const projectData = {
-      user_id: user.id,
+      creator_id: user.id,
+      team_id: null, // Individual project
       project_name: body.project_name,
       project_description: body.project_description,
       category: body.category,
@@ -175,14 +180,13 @@ export async function POST(request: NextRequest) {
       screenshot_urls,
       challenges: body.challenges || null,
       features: body.features || [],
-      team_members: body.team_members || [],
       status: 'draft'
     }
 
     const { data: project, error } = await supabase
-      .from('project_submissions')
+      .from('projects')
       .insert(projectData)
-      .select()
+      .select('*')
       .single()
 
     if (error) {

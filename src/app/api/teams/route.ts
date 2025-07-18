@@ -28,7 +28,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    let query = supabase.from('team_overview').select('*')
+    let query = supabase.from('team_overview').select(`
+      *,
+      members
+    `)
 
     // Apply filters based on mode
     if (mode === 'my') {
@@ -71,7 +74,45 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch teams' }, { status: 500 })
     }
 
-    return NextResponse.json({ teams })
+    // Enrich teams with detailed member information if they have members
+    const enrichedTeams = await Promise.all(
+      (teams || []).map(async (team) => {
+        if (team.members && team.members.length > 0) {
+          // Get detailed member info from profiles
+          const memberIds = team.members.map((m: any) => m.user_id)
+          
+          const { data: memberProfiles } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, username')
+            .in('id', memberIds)
+
+          // Merge team membership data with profile data
+          const enrichedMembers = team.members.map((member: any) => {
+            const profile = memberProfiles?.find(p => p.id === member.user_id)
+            
+            return {
+              user_id: member.user_id,
+              name: profile?.full_name || profile?.username || 'Unknown Member',
+              avatar_url: profile?.avatar_url,
+              role: member.role || 'Member',
+              permissions: {
+                can_invite: member.can_invite || false,
+                can_manage_submissions: member.can_manage_submissions || false
+              },
+              joined_at: member.joined_at
+            }
+          })
+
+          return {
+            ...team,
+            members: enrichedMembers
+          }
+        }
+        return team
+      })
+    )
+
+    return NextResponse.json({ teams: enrichedTeams })
   } catch (error) {
     console.error('Teams API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

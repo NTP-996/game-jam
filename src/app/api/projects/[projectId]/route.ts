@@ -80,7 +80,7 @@ export async function GET(
     const { supabase, user } = await createAuthenticatedClient(request)
 
     const { data: project, error } = await supabase
-      .from('project_submissions')
+      .from('projects')
       .select('*')
       .eq('id', projectId)
       .single()
@@ -100,7 +100,7 @@ export async function GET(
     }
 
     // Check if user owns this project or if it's publicly viewable
-    if (project.user_id !== user.id && !['submitted', 'approved', 'featured'].includes(project.status)) {
+    if (project.creator_id !== user.id && !['submitted', 'approved', 'featured'].includes(project.status)) {
       return NextResponse.json(
         { error: 'Project not found' },
         { status: 404 }
@@ -136,10 +136,10 @@ export async function PUT(
 
     // Check if project exists and user owns it
     const { data: existingProject, error: fetchError } = await supabase
-      .from('project_submissions')
+      .from('projects')
       .select('*')
       .eq('id', projectId)
-      .eq('user_id', user.id)
+      .eq('creator_id', user.id)
       .single()
 
     if (fetchError || !existingProject) {
@@ -174,7 +174,6 @@ export async function PUT(
     if (body.logo_url !== undefined) updateData.logo_url = body.logo_url
     if (body.challenges !== undefined) updateData.challenges = body.challenges
     if (body.features !== undefined) updateData.features = body.features
-    if (body.team_members !== undefined) updateData.team_members = body.team_members
 
     // Handle tech_stack
     if (body.tech_stack !== undefined) {
@@ -199,11 +198,11 @@ export async function PUT(
     }
 
     const { data: project, error } = await supabase
-      .from('project_submissions')
+      .from('projects')
       .update(updateData)
       .eq('id', projectId)
-      .eq('user_id', user.id)
-      .select()
+      .eq('creator_id', user.id)
+      .select('*')
       .single()
 
     if (error) {
@@ -247,10 +246,10 @@ export async function DELETE(
 
     // Check if project exists and is a draft
     const { data: existingProject, error: fetchError } = await supabase
-      .from('project_submissions')
+      .from('projects')
       .select('*')
       .eq('id', projectId)
-      .eq('user_id', user.id)
+      .eq('creator_id', user.id)
       .single()
 
     if (fetchError || !existingProject) {
@@ -269,10 +268,10 @@ export async function DELETE(
     }
 
     const { error } = await supabase
-      .from('project_submissions')
+      .from('projects')
       .delete()
       .eq('id', projectId)
-      .eq('user_id', user.id)
+      .eq('creator_id', user.id)
 
     if (error) {
       console.error('Project deletion error:', error)

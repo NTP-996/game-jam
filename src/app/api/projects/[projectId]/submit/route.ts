@@ -49,10 +49,10 @@ export async function POST(
 
     // Get the current project
     const { data: project, error: fetchError } = await supabase
-      .from('project_submissions')
+      .from('projects')
       .select('*')
       .eq('id', projectId)
-      .eq('user_id', user.id)
+      .eq('creator_id', user.id)
       .single()
 
     if (fetchError || !project) {
@@ -105,15 +105,15 @@ export async function POST(
 
     // Submit the project
     const { data: submittedProject, error: submitError } = await supabase
-      .from('project_submissions')
+      .from('projects')
       .update({
         status: 'submitted',
         is_final: true,
         submitted_at: new Date().toISOString()
       })
       .eq('id', projectId)
-      .eq('user_id', user.id)
-      .select()
+      .eq('creator_id', user.id)
+      .select('*')
       .single()
 
     if (submitError) {

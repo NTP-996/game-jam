@@ -35,28 +35,36 @@ interface Team {
 interface TeamSubmission {
   id: string
   team_id: string
+  creator_id: string
   project_name: string
   project_description: string
-  github_repo_url?: string
+  category: string
+  solana_integration: string
+  tech_stack: string[]
+  github_url: string
   demo_url?: string
-  video_url?: string
-  presentation_url?: string
-  game_build_files: string[]
-  screenshots: string[]
-  category?: string
-  tags: string[]
-  solana_program_id?: string
-  solana_features: string[]
-  status: 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected'
+  game_host_url: string
+  video_url: string
+  banner_url: string
+  logo_url: string
+  screenshot_urls: string[]
+  challenges?: string
+  features: string[]
+  status: 'draft' | 'submitted' | 'approved' | 'featured' | 'rejected'
   is_final: boolean
   hackathon_edition: string
   created_at: string
   submitted_at?: string
   updated_at: string
-  submitted_by: string
-  submitted_by_profile?: {
+  creator_profile?: {
     full_name: string
     avatar_url?: string
+    username: string
+  }
+  team?: {
+    id: string
+    name: string
+    description: string
   }
 }
 
@@ -695,15 +703,15 @@ export default function TeamPage() {
                         {team.description}
                       </p>
 
-                      {team.looking_for.length > 0 && (
+                      {team.looking_for && Array.isArray(team.looking_for) && team.looking_for.length > 0 && (
                         <div className="mb-4">
                           <h4 className="text-sm font-semibold text-purple-300 mb-2">Looking for:</h4>
                           <div className="flex flex-wrap gap-2">
-                            {team.looking_for.map((skill, index) => (
-                              <span key={index} className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-sm">
-                                {skill}
-                              </span>
-                            ))}
+                                                      {team.looking_for.map((skill, index) => (
+                            <span key={index} className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-sm">
+                              {skill || 'Unknown Skill'}
+                            </span>
+                          ))}
                           </div>
                         </div>
                       )}
@@ -794,22 +802,14 @@ export default function TeamPage() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-white font-bold">
-                          {member.name.charAt(0).toUpperCase()}
+                          {member.name ? member.name.charAt(0).toUpperCase() : '?'}
                         </div>
                       )}
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-white">{member.name}</h3>
-                      <p className="text-purple-300 text-sm">{member.role}</p>
-                      {member.skills && member.skills.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {member.skills.map((skill, index) => (
-                            <span key={index} className="bg-purple-600/50 text-purple-200 px-2 py-1 rounded text-xs">
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                      <h3 className="font-semibold text-white">{member.name || 'Unknown Member'}</h3>
+                      <p className="text-purple-300 text-sm">{member.role || 'Member'}</p>
+
                     </div>
                   </div>
                 ))}
@@ -866,10 +866,12 @@ export default function TeamPage() {
             <div className="space-y-6">
               {/* Submission Status Banner */}
               <div className={`backdrop-blur-sm border rounded-lg p-6 ${
-                teamSubmission.status === 'submitted' || teamSubmission.status === 'under_review' 
+                teamSubmission.status === 'submitted' 
                   ? 'bg-green-500/20 border-green-500/30' 
                   : teamSubmission.status === 'approved'
                   ? 'bg-blue-500/20 border-blue-500/30'
+                  : teamSubmission.status === 'featured'
+                  ? 'bg-purple-500/20 border-purple-500/30'
                   : teamSubmission.status === 'rejected'
                   ? 'bg-red-500/20 border-red-500/30'
                   : 'bg-yellow-500/20 border-yellow-500/30'
@@ -877,32 +879,37 @@ export default function TeamPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="text-3xl">
-                      {teamSubmission.status === 'submitted' || teamSubmission.status === 'under_review' ? '✅' 
+                      {teamSubmission.status === 'submitted' ? '✅' 
                        : teamSubmission.status === 'approved' ? '🏆'
+                       : teamSubmission.status === 'featured' ? '🌟'
                        : teamSubmission.status === 'rejected' ? '❌'
                        : '📝'}
                     </div>
                     <div>
                       <h3 className={`text-xl font-bold pixelify-sans ${
-                        teamSubmission.status === 'submitted' || teamSubmission.status === 'under_review' 
+                        teamSubmission.status === 'submitted' 
                           ? 'text-green-400' 
                           : teamSubmission.status === 'approved'
                           ? 'text-blue-400'
+                          : teamSubmission.status === 'featured'
+                          ? 'text-purple-400'
                           : teamSubmission.status === 'rejected'
                           ? 'text-red-400'
                           : 'text-yellow-400'
                       }`}>
                         {teamSubmission.status === 'draft' ? 'Draft Saved'
                          : teamSubmission.status === 'submitted' ? 'Submission Complete'
-                         : teamSubmission.status === 'under_review' ? 'Under Review'
                          : teamSubmission.status === 'approved' ? 'Approved!'
+                         : teamSubmission.status === 'featured' ? 'Featured!'
                          : 'Rejected'}
                       </h3>
                       <p className={`${
-                        teamSubmission.status === 'submitted' || teamSubmission.status === 'under_review' 
+                        teamSubmission.status === 'submitted' 
                           ? 'text-green-200' 
                           : teamSubmission.status === 'approved'
                           ? 'text-blue-200'
+                          : teamSubmission.status === 'featured'
+                          ? 'text-purple-200'
                           : teamSubmission.status === 'rejected'
                           ? 'text-red-200'
                           : 'text-yellow-200'
@@ -948,9 +955,9 @@ export default function TeamPage() {
                 <div>
                   <h4 className="text-lg font-semibold text-white mb-3">Links & Resources</h4>
                   <div className="space-y-2">
-                    {teamSubmission.github_repo_url && (
+                    {teamSubmission.github_url && (
                       <a 
-                        href={teamSubmission.github_repo_url}
+                        href={teamSubmission.github_url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center space-x-2 text-blue-400 hover:text-blue-300 text-sm"
@@ -983,26 +990,26 @@ export default function TeamPage() {
                     )}
                   </div>
 
-                  {teamSubmission.tags && teamSubmission.tags.length > 0 && (
+                  {teamSubmission.tech_stack && Array.isArray(teamSubmission.tech_stack) && teamSubmission.tech_stack.length > 0 && (
                     <div className="mt-4">
                       <p className="text-purple-300 text-sm mb-2">Technologies</p>
                       <div className="flex flex-wrap gap-2">
-                        {teamSubmission.tags.map((tag, index) => (
+                        {teamSubmission.tech_stack.map((tech, index) => (
                           <span key={index} className="bg-purple-600/50 text-purple-200 px-2 py-1 rounded text-xs">
-                            {tag}
+                            {tech || 'Unknown Tech'}
                           </span>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {teamSubmission.solana_features && teamSubmission.solana_features.length > 0 && (
+                  {teamSubmission.features && Array.isArray(teamSubmission.features) && teamSubmission.features.length > 0 && (
                     <div className="mt-4">
-                      <p className="text-purple-300 text-sm mb-2">Solana Features</p>
+                      <p className="text-purple-300 text-sm mb-2">Features</p>
                       <div className="flex flex-wrap gap-2">
-                        {teamSubmission.solana_features.map((feature, index) => (
+                        {teamSubmission.features.map((feature, index) => (
                           <span key={index} className="bg-orange-600/50 text-orange-200 px-2 py-1 rounded text-xs">
-                            {feature}
+                            {feature || 'Unknown Feature'}
                           </span>
                         ))}
                       </div>
@@ -1073,13 +1080,13 @@ export default function TeamPage() {
                 </div>
 
                 {/* Looking For Skills */}
-                {userTeam?.looking_for && userTeam.looking_for.length > 0 && (
+                {userTeam?.looking_for && Array.isArray(userTeam.looking_for) && userTeam.looking_for.length > 0 && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-white mb-2">Looking for:</h3>
                     <div className="flex flex-wrap gap-2">
                       {userTeam.looking_for.map((skill, index) => (
                         <span key={index} className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">
-                          {skill}
+                          {skill || 'Unknown Skill'}
                         </span>
                       ))}
                     </div>
@@ -1131,11 +1138,11 @@ export default function TeamPage() {
                           {profile.job_title && (
                             <p className="text-purple-300 text-sm">{profile.job_title}</p>
                           )}
-                          {profile.skills && profile.skills.length > 0 && (
+                          {profile.skills && Array.isArray(profile.skills) && profile.skills.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-1">
                               {profile.skills.slice(0, 5).map((skill: string, index: number) => (
                                 <span key={index} className="bg-purple-600/50 text-purple-200 px-2 py-1 rounded text-xs">
-                                  {skill}
+                                  {skill || 'Unknown Skill'}
                                 </span>
                               ))}
                               {profile.skills.length > 5 && (
