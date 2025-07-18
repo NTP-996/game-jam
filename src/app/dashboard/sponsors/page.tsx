@@ -187,24 +187,7 @@ const SponsorsPage = () => {
           ))}
         </div>
 
-        {/* Call to Action */}
-        <div className="mt-16 text-center bg-purple-500/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-12 shadow-lg">
-          <h2 className="text-3xl font-bold text-white pixelify-sans mb-4">
-            Ready to Build with Our Sponsors?
-          </h2>
-          <p className="text-xl text-purple-200 mb-8 max-w-2xl mx-auto">
-            Leverage these powerful tools and platforms to create amazing games during the Solana Game Jam.
-            Each sponsor offers unique advantages that can accelerate your development process.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105">
-              Start Building Now
-            </button>
-            <button className="px-8 py-4 border-2 border-purple-400 text-purple-200 rounded-xl font-semibold hover:border-purple-300 hover:text-white hover:bg-purple-600/20 transition-all duration-200">
-              View Documentation
-            </button>
-          </div>
-        </div>
+
       </div>
     </div>
   );

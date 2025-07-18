@@ -385,24 +385,7 @@ const PartnersPage = () => {
           </div>
         </div>
 
-        {/* Call to Action */}
-        <div className="mt-8 text-center bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6">
-          <h2 className="text-2xl font-bold text-white pixelify-sans mb-3">
-            Join Our Partner Network
-          </h2>
-          <p className="text-lg text-purple-200 mb-6 max-w-2xl mx-auto">
-            Interested in partnering with us for future events? We're always looking for organizations 
-            that share our vision of building the future of gaming on Solana.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105">
-              Become a Partner
-            </button>
-            <button className="px-8 py-4 border-2 border-purple-400 text-purple-200 rounded-xl font-semibold hover:border-purple-300 hover:text-white hover:bg-purple-600/20 transition-all duration-200">
-              Learn More
-            </button>
-          </div>
-        </div>
+
       </div>
     </div>
   );

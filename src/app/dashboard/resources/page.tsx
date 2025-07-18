@@ -2,115 +2,229 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { BookOpen, Play, MessageCircle, Download, ExternalLink, Search, Filter, Star, Clock, Users } from 'lucide-react';
+import { BookOpen, Play, MessageCircle, Download, ExternalLink, Search, Filter, Star, Clock, Users, Code, Zap, Trophy } from 'lucide-react';
 
 const ResourcesPage = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
   const categories = [
-    { id: 'all', name: 'All Resources', icon: <BookOpen className="w-4 h-4" />, count: 42 },
-    { id: 'guides', name: 'Game Design Guides', icon: <BookOpen className="w-4 h-4" />, count: 15 },
-    { id: 'handbook', name: 'Game Handbook', icon: <Star className="w-4 h-4" />, count: 8 },
-    { id: 'videos', name: 'Video Tutorials', icon: <Play className="w-4 h-4" />, count: 12 },
-    { id: 'social', name: 'Community Content', icon: <MessageCircle className="w-4 h-4" />, count: 7 }
+    { id: 'all', name: 'All Resources', icon: <BookOpen className="w-4 h-4" />, count: 25 },
+    { id: 'guides', name: 'Official Guides', icon: <BookOpen className="w-4 h-4" />, count: 1 },
+    { id: 'jonas', name: 'SolPlay Jonas Resources', icon: <Star className="w-4 h-4" />, count: 15 },
+    { id: 'videos', name: 'Video Tutorials', icon: <Play className="w-4 h-4" />, count: 1 },
+    { id: 'obelisk', name: 'Obelisk Protocol Videos', icon: <Play className="w-4 h-4" />, count: 2 },
+    { id: 'superteamvn', name: 'SuperteamVN Live Sessions', icon: <Play className="w-4 h-4" />, count: 4 },
+    { id: 'social', name: 'Community Content', icon: <MessageCircle className="w-4 h-4" />, count: 3 }
   ];
 
   const gameDesignGuides = [
     {
       id: 1,
-      title: "Game Design Fundamentals for Blockchain",
-      description: "Essential principles for designing engaging blockchain games that players actually want to play.",
-      author: "Game Design Team",
-      readTime: "15 min read",
+      title: "Official Solana Game Development Guide",
+      description: "The complete official guide from Solana.com covering everything you need to get started with game development on Solana.",
+      author: "Solana Foundation",
+      readTime: "30 min read",
       difficulty: "Beginner",
-      tags: ["Game Design", "Blockchain", "Fundamentals"],
-      downloadUrl: "#",
-      featured: true
-    },
-    {
-      id: 2,
-      title: "Tokenomics in Game Design",
-      description: "How to design sustainable token economies that enhance gameplay rather than extract value.",
-      author: "Economics Expert",
-      readTime: "20 min read",
-      difficulty: "Intermediate",
-      tags: ["Tokenomics", "Economy", "Design"],
-      downloadUrl: "#"
-    },
-    {
-      id: 3,
-      title: "Player Onboarding for Web3 Games",
-      description: "Best practices for getting traditional gamers into blockchain gaming without friction.",
-      author: "UX Team",
-      readTime: "12 min read",
-      difficulty: "Beginner",
-      tags: ["Onboarding", "UX", "Web3"],
-      downloadUrl: "#"
+      tags: ["Official", "Solana", "Getting Started"],
+      downloadUrl: "https://solana.com/de/developers/guides/games/getting-started-with-game-development",
+      featured: true,
+      isExternal: true
     }
   ];
 
-  const handbookSections = [
-    {
-      id: 1,
-      title: "Complete Game Development Handbook",
-      description: "Comprehensive guide covering everything from concept to deployment on Solana.",
-      chapters: 12,
-      pages: 150,
-      downloadUrl: "#",
-      featured: true
-    },
-    {
-      id: 2,
-      title: "Solana Gaming SDK Reference",
-      description: "Technical documentation and code examples for building on Solana.",
-      chapters: 8,
-      pages: 80,
-      downloadUrl: "#"
-    },
-    {
-      id: 3,
-      title: "Game Jam Submission Guidelines",
-      description: "Everything you need to know about submitting your game to the jam.",
-      chapters: 3,
-      pages: 25,
-      downloadUrl: "#"
-    }
-  ];
+  const handbookSections: any[] = [];
+
+  // Helper function to extract YouTube video ID and get thumbnail
+  const getYouTubeThumbnail = (url: string) => {
+    const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/)?.[1];
+    return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : "/api/placeholder/300/200";
+  };
 
   const videoTutorials = [
     {
       id: 1,
-      title: "Building Your First Solana Game",
-      description: "Step-by-step tutorial for creating a simple game on Solana blockchain.",
-      duration: "45:30",
-      instructor: "Lead Developer",
-      thumbnail: "/api/placeholder/300/200",
-      videoUrl: "#",
-      difficulty: "Beginner",
-      views: "2.3k"
+      title: "Game Jam Workshop Series (Complete Playlist)",
+      description: "Complete workshop series from last year's Game Jam covering all aspects of Solana game development.",
+      duration: "Playlist",
+      instructor: "Game Jam Experts",
+      thumbnail: getYouTubeThumbnail("https://www.youtube.com/watch?v=WoEZAsSjN2g&list=PL_KwIUlXHzRJxNybaxuuK3RK6kDr-lo77"),
+      videoUrl: "https://www.youtube.com/watch?v=WoEZAsSjN2g&list=PL_KwIUlXHzRJxNybaxuuK3RK6kDr-lo77",
+      difficulty: "All Levels",
+      views: "5.2k",
+      featured: true
+    }
+  ];
+
+  const jonasResources = {
+    sdks: [
+      {
+        name: "Solana Unity SDK",
+        description: "Feature-complete SDK with full RPC coverage, Anchor C# client generator, reliable WebSocket connections, Metaplex NFT and candy machine support directly in Unity Editor.",
+        url: "https://docs.magicblock.gg/pages/tools/solana-unity-sdk/overview",
+        category: "Unity"
+      },
+      {
+        name: "Godot Solana SDK",
+        description: "Rising game engine with a great Solana SDK, perfect for indie developers looking for an open-source alternative.",
+        url: "https://github.com/Virus-Axel/godot-solana-sdk",
+        category: "Godot"
+      },
+      {
+        name: "Solana Phaser Template",
+        description: "Great Phaser preset with upcoming Privy wallet support, perfect for vibe coding and quick prototypes.",
+        url: "https://github.com/Bread-Heads-NFT/solana-phaser-template",
+        category: "Web"
+      },
+      {
+        name: "Turbo Rust Game Engine",
+        description: "Lightweight game engine that lets you build and deploy Solana Rust games directly in the browser. Capable of on-chain games!",
+        url: "https://turbo.computer",
+        category: "Rust"
+      }
+    ],
+    videos: [
+      {
+        title: "Godot Solana SDK Tutorial",
+        url: "https://youtu.be/FKwTus8xc2s?si=Bcg9_-D1rQ4gQqwn",
+        description: "Complete tutorial for getting started with Godot and Solana"
+      },
+      {
+        title: "RubiansVR Channel",
+        url: "https://youtube.com/@RubiansVR",
+        description: "Comprehensive Solana game development tutorials"
+      },
+      {
+        title: "Advanced Solana Gaming",
+        url: "https://youtu.be/0ZaUaKuQCm0?si=cCWV942kPiY2xJtb",
+        description: "Deep dive into advanced Solana gaming concepts"
+      },
+      {
+        title: "Energy System Tutorial",
+        url: "https://youtube.com/watch?v=YYQtRCXJBgs&t=3s&ab_channel=Solana",
+        description: "Learn how to implement energy systems in Solana games"
+      },
+      {
+        title: "Session Keys Implementation",
+        url: "https://youtube.com/watch?v=oKvWZoybv7Y&ab_channel=Solana",
+        description: "Master session keys for seamless gaming experiences"
+      },
+      {
+        title: "Games Workshop from Last Hackathon",
+        url: "https://youtube.com/watch?v=zWvpivvrX1M&t=1s&ab_channel=JonasHahn",
+        description: "Complete workshop covering game development from previous hackathon"
+      }
+    ],
+    tools: [
+      {
+        name: "Honeycomb Protocol",
+        description: "Generic data compression perfect for games with functionality for loot boxes, guilds, tokens, and player profiles.",
+        url: "https://docs.honeycombprotocol.com"
+      },
+      {
+        name: "Helium TukTuk",
+        description: "Automation tool perfect for idle games and automated game mechanics.",
+        url: "https://github.com/helium/tuktuk"
+      },
+      {
+        name: "Proof Network",
+        description: "Proofable JavaScript backend for Solana games, just released and actively maintained.",
+        url: "https://proofnetwork.lol"
+      }
+    ],
+    examples: [
+      {
+        name: "Solana Game Examples",
+        description: "Official collection of game development examples and tutorials",
+        url: "https://github.com/solana-developers/solana-game-examples"
+      },
+      {
+        name: "Solana 2048 Demo",
+        description: "Live demo showcasing Solana game mechanics",
+        url: "https://solplay.de/solana-2048/"
+      },
+      {
+        name: "Past Game Jam Submissions",
+        description: "Open source submissions from previous Solana game jams",
+        url: "https://itch.io/jam/solana-speedrun-3/entries"
+      }
+    ],
+    opportunities: [] as Array<{
+      name: string;
+      description: string;
+      url: string;
+    }>
+  };
+
+  const obeliskVideos = [
+    {
+      id: 1,
+      title: "Obelisk Protocol Development Tutorial",
+      description: "Learn how to build with Obelisk Protocol for Web3 game development and AI-native development approaches.",
+      duration: "~21:30",
+      instructor: "Obelisk Protocol Team",
+      thumbnail: getYouTubeThumbnail("https://www.youtube.com/watch?v=SL2SVWUY9OY&t=1290s"),
+      videoUrl: "https://www.youtube.com/watch?v=SL2SVWUY9OY&t=1290s",
+      difficulty: "Intermediate",
+      views: "1.2k"
     },
     {
       id: 2,
-      title: "Advanced NFT Integration Techniques",
-      description: "Learn how to seamlessly integrate NFTs into your game mechanics.",
-      duration: "32:15",
-      instructor: "Blockchain Expert",
-      thumbnail: "/api/placeholder/300/200",
-      videoUrl: "#",
+      title: "Advanced Obelisk Protocol Techniques",
+      description: "Deep dive into advanced features and development patterns with Obelisk Protocol for game development.",
+      duration: "Various",
+      instructor: "Obelisk Protocol Team",
+      thumbnail: getYouTubeThumbnail("https://www.youtube.com/watch?v=CJzLwq4htCc&t=1s"),
+      videoUrl: "https://www.youtube.com/watch?v=CJzLwq4htCc&t=1s",
       difficulty: "Advanced",
-      views: "1.8k"
+      views: "890"
+    }
+  ];
+
+  const superteamVNVideos = [
+    {
+      id: 1,
+      title: "SuperteamVN Game Jam Live Session #1",
+      description: "Official SuperteamVN live broadcast covering game development fundamentals and jam preparation.",
+      duration: "Live",
+      instructor: "SuperteamVN Team",
+      thumbnail: "/api/placeholder/300/200",
+      videoUrl: "https://x.com/i/broadcasts/1OyJALDgBkOGb",
+      difficulty: "All Levels",
+      views: "Live"
+    },
+    {
+      id: 2,
+      title: "SuperteamVN Game Jam Live Session #2",
+      description: "Second official live session focusing on advanced game mechanics and Solana integration.",
+      duration: "Live",
+      instructor: "SuperteamVN Team",
+      thumbnail: "/api/placeholder/300/200",
+      videoUrl: "https://x.com/i/broadcasts/1eaKbWNWvdkGX",
+      difficulty: "Intermediate",
+      views: "Live"
     },
     {
       id: 3,
-      title: "Optimizing Game Performance on Solana",
-      description: "Best practices for ensuring your game runs smoothly on the blockchain.",
-      duration: "28:45",
-      instructor: "Performance Engineer",
+      title: "SuperteamVN Game Jam Live Session #3",
+      description: "Third live session covering project showcase and development best practices.",
+      duration: "Live",
+      instructor: "SuperteamVN Team",
       thumbnail: "/api/placeholder/300/200",
-      videoUrl: "#",
-      difficulty: "Intermediate",
-      views: "1.5k"
+      videoUrl: "https://x.com/i/broadcasts/1lPJqMBQbRwJb",
+      difficulty: "All Levels",
+      views: "Live"
+    },
+    {
+      id: 4,
+      title: "SuperteamVN Game Jam Live Session #4",
+      description: "Final live session with project demos, feedback, and community discussions.",
+      duration: "Live",
+      instructor: "SuperteamVN Team",
+      thumbnail: "/api/placeholder/300/200",
+      videoUrl: "https://x.com/i/broadcasts/1mrGmPkzdvqKy",
+      difficulty: "All Levels",
+      views: "Live"
     }
   ];
 
@@ -160,13 +274,15 @@ const ResourcesPage = () => {
   };
 
   const renderGuides = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
       {gameDesignGuides.map((guide) => (
         <div key={guide.id} className={`bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 hover:bg-white/15 transition-all duration-200 ${guide.featured ? 'ring-2 ring-yellow-500/50' : ''}`}>
           {guide.featured && (
             <div className="flex items-center gap-2 mb-4">
               <Star className="w-4 h-4 text-yellow-400 fill-current" />
-              <span className="text-yellow-400 text-sm font-medium">Featured Guide</span>
+              <span className="text-yellow-400 text-sm font-medium">
+                {guide.isExternal ? 'Official Guide' : 'Featured Guide'}
+              </span>
             </div>
           )}
           
@@ -193,10 +309,22 @@ const ResourcesPage = () => {
           
           <div className="flex items-center justify-between">
             <span className="text-purple-300 text-sm">by {guide.author}</span>
-            <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-              <Download className="w-4 h-4" />
-              Download
-            </button>
+            {guide.isExternal ? (
+              <a
+                href={guide.downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Visit Guide
+              </a>
+            ) : (
+              <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                <Download className="w-4 h-4" />
+                Download
+              </button>
+            )}
           </div>
         </div>
       ))}
@@ -238,41 +366,251 @@ const ResourcesPage = () => {
     </div>
   );
 
+    const renderVideoCard = (video: any, isSpecial = false) => (
+    <div key={video.id} className={`bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl overflow-hidden hover:bg-white/15 transition-all duration-200 ${video.featured ? 'ring-2 ring-yellow-500/50' : ''} ${isSpecial ? 'ring-2 ring-blue-500/50' : ''}`}>
+      <div className="relative h-48 bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center overflow-hidden">
+        {video.thumbnail && video.thumbnail !== "/api/placeholder/300/200" ? (
+          <Image
+            src={video.thumbnail}
+            alt={video.title}
+            fill
+            className="object-cover"
+            onError={(e) => {
+              // Fallback to gradient background if thumbnail fails to load
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+            }}
+          />
+        ) : null}
+        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+          <Play className="w-16 h-16 text-white opacity-90 drop-shadow-lg" />
+        </div>
+        <div className="absolute bottom-2 right-2 bg-black/80 text-white px-2 py-1 rounded text-sm font-medium">
+          {video.duration}
+        </div>
+        {video.featured && (
+          <div className="absolute top-2 left-2">
+            <div className="flex items-center gap-1 bg-yellow-500/90 text-black px-2 py-1 rounded text-xs font-medium">
+              <Star className="w-3 h-3 fill-current" />
+              Featured
+            </div>
+          </div>
+        )}
+        {isSpecial && (
+          <div className="absolute top-2 left-2">
+            <div className="flex items-center gap-1 bg-blue-500/90 text-white px-2 py-1 rounded text-xs font-medium">
+              <Play className="w-3 h-3 fill-current" />
+              Partner
+            </div>
+          </div>
+        )}
+      </div>
+      
+      <div className="p-6">
+        <h3 className="text-lg font-bold text-white pixelify-sans mb-2">{video.title}</h3>
+        <p className="text-purple-200 text-sm mb-4 line-clamp-2">{video.description}</p>
+        
+        <div className="flex items-center gap-2 mb-4">
+          <span className={`px-2 py-1 rounded-lg text-xs font-medium border ${getDifficultyColor(video.difficulty)}`}>
+            {video.difficulty}
+          </span>
+          <span className="text-purple-300 text-xs flex items-center gap-1">
+            <Users className="w-3 h-3" />
+            {video.views} views
+          </span>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <span className="text-purple-300 text-sm">by {video.instructor}</span>
+          <a
+            href={video.videoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            <Play className="w-4 h-4" />
+            Watch
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+
   const renderVideos = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-      {videoTutorials.map((video) => (
-        <div key={video.id} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl overflow-hidden hover:bg-white/15 transition-all duration-200">
-          <div className="relative h-48 bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-            <Play className="w-16 h-16 text-white opacity-80" />
-            <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-sm">
-              {video.duration}
-            </div>
+      {videoTutorials.map((video) => renderVideoCard(video))}
+    </div>
+  );
+
+  const renderObeliskVideos = () => (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {obeliskVideos.map((video) => renderVideoCard(video, true))}
+    </div>
+  );
+
+  const renderSuperteamVNVideos = () => (
+    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      {superteamVNVideos.map((video) => renderVideoCard(video, true))}
+    </div>
+  );
+
+  const renderJonasResources = () => (
+    <div className="space-y-8">
+      {/* Introduction */}
+      <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-500/30 rounded-2xl p-6">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+            <Users className="w-8 h-8 text-white" />
           </div>
-          
-          <div className="p-6">
-            <h3 className="text-lg font-bold text-white pixelify-sans mb-2">{video.title}</h3>
-            <p className="text-purple-200 text-sm mb-4 line-clamp-2">{video.description}</p>
-            
-            <div className="flex items-center gap-2 mb-4">
-              <span className={`px-2 py-1 rounded-lg text-xs font-medium border ${getDifficultyColor(video.difficulty)}`}>
-                {video.difficulty}
-              </span>
-              <span className="text-purple-300 text-xs flex items-center gap-1">
-                <Users className="w-3 h-3" />
-                {video.views} views
-              </span>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <span className="text-purple-300 text-sm">by {video.instructor}</span>
-              <button className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                <Play className="w-4 h-4" />
-                Watch
-              </button>
-            </div>
+          <div>
+            <h3 className="text-2xl font-bold text-white pixelify-sans">SolPlay Jonas's Curated Resources</h3>
+            <p className="text-blue-200">Comprehensive collection of tools, tutorials, and resources for Solana game development</p>
           </div>
         </div>
-      ))}
+        <p className="text-blue-100 leading-relaxed">
+          Get started with the official <a href="https://solana.com/de/developers/guides/games/getting-started-with-game-development" target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:text-blue-200 underline">Solana Game Development Guide</a> that provides a comprehensive overview of everything Solana game dev related and all the different SDKs available.
+        </p>
+      </div>
+
+      {/* SDKs & Engines */}
+      <div>
+        <h4 className="text-xl font-bold text-white pixelify-sans mb-4 flex items-center gap-2">
+          <Code className="w-5 h-5" />
+          Game Engines & SDKs
+        </h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {jonasResources.sdks.map((sdk, idx) => (
+            <div key={idx} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 hover:bg-white/15 transition-all duration-200">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs font-medium">{sdk.category}</span>
+                <h5 className="text-lg font-bold text-white">{sdk.name}</h5>
+              </div>
+              <p className="text-purple-200 text-sm mb-4">{sdk.description}</p>
+              <a
+                href={sdk.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-blue-300 hover:text-blue-200 font-medium text-sm"
+              >
+                <ExternalLink className="w-4 h-4" />
+                View Documentation
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Video Tutorials */}
+      <div>
+        <h4 className="text-xl font-bold text-white pixelify-sans mb-4 flex items-center gap-2">
+          <Play className="w-5 h-5" />
+          Video Tutorials
+        </h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {jonasResources.videos.map((video, idx) => (
+            <div key={idx} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 hover:bg-white/15 transition-all duration-200">
+              <h5 className="text-lg font-bold text-white mb-2">{video.title}</h5>
+              <p className="text-purple-200 text-sm mb-4">{video.description}</p>
+              <a
+                href={video.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                <Play className="w-4 h-4" />
+                Watch
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Tools & Services */}
+      <div>
+        <h4 className="text-xl font-bold text-white pixelify-sans mb-4 flex items-center gap-2">
+          <Zap className="w-5 h-5" />
+          Development Tools
+        </h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {jonasResources.tools.map((tool, idx) => (
+            <div key={idx} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 hover:bg-white/15 transition-all duration-200">
+              <h5 className="text-lg font-bold text-white mb-2">{tool.name}</h5>
+              <p className="text-purple-200 text-sm mb-4">{tool.description}</p>
+              <a
+                href={tool.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Explore
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Examples & References */}
+      <div>
+        <h4 className="text-xl font-bold text-white pixelify-sans mb-4 flex items-center gap-2">
+          <BookOpen className="w-5 h-5" />
+          Examples & References
+        </h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {jonasResources.examples.map((example, idx) => (
+            <div key={idx} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 hover:bg-white/15 transition-all duration-200">
+              <h5 className="text-lg font-bold text-white mb-2">{example.name}</h5>
+              <p className="text-purple-200 text-sm mb-4">{example.description}</p>
+              <a
+                href={example.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                <ExternalLink className="w-4 h-4" />
+                View Examples
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Opportunities */}
+      {jonasResources.opportunities.length > 0 && (
+        <div>
+          <h4 className="text-xl font-bold text-white pixelify-sans mb-4 flex items-center gap-2">
+            <Trophy className="w-5 h-5" />
+            Funding & Opportunities
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {jonasResources.opportunities.map((opportunity, idx) => (
+              <div key={idx} className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-sm border border-yellow-500/30 rounded-xl p-6 hover:from-yellow-500/30 hover:to-orange-500/30 transition-all duration-200">
+                <h5 className="text-lg font-bold text-white mb-2">{opportunity.name}</h5>
+                <p className="text-yellow-100 text-sm mb-4">{opportunity.description}</p>
+                <a
+                  href={opportunity.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Learn More
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Footer */}
+      <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6 text-center">
+        <p className="text-purple-100 mb-4">
+          Special thanks to <span className="text-purple-300 font-semibold">@SuperteamVN</span>, <span className="text-purple-300 font-semibold">@SENDArcadeX</span>, and <span className="text-purple-300 font-semibold">@honeycomb_prtcl</span> for organizing this game jam!
+        </p>
+        <p className="text-purple-200 text-sm">
+          For AI-powered development, check out <span className="text-purple-300 font-semibold">@Belacosaursol</span> with <span className="text-purple-300 font-semibold">@ObeliskProtocol</span> - they have extensive experience in vibe coding with Copilot, Cursor, and Windsurf.
+        </p>
+      </div>
     </div>
   );
 
@@ -333,23 +671,33 @@ const ResourcesPage = () => {
   const renderContent = () => {
     switch (activeCategory) {
       case 'guides': return renderGuides();
-      case 'handbook': return renderHandbook();
+      case 'jonas': return renderJonasResources();
       case 'videos': return renderVideos();
+      case 'obelisk': return renderObeliskVideos();
+      case 'superteamvn': return renderSuperteamVNVideos();
       case 'social': return renderSocialContent();
       default: 
         return (
           <div className="space-y-12">
             <div>
-              <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">🌟 Featured Resources</h2>
+              <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">📘 Official Solana Guide</h2>
               {renderGuides()}
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">📖 Game Handbooks</h2>
-              {renderHandbook()}
+              <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">⭐ SolPlay Jonas's Curated Resources</h2>
+              {renderJonasResources()}
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">🎥 Latest Videos</h2>
+              <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">🎥 Video Tutorials</h2>
               {renderVideos()}
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">🛠️ Obelisk Protocol Videos</h2>
+              {renderObeliskVideos()}
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">📺 SuperteamVN Live Sessions</h2>
+              {renderSuperteamVNVideos()}
             </div>
           </div>
         );
@@ -412,23 +760,7 @@ const ResourcesPage = () => {
         {/* Content */}
         {renderContent()}
 
-        {/* Call to Action */}
-        <div className="mt-16 text-center bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-12">
-          <h2 className="text-3xl font-bold text-white pixelify-sans mb-4">
-            Need More Help?
-          </h2>
-          <p className="text-xl text-purple-200 mb-8 max-w-2xl mx-auto">
-            Join our Discord community for real-time help, connect with mentors, and collaborate with other developers.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105">
-              Join Discord Community
-            </button>
-            <button className="px-8 py-4 border-2 border-purple-400 text-purple-200 rounded-xl font-semibold hover:border-purple-300 hover:text-white hover:bg-purple-600/20 transition-all duration-200">
-              Schedule Mentorship
-            </button>
-          </div>
-        </div>
+
       </div>
     </div>
   );
