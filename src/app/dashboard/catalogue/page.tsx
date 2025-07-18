@@ -42,119 +42,41 @@ interface Team {
   website_url?: string
 }
 
-// Mock data for visual representation
-const mockProjects: Project[] = [
-  {
-    id: 'mock-1',
-    project_name: 'Stellar Warriors',
-    project_description: 'An epic space combat game built on Solana with NFT ships and real-time battles.',
-    category: 'Action/Adventure',
-    tech_stack: ['Unity', 'Solana', 'Anchor', 'C#'],
+// Speedrun 2024 game interface (from database)
+interface Speedrun2024Game {
+  id: string
+  name: string
+  description: string
+  developer_name: string
+  itch_url: string
+  github_url?: string
+  demo_url?: string
+  thumbnail_url: string
+  banner_url?: string
+  screenshot_urls: string[]
+  tech_stack: string[]
+  category?: string
+  tags: string[]
+  published_date?: string
+  downloads_count: number
+  rating: number
+  rating_count: number
+  solana_features: string[]
+  is_featured: boolean
+  display_order: number
+}
 
-    banner_url: 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=800&h=400&fit=crop',
-    logo_url: 'https://images.unsplash.com/photo-1614732414444-096e5f1122d5?w=200&h=200&fit=crop',
-    screenshot_urls: ['https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&h=400&fit=crop'],
-    game_host_url: 'https://stellar-warriors.game',
-    github_url: 'https://github.com/team/stellar-warriors',
-    video_url: 'https://youtube.com/watch?v=demo',
-    created_at: '2024-01-15T10:00:00Z',
-    team: { id: 'team-1', name: 'Cosmic Devs' }
-  },
-  {
-    id: 'mock-2',
-    project_name: 'DeFi Dungeon',
-    project_description: 'Roguelike dungeon crawler where loot is minted as NFTs and trading happens on-chain.',
-    category: 'RPG/MMORPG',
-    tech_stack: ['Godot', 'Rust', 'Solana', 'Metaplex'],
-    banner_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=400&fit=crop',
-    logo_url: 'https://images.unsplash.com/photo-1578662996440-48f60103fc96?w=200&h=200&fit=crop',
-    screenshot_urls: ['https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=400&fit=crop'],
-    game_host_url: 'https://defi-dungeon.app',
-    github_url: 'https://github.com/team/defi-dungeon',
-    video_url: '',
-    created_at: '2024-01-14T15:30:00Z',
-    team: { id: 'team-2', name: 'Blockchain Builders' }
-  },
-  {
-    id: 'mock-3',
-    project_name: 'Solana Speedway',
-    project_description: 'High-speed racing game with tokenized cars and track ownership on Solana.',
-    category: 'Racing',
-    tech_stack: ['Unreal Engine', 'TypeScript', 'Anchor', 'React'],
-    banner_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=400&fit=crop',
-    logo_url: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=200&h=200&fit=crop',
-    screenshot_urls: ['https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop'],
-    game_host_url: 'https://solana-speedway.racing',
-    github_url: 'https://github.com/team/solana-speedway',
-    video_url: 'https://youtube.com/watch?v=demo2',
-    created_at: '2024-01-13T09:15:00Z',
-    creator_profile: { full_name: 'Alex Racing', avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop' }
-  },
-  {
-    id: 'mock-4',
-    project_name: 'Crypto Puzzle Quest',
-    project_description: 'Mind-bending puzzle game where solutions unlock cryptocurrency rewards.',
-    category: 'Puzzle',
-    tech_stack: ['Phaser', 'JavaScript', 'Solana Web3.js'],
-    banner_url: 'https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?w=800&h=400&fit=crop',
-    logo_url: 'https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?w=200&h=200&fit=crop',
-    screenshot_urls: ['https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=600&h=400&fit=crop'],
-    game_host_url: 'https://crypto-puzzle-quest.com',
-    github_url: 'https://github.com/team/crypto-puzzle',
-    video_url: '',
-    created_at: '2024-01-12T14:20:00Z',
-    team: { id: 'team-3', name: 'Puzzle Masters' }
-  }
-]
+// Production version - only real submissions, no mock data
 
-const mockTeams: Team[] = [
-  {
-    id: 'team-1',
-    name: 'Cosmic Devs',
-    description: 'Passionate game developers creating the next generation of space-themed blockchain games.',
-    member_count: 4,
-    avatar_url: 'https://images.unsplash.com/photo-1614680376739-414d95ff43df?w=200&h=200&fit=crop',
-    skills: ['Unity', 'Solana', 'Game Design', 'NFTs'],
-    github_url: 'https://github.com/cosmic-devs',
-    discord_server: 'https://discord.gg/cosmic-devs'
-  },
-  {
-    id: 'team-2',
-    name: 'Blockchain Builders',
-    description: 'Full-stack developers specializing in DeFi gaming experiences and smart contract development.',
-    member_count: 3,
-    avatar_url: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=200&h=200&fit=crop',
-    skills: ['Rust', 'Anchor', 'Godot', 'DeFi'],
-    github_url: 'https://github.com/blockchain-builders',
-    website_url: 'https://blockchainbuilders.dev'
-  },
-  {
-    id: 'team-3',
-    name: 'Puzzle Masters',
-    description: 'Creative minds focused on innovative puzzle mechanics and cryptocurrency integration.',
-    member_count: 2,
-    avatar_url: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&h=200&fit=crop',
-    skills: ['JavaScript', 'Phaser', 'Game Logic', 'Web3'],
-    github_url: 'https://github.com/puzzle-masters',
-    discord_server: 'https://discord.gg/puzzle-masters'
-  },
-  {
-    id: 'team-4',
-    name: 'Web3 Warriors',
-    description: 'Veteran game developers transitioning to blockchain gaming with years of AAA experience.',
-    member_count: 5,
-    avatar_url: 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=200&h=200&fit=crop',
-    skills: ['Unreal Engine', 'C++', 'Solana', 'Multiplayer'],
-    github_url: 'https://github.com/web3-warriors',
-    website_url: 'https://web3warriors.gg'
-  }
-]
+// Note: Speedrun 2024 games are now loaded from the API instead of hardcoded data
 
 export default function CataloguePage() {
-  const [activeTab, setActiveTab] = useState<'games' | 'teams'>('games')
+  const [activeTab, setActiveTab] = useState<'games' | 'teams' | 'speedrun2024'>('games')
   const [projects, setProjects] = useState<Project[]>([])
   const [teams, setTeams] = useState<Team[]>([])
+  const [speedrun2024Games, setSpeedrun2024Games] = useState<Speedrun2024Game[]>([])
   const [loading, setLoading] = useState(true)
+  const [speedrunLoading, setSpeedrunLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [sortBy, setSortBy] = useState('newest')
@@ -176,6 +98,12 @@ export default function CataloguePage() {
   useEffect(() => {
     loadData()
   }, [])
+
+  useEffect(() => {
+    if (activeTab === 'speedrun2024' && speedrun2024Games.length === 0) {
+      loadSpeedrun2024Games()
+    }
+  }, [activeTab])
 
   const loadData = async () => {
     try {
@@ -199,33 +127,75 @@ export default function CataloguePage() {
         realTeams = data.teams || []
       }
 
-      // Combine real data with mock data for visual representation
-      const allProjects = [...realProjects, ...mockProjects]
-      setProjects(allProjects)
-      setTeams([...realTeams, ...mockTeams])
+      // Production: Use only real data
+      setProjects(realProjects)
+      setTeams(realTeams)
       
-      // Randomly select a featured game from all projects
-      if (allProjects.length > 0) {
-        const randomIndex = Math.floor(Math.random() * allProjects.length)
-        setFeaturedGame(allProjects[randomIndex])
+      // Randomly select a featured game from real projects
+      if (realProjects.length > 0) {
+        const randomIndex = Math.floor(Math.random() * realProjects.length)
+        setFeaturedGame(realProjects[randomIndex])
+      } else {
+        // If no real projects yet, try to get a random Speedrun 2024 game for featured display
+        try {
+          const speedrunResponse = await fetch('/api/speedrun-2024-games/random')
+          if (speedrunResponse.ok) {
+            const speedrunData = await speedrunResponse.json()
+            if (speedrunData.game) {
+              // Convert Speedrun 2024 game to Project format for featured display
+              const convertedGame: Project = {
+                id: speedrunData.game.id,
+                project_name: speedrunData.game.name,
+                project_description: speedrunData.game.description,
+                category: speedrunData.game.category || 'Historical',
+                tech_stack: speedrunData.game.tech_stack || [],
+                banner_url: speedrunData.game.banner_url || speedrunData.game.thumbnail_url,
+                logo_url: speedrunData.game.thumbnail_url,
+                screenshot_urls: speedrunData.game.screenshot_urls || [],
+                game_host_url: speedrunData.game.itch_url,
+                github_url: speedrunData.game.github_url || '',
+                video_url: speedrunData.game.video_url || '',
+                created_at: speedrunData.game.published_date || new Date().toISOString(),
+                creator_profile: { full_name: speedrunData.game.developer_name, avatar_url: null }
+              }
+              setFeaturedGame(convertedGame)
+            }
+          }
+        } catch (speedrunError) {
+          console.log('Could not load Speedrun 2024 game for featured display')
+        }
       }
       
     } catch (error) {
       console.error('Error loading catalogue data:', error)
-      // Use mock data if API fails
-      setProjects(mockProjects)
-      setTeams(mockTeams)
-      
-      // Randomly select a featured game from mock data
-      if (mockProjects.length > 0) {
-        const randomIndex = Math.floor(Math.random() * mockProjects.length)
-        setFeaturedGame(mockProjects[randomIndex])
-      }
+      // If API fails, set empty arrays
+      setProjects([])
+      setTeams([])
+      setFeaturedGame(null)
     } finally {
       setLoading(false)
     }
   }
 
+  const loadSpeedrun2024Games = async () => {
+    try {
+      setSpeedrunLoading(true)
+      
+      const response = await fetch('/api/speedrun-2024-games')
+      if (!response.ok) {
+        throw new Error('Failed to fetch Speedrun 2024 games')
+      }
+      
+      const data = await response.json()
+      setSpeedrun2024Games(data.games || [])
+      
+    } catch (error) {
+      console.error('Error loading Speedrun 2024 games:', error)
+      // You could add a fallback to mock data here if needed
+    } finally {
+      setSpeedrunLoading(false)
+    }
+  }
 
 
   const filteredProjects = projects
@@ -253,6 +223,29 @@ export default function CataloguePage() {
     team.description.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  const filteredSpeedrun2024Games = speedrun2024Games
+    .filter(game => {
+      const matchesSearch = game.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           game.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           game.developer_name.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesCategory = selectedCategory === 'all' || game.category === selectedCategory
+      return matchesSearch && matchesCategory
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.published_date || '').getTime() - new Date(a.published_date || '').getTime()
+        case 'featured':
+          return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0)
+        case 'rating':
+          return b.rating - a.rating
+        case 'name':
+          return a.name.localeCompare(b.name)
+        default:
+          return a.display_order - b.display_order
+      }
+    })
+
   if (loading) {
     return (
       <div className="ml-0 lg:ml-64 p-6 transition-all duration-300">
@@ -276,7 +269,7 @@ export default function CataloguePage() {
             Game Catalogue
           </h1>
           <p className="text-xl text-purple-200 max-w-3xl mx-auto">
-            Discover amazing games and talented teams from the Solana Game Jam
+            Discover amazing games and talented teams from the Solana Game Jam 2025, plus historical entries from previous hackathons
           </p>
         </div>
 
@@ -365,6 +358,16 @@ export default function CataloguePage() {
               }`}
             >
               👥 Teams ({filteredTeams.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('speedrun2024')}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                activeTab === 'speedrun2024'
+                  ? 'bg-purple-600 text-white'
+                  : 'text-purple-200 hover:text-white'
+              }`}
+            >
+              🏆 Speedrun 2024 ({speedrun2024Games.length})
             </button>
           </div>
 
@@ -480,6 +483,134 @@ export default function CataloguePage() {
           </div>
         )}
 
+        {/* Speedrun 2024 Games Grid */}
+        {activeTab === 'speedrun2024' && (
+          <div className="space-y-6">
+            {/* Header for Speedrun 2024 */}
+            <div className="text-center bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-sm border border-yellow-500/30 rounded-2xl p-6">
+              <h2 className="text-3xl font-bold text-white pixelify-sans mb-2">
+                🏆 Solana Speedrun 3 (2024)
+              </h2>
+              <p className="text-yellow-200 mb-4">
+                Games from the previous Solana hackathon showcasing innovation and creativity
+              </p>
+              <a
+                href="https://itch.io/jam/solana-speedrun-3/entries"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+              >
+                View on itch.io
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+
+            {speedrunLoading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto"></div>
+                <p className="text-yellow-200 mt-4">Loading Speedrun 2024 games...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredSpeedrun2024Games.map((game) => (
+                  <div key={game.id} className="bg-gradient-to-br from-yellow-900/20 to-orange-900/20 backdrop-blur-sm border border-yellow-500/30 rounded-2xl overflow-hidden hover:scale-105 hover:border-yellow-400/50 transition-all duration-300 group">
+                    {/* Game Image */}
+                    <div className="relative aspect-video bg-gray-800">
+                      <Image
+                        src={game.thumbnail_url || game.banner_url || '/api/placeholder/400/225'}
+                        alt={game.name}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = '/api/placeholder/400/225';
+                        }}
+                      />
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 px-2 py-1 rounded-lg text-xs font-bold">
+                          🏆 Speedrun 2024
+                        </span>
+                      </div>
+                      {game.category && (
+                        <div className="absolute top-3 right-3 bg-purple-600/30 text-purple-300 px-2 py-1 rounded-lg text-xs font-medium">
+                          {game.category}
+                        </div>
+                      )}
+                      {game.is_featured && (
+                        <div className="absolute bottom-3 left-3">
+                          <span className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
+                            <Star className="w-3 h-3 fill-current" />
+                            Featured
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Game Info */}
+                    <div className="p-4 space-y-3">
+                      <div>
+                        <h3 className="text-lg font-bold text-white pixelify-sans line-clamp-1">
+                          {game.name}
+                        </h3>
+                        <p className="text-yellow-300 text-sm">by {game.developer_name}</p>
+                      </div>
+                      
+                      <p className="text-yellow-200 text-sm line-clamp-2">
+                        {game.description}
+                      </p>
+
+                      {/* Stats */}
+                      <div className="flex items-center gap-4 text-xs text-yellow-300">
+                        <span className="flex items-center gap-1">
+                          <Star className="w-3 h-3 fill-current" />
+                          {game.rating.toFixed(1)} ({game.rating_count})
+                        </span>
+                        <span className="flex items-center gap-1">
+                          📥 {game.downloads_count}
+                        </span>
+                      </div>
+
+                      {/* Tech Stack */}
+                      <div className="flex flex-wrap gap-1">
+                        {game.tech_stack.slice(0, 3).map((tech, idx) => (
+                          <span key={idx} className="bg-yellow-600/20 text-yellow-400 px-2 py-1 rounded text-xs">
+                            {tech}
+                          </span>
+                        ))}
+                        {game.tech_stack.length > 3 && (
+                          <span className="text-yellow-400 text-xs">+{game.tech_stack.length - 3}</span>
+                        )}
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <a
+                          href={game.itch_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center"
+                        >
+                          View on itch.io
+                        </a>
+                        {game.github_url && (
+                          <a
+                            href={game.github_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded-lg text-sm transition-colors"
+                          >
+                            <Github className="w-4 h-4" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Teams Grid */}
         {activeTab === 'teams' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -576,19 +707,71 @@ export default function CataloguePage() {
         )}
 
         {/* Empty States */}
-        {activeTab === 'games' && filteredProjects.length === 0 && (
+        {activeTab === 'games' && filteredProjects.length === 0 && !loading && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🎮</div>
-            <h3 className="text-2xl font-bold text-white mb-2">No games found</h3>
-            <p className="text-purple-300">Try adjusting your search or filter criteria</p>
+            <h3 className="text-2xl font-bold text-white mb-2">
+              {searchTerm || selectedCategory !== 'all' ? 'No games found' : 'No games submitted yet'}
+            </h3>
+            <p className="text-purple-300 mb-6">
+              {searchTerm || selectedCategory !== 'all' 
+                ? 'Try adjusting your search or filter criteria'
+                : 'Be the first to submit your game to the Solana Game Jam 2025!'
+              }
+            </p>
+            {(!searchTerm && selectedCategory === 'all') && (
+              <Link
+                href="/dashboard/project"
+                className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+              >
+                🚀 Submit Your Game
+              </Link>
+            )}
           </div>
         )}
 
-        {activeTab === 'teams' && filteredTeams.length === 0 && (
+        {activeTab === 'teams' && filteredTeams.length === 0 && !loading && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">👥</div>
-            <h3 className="text-2xl font-bold text-white mb-2">No teams found</h3>
-            <p className="text-purple-300">Try adjusting your search criteria</p>
+            <h3 className="text-2xl font-bold text-white mb-2">
+              {searchTerm ? 'No teams found' : 'No teams formed yet'}
+            </h3>
+            <p className="text-purple-300 mb-6">
+              {searchTerm 
+                ? 'Try adjusting your search criteria'
+                : 'Create a team or join forces with other developers!'
+              }
+            </p>
+            {!searchTerm && (
+              <Link
+                href="/dashboard/team"
+                className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+              >
+                👥 Create Team
+              </Link>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'speedrun2024' && !speedrunLoading && filteredSpeedrun2024Games.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">🏆</div>
+            <h3 className="text-2xl font-bold text-white mb-2">No Speedrun 2024 games found</h3>
+            <p className="text-yellow-300 mb-4">
+              {speedrun2024Games.length === 0 
+                ? "Games are being loaded from the database. Please check back soon!"
+                : "Try adjusting your search or filter criteria"
+              }
+            </p>
+            <a
+              href="https://itch.io/jam/solana-speedrun-3/entries"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+            >
+              View on itch.io
+              <ExternalLink className="w-4 h-4" />
+            </a>
           </div>
         )}
 
