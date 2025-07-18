@@ -43,14 +43,6 @@ export default function Footer() {
           <div className="footer__sponsors-grid">
             <div className="footer__sponsor-item">
               <Image
-                src="/assets/sponsor/solanafoundation.svg"
-                alt="Solana Foundation"
-                width={150}
-                height={60}
-              />
-            </div>
-            <div className="footer__sponsor-item">
-              <Image
                 src="/assets/sponsor/MainLogoPlaySolana.png"
                 alt="Play Solana"
                 width={150}
@@ -63,6 +55,14 @@ export default function Footer() {
                 alt="Civic"
                 width={120}
                 height={40}
+              />
+            </div>
+            <div className="footer__sponsor-item">
+              <Image
+                src="/assets/sponsor/solanafoundation.svg"
+                alt="Solana Foundation"
+                width={150}
+                height={60}
               />
             </div>
           </div>

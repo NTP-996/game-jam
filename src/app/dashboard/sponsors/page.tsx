@@ -7,30 +7,30 @@ import { ExternalLink, Zap, Shield, Users, Code, GamepadIcon, Wallet, Globe } fr
 const SponsorsPage = () => {
   const sponsors = [
     {
-      name: "Honeycomb Protocol",
-      tagline: "Simplifies game development with no need to write contracts and dramatically reduces on-chain fees for users.",
-      description: "Honeycomb Protocol enables rapid deployment of fully and partial on-chain games reducing development time & costs. Game studios can leverage blockchain game mechanics using Solana with a unified SDK and on-chain primitives to accelerate, scale and secure game development. All with no blockchain coding experience required.",
-      logo: "/assets/sponsor/honeycomb.jpg",
-      banner: "/assets/sponsor/honeycombbanner.jpeg",
-      color: "from-amber-500 to-orange-500",
+      name: "PlaySolana",
+      tagline: "The flagship distribution device. Games built during this Game Jam will be eligible for publishing on their platform.",
+      description: "PlaySolana-Unity.SDK is a development kit built for seamless integration between Unity projects and the PSG1 console. Whether you are creating new games or porting existing ones, the SDK provides all the tools needed to support the console's custom input system and device simulator.",
+      logo: "/assets/sponsor/PlaySolana.png",
+      banner: "/assets/sponsor/playsolanabanner.jpeg",
+      color: "from-purple-500 to-pink-500",
       features: [
-        "~500x fee reduction via State-Compression",
-        "Simple JS/TS SDK (Unity, Unreal, Godot, GraphQL)",
-        "Users & Profiles – Universal accounts with integrations (Steam, Discord, etc.)",
-        "Characters – Create or import NFTs as playable characters",
-        "Resources – Design currencies, assets, recipes, and equipable items",
-        "Missions – On-chain quests with rewards",
-        "Staking – Passive rewards (staking) for NFTs and tokens"
+        "Seamless Unity integration with PSG1 console",
+        "Custom input system support",
+        "Device simulator included",
+        "Dedicated Developer Portal (coming soon)",
+        "Preinstallation opportunity on PSG1 at launch",
+        "Distribution to over 7,000 players",
+        "Premium, zero-friction experience",
+        "All hackathon participants considered for preinstallation"
       ],
       links: [
-        { title: "Documentation", url: "https://docs.honeycombprotocol.com/", icon: <Code className="w-4 h-4" /> },
-        { title: "GitHub", url: "https://github.com/honeycomb-protocol", icon: <Code className="w-4 h-4" /> },
-        { title: "Twitter", url: "https://x.com/honeycomb_prtcl", icon: <ExternalLink className="w-4 h-4" /> }
+        { title: "Developer Guide", url: "https://developers.playsolana.com/", icon: <Code className="w-4 h-4" /> },
+        { title: "GitHub SDK", url: "https://github.com/playsolana/PlaySolana.Unity-SDK", icon: <Code className="w-4 h-4" /> }
       ],
       keyBenefits: [
-        { icon: <Zap className="w-5 h-5" />, title: "500x Fee Reduction", desc: "Massive cost savings via State-Compression" },
-        { icon: <Code className="w-5 h-5" />, title: "No Blockchain Coding", desc: "Build games without smart contract experience" },
-        { icon: <GamepadIcon className="w-5 h-5" />, title: "Multi-Engine Support", desc: "Works with Unity, Unreal, Godot" }
+        { icon: <GamepadIcon className="w-5 h-5" />, title: "PSG1 Console", desc: "Direct access to gaming hardware" },
+        { icon: <Users className="w-5 h-5" />, title: "7,000+ Players", desc: "Built-in distribution network" },
+        { icon: <Globe className="w-5 h-5" />, title: "Preinstallation", desc: "Hackathon projects eligible for launch inclusion" }
       ]
     },
     {
@@ -60,30 +60,31 @@ const SponsorsPage = () => {
       ]
     },
     {
-      name: "PlaySolana",
-      tagline: "The flagship distribution device. Games built during this Game Jam will be eligible for publishing on their platform.",
-      description: "PlaySolana-Unity.SDK is a development kit built for seamless integration between Unity projects and the PSG1 console. Whether you are creating new games or porting existing ones, the SDK provides all the tools needed to support the console's custom input system and device simulator.",
-      logo: "/assets/sponsor/PlaySolana.png",
-      banner: "/assets/sponsor/playsolanabanner.jpeg",
-      color: "from-purple-500 to-pink-500",
+      name: "Solana Foundation",
+      tagline: "Supporting the growth and development of the Solana ecosystem through grants, events, and community initiatives.",
+      description: "The Solana Foundation is a non-profit organization dedicated to supporting the decentralized development and adoption of the Solana network. They provide grants, organize events, and support developers building innovative applications on Solana, including gaming and Web3 experiences.",
+      logo: "/assets/sponsor/solanafoundation.svg",
+      banner: "/assets/sponsor/solana-banner.jpeg", // Placeholder - will need actual asset
+      color: "from-purple-600 to-blue-600",
       features: [
-        "Seamless Unity integration with PSG1 console",
-        "Custom input system support",
-        "Device simulator included",
-        "Dedicated Developer Portal (coming soon)",
-        "Preinstallation opportunity on PSG1 at launch",
-        "Distribution to over 7,000 players",
-        "Premium, zero-friction experience",
-        "All hackathon participants considered for preinstallation"
+        "Developer grants and funding opportunities",
+        "Educational resources and documentation",
+        "Community events and hackathons",
+        "Technical support and mentorship",
+        "Ecosystem development initiatives",
+        "Partnership facilitation",
+        "Developer advocacy programs",
+        "Open source development support"
       ],
       links: [
-        { title: "Developer Guide", url: "https://developers.playsolana.com/", icon: <Code className="w-4 h-4" /> },
-        { title: "GitHub SDK", url: "https://github.com/playsolana/PlaySolana.Unity-SDK", icon: <Code className="w-4 h-4" /> }
+        { title: "Website", url: "https://solana.org/", icon: <Globe className="w-4 h-4" /> },
+        { title: "Developer Resources", url: "https://docs.solana.com/", icon: <Code className="w-4 h-4" /> },
+        { title: "Grants Program", url: "https://solana.org/grants", icon: <ExternalLink className="w-4 h-4" /> }
       ],
       keyBenefits: [
-        { icon: <GamepadIcon className="w-5 h-5" />, title: "PSG1 Console", desc: "Direct access to gaming hardware" },
-        { icon: <Users className="w-5 h-5" />, title: "7,000+ Players", desc: "Built-in distribution network" },
-        { icon: <Globe className="w-5 h-5" />, title: "Preinstallation", desc: "Hackathon projects eligible for launch inclusion" }
+        { icon: <Zap className="w-5 h-5" />, title: "Fast & Cheap", desc: "High-performance blockchain with low fees" },
+        { icon: <Users className="w-5 h-5" />, title: "Strong Community", desc: "Vibrant ecosystem of developers and builders" },
+        { icon: <Code className="w-5 h-5" />, title: "Developer Support", desc: "Comprehensive tools and resources" }
       ]
     }
   ];
