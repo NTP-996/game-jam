@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { 
   User, Mail, Settings, LogOut, Edit3, Save, X, Github, MessageCircle, 
   Calendar, MapPin, Briefcase, GraduationCap, Trophy, Code, Gamepad2,
-  Globe, Phone, Linkedin, Instagram, Upload, Plus, Trash2, Loader2
+  Globe, Phone, Instagram, Upload, Plus, Trash2, Loader2
 } from 'lucide-react'
 
 interface UserProfile {
@@ -26,7 +26,6 @@ interface UserProfile {
   twitter_url: string
   discord_username: string
   telegram_username: string
-  linkedin_url: string
   website_url: string
   
   // Personal Details
@@ -110,7 +109,6 @@ export default function ProfilePage() {
     twitter_url: '',
     discord_username: '',
     telegram_username: '',
-    linkedin_url: '',
     website_url: '',
     
     // Personal Details
@@ -164,7 +162,6 @@ export default function ProfilePage() {
           twitter_url: data.profile.twitter_url || '',
           discord_username: data.profile.discord_username || '',
           telegram_username: data.profile.telegram_username || '',
-          linkedin_url: data.profile.linkedin_url || '',
           website_url: data.profile.website_url || '',
           location: data.profile.location || '',
           timezone: data.profile.timezone || 'UTC+8',
@@ -217,8 +214,8 @@ export default function ProfilePage() {
   }
 
   const addSkill = (skill: string) => {
-    if (skill && !editForm.skills.includes(skill)) {
-      setEditForm({...editForm, skills: [...editForm.skills, skill]})
+    if (skill && !(editForm.skills || []).includes(skill)) {
+      setEditForm({...editForm, skills: [...(editForm.skills || []), skill]})
     }
     setNewSkill('')
   }
@@ -226,7 +223,7 @@ export default function ProfilePage() {
   const removeSkill = (skillToRemove: string) => {
     setEditForm({
       ...editForm, 
-      skills: editForm.skills.filter(skill => skill !== skillToRemove)
+      skills: (editForm.skills || []).filter(skill => skill !== skillToRemove)
     })
   }
 
@@ -539,21 +536,29 @@ export default function ProfilePage() {
                   <div>
                     <label className="block text-sm font-medium text-purple-300 mb-2">
                       Email Address
+                      <span className="text-xs text-purple-400 ml-2">(Private - not shown publicly)</span>
                     </label>
-                    <div className="flex items-center space-x-2 text-white">
-                      <Mail size={16} className="text-purple-400" />
-                      <span>{profile.email}</span>
-                    </div>
+                    {isEditing ? (
+                      <div className="flex items-center space-x-2 text-white bg-purple-900/30 border border-purple-500/30 rounded-lg px-3 py-2">
+                        <Mail size={16} className="text-purple-400" />
+                        <span className="text-purple-300">{profile.email}</span>
+                        <span className="text-xs text-purple-400">(Read-only)</span>
+                      </div>
+                    ) : (
+                      <div className="text-purple-400 text-sm italic">
+                        Email hidden for privacy
+                      </div>
+                    )}
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-purple-300 mb-2">
                       Phone
+                      <span className="text-xs text-purple-400 ml-2">(Private - not shown publicly)</span>
                     </label>
                     {!isEditing ? (
-                      <div className="flex items-center space-x-2 text-white">
-                        <Phone size={16} className="text-purple-400" />
-                        <span>{profile.phone || 'Not provided'}</span>
+                      <div className="text-purple-400 text-sm italic">
+                        Phone hidden for privacy
                       </div>
                     ) : (
                       <input
@@ -621,18 +626,87 @@ export default function ProfilePage() {
                   <span>Social Links</span>
                 </h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* GitHub */}
-                  <div>
-                    <label className="block text-sm font-medium text-purple-300 mb-2 flex items-center space-x-2">
-                      <Github size={16} />
-                      <span>GitHub</span>
-                    </label>
-                    {!isEditing ? (
-                      <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">
-                        {profile.github_url}
+                {!isEditing ? (
+                  <div className="flex flex-wrap gap-3">
+                    {/* GitHub Button */}
+                    {profile.github_url && (
+                      <a 
+                        href={profile.github_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center space-x-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors border border-gray-600"
+                      >
+                        <Github size={18} />
+                        <span className="font-medium">GitHub</span>
                       </a>
-                    ) : (
+                    )}
+                    
+                    {/* Twitter/X Button */}
+                    {profile.twitter_url && (
+                      <a 
+                        href={profile.twitter_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                      >
+                        <MessageCircle size={18} />
+                        <span className="font-medium">Twitter</span>
+                      </a>
+                    )}
+                    
+                    {/* Discord Button */}
+                    {profile.discord_username && (
+                      <div className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg">
+                        <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
+                          <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+                        </svg>
+                        <span className="font-medium">{profile.discord_username}</span>
+                      </div>
+                    )}
+                    
+                    {/* Telegram Button */}
+                    {profile.telegram_username && (
+                      <a 
+                        href={`https://t.me/${profile.telegram_username.replace('@', '')}`}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+                      >
+                        <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
+                          <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12a12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472c-.18 1.898-.962 6.502-1.36 8.627c-.168.9-.499 1.201-.82 1.23c-.696.065-1.225-.46-1.9-.902c-1.056-.693-1.653-1.124-2.678-1.8c-1.185-.78-.417-1.21.258-1.91c.177-.184 3.247-2.977 3.307-3.23c.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345c-.48.33-.913.49-1.302.48c-.428-.008-1.252-.241-1.865-.44c-.752-.245-1.349-.374-1.297-.789c.027-.216.325-.437.893-.663c3.498-1.524 5.83-2.529 6.998-3.014c3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                        </svg>
+                        <span className="font-medium">Telegram</span>
+                      </a>
+                    )}
+                    
+                    {/* Website Button */}
+                    {profile.website_url && (
+                      <a 
+                        href={profile.website_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+                      >
+                        <Globe size={18} />
+                        <span className="font-medium">Website</span>
+                      </a>
+                    )}
+                    
+                    {/* Empty state */}
+                    {!profile.github_url && !profile.twitter_url && !profile.discord_username && !profile.telegram_username && !profile.website_url && (
+                      <div className="text-purple-300 text-sm italic">
+                        No social links added yet. Click edit to add your social profiles.
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* GitHub */}
+                    <div>
+                      <label className="block text-sm font-medium text-purple-300 mb-2 flex items-center space-x-2">
+                        <Github size={16} />
+                        <span>GitHub</span>
+                      </label>
                       <input
                         type="url"
                         value={editForm.github_url}
@@ -640,20 +714,14 @@ export default function ProfilePage() {
                         className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 text-white"
                         placeholder="https://github.com/username"
                       />
-                    )}
-                  </div>
-                  
-                  {/* Twitter/X */}
-                  <div>
-                    <label className="block text-sm font-medium text-purple-300 mb-2 flex items-center space-x-2">
-                      <MessageCircle size={16} />
-                      <span>Twitter/X</span>
-                    </label>
-                    {!isEditing ? (
-                      <a href={profile.twitter_url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">
-                        {profile.twitter_url}
-                      </a>
-                    ) : (
+                    </div>
+                    
+                    {/* Twitter/X */}
+                    <div>
+                      <label className="block text-sm font-medium text-purple-300 mb-2 flex items-center space-x-2">
+                        <MessageCircle size={16} />
+                        <span>Twitter/X</span>
+                      </label>
                       <input
                         type="url"
                         value={editForm.twitter_url}
@@ -661,17 +729,16 @@ export default function ProfilePage() {
                         className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 text-white"
                         placeholder="https://x.com/username"
                       />
-                    )}
-                  </div>
-                  
-                  {/* Discord */}
-                  <div>
-                    <label className="block text-sm font-medium text-purple-300 mb-2">
-                      Discord
-                    </label>
-                    {!isEditing ? (
-                      <span className="text-white">{profile.discord_username}</span>
-                    ) : (
+                    </div>
+                    
+                    {/* Discord */}
+                    <div>
+                      <label className="block text-sm font-medium text-purple-300 mb-2 flex items-center space-x-2">
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+                          <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+                        </svg>
+                        <span>Discord</span>
+                      </label>
                       <input
                         type="text"
                         value={editForm.discord_username}
@@ -679,17 +746,16 @@ export default function ProfilePage() {
                         className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 text-white"
                         placeholder="username#1234"
                       />
-                    )}
-                  </div>
-                  
-                  {/* Telegram */}
-                  <div>
-                    <label className="block text-sm font-medium text-purple-300 mb-2">
-                      Telegram
-                    </label>
-                    {!isEditing ? (
-                      <span className="text-white">{profile.telegram_username || 'Not provided'}</span>
-                    ) : (
+                    </div>
+                    
+                    {/* Telegram */}
+                    <div>
+                      <label className="block text-sm font-medium text-purple-300 mb-2 flex items-center space-x-2">
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+                          <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12a12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472c-.18 1.898-.962 6.502-1.36 8.627c-.168.9-.499 1.201-.82 1.23c-.696.065-1.225-.46-1.9-.902c-1.056-.693-1.653-1.124-2.678-1.8c-1.185-.78-.417-1.21.258-1.91c.177-.184 3.247-2.977 3.307-3.23c.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345c-.48.33-.913.49-1.302.48c-.428-.008-1.252-.241-1.865-.44c-.752-.245-1.349-.374-1.297-.789c.027-.216.325-.437.893-.663c3.498-1.524 5.83-2.529 6.998-3.014c3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                        </svg>
+                        <span>Telegram</span>
+                      </label>
                       <input
                         type="text"
                         value={editForm.telegram_username}
@@ -697,41 +763,14 @@ export default function ProfilePage() {
                         className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 text-white"
                         placeholder="@username"
                       />
-                    )}
-                  </div>
-                  
-                  {/* LinkedIn */}
-                  <div>
-                    <label className="block text-sm font-medium text-purple-300 mb-2 flex items-center space-x-2">
-                      <Linkedin size={16} />
-                      <span>LinkedIn</span>
-                    </label>
-                    {!isEditing ? (
-                      <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">
-                        {profile.linkedin_url || 'Not provided'}
-                      </a>
-                    ) : (
-                      <input
-                        type="url"
-                        value={editForm.linkedin_url}
-                        onChange={(e) => setEditForm({...editForm, linkedin_url: e.target.value})}
-                        className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 text-white"
-                        placeholder="https://linkedin.com/in/username"
-                      />
-                    )}
-                  </div>
-                  
-                  {/* Website */}
-                  <div>
-                    <label className="block text-sm font-medium text-purple-300 mb-2 flex items-center space-x-2">
-                      <Globe size={16} />
-                      <span>Website</span>
-                    </label>
-                    {!isEditing ? (
-                      <a href={profile.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">
-                        {profile.website_url || 'Not provided'}
-                      </a>
-                    ) : (
+                    </div>
+                    
+                    {/* Website */}
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-purple-300 mb-2 flex items-center space-x-2">
+                        <Globe size={16} />
+                        <span>Website</span>
+                      </label>
                       <input
                         type="url"
                         value={editForm.website_url}
@@ -739,9 +778,9 @@ export default function ProfilePage() {
                         className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 text-white"
                         placeholder="https://yourwebsite.com"
                       />
-                    )}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Professional Information */}
@@ -820,7 +859,7 @@ export default function ProfilePage() {
                     <div>
                       <h4 className="text-sm font-semibold text-purple-300 mb-2">Core Skills</h4>
                       <div className="flex flex-wrap gap-2">
-                        {profile.skills.map((skill, index) => (
+                        {(profile.skills || []).map((skill, index) => (
                           <span key={index} className="bg-purple-600/50 text-purple-200 px-3 py-1 rounded-full text-sm">
                             {skill}
                           </span>
@@ -831,7 +870,7 @@ export default function ProfilePage() {
                     <div>
                       <h4 className="text-sm font-semibold text-purple-300 mb-2">Programming Languages</h4>
                       <div className="flex flex-wrap gap-2">
-                        {profile.programming_languages.map((lang, index) => (
+                        {(profile.programming_languages || []).map((lang, index) => (
                           <span key={index} className="bg-blue-600/50 text-blue-200 px-3 py-1 rounded-full text-sm">
                             {lang}
                           </span>
@@ -842,7 +881,7 @@ export default function ProfilePage() {
                     <div>
                       <h4 className="text-sm font-semibold text-purple-300 mb-2">Frameworks & Tools</h4>
                       <div className="flex flex-wrap gap-2">
-                        {profile.frameworks.map((framework, index) => (
+                        {(profile.frameworks || []).map((framework, index) => (
                           <span key={index} className="bg-green-600/50 text-green-200 px-3 py-1 rounded-full text-sm">
                             {framework}
                           </span>
@@ -855,7 +894,7 @@ export default function ProfilePage() {
                     <div>
                       <h4 className="text-sm font-semibold text-purple-300 mb-2">Core Skills</h4>
                       <div className="flex flex-wrap gap-2 mb-3">
-                        {editForm.skills.map((skill, index) => (
+                        {(editForm.skills || []).map((skill, index) => (
                           <span key={index} className="bg-purple-600/50 text-purple-200 px-3 py-1 rounded-full text-sm flex items-center space-x-1">
                             <span>{skill}</span>
                             <button
@@ -884,7 +923,7 @@ export default function ProfilePage() {
                         </button>
                       </div>
                       <div className="mt-2 flex flex-wrap gap-1">
-                        {POPULAR_SKILLS.filter(skill => !editForm.skills.includes(skill)).slice(0, 8).map(skill => (
+                        {POPULAR_SKILLS.filter(skill => !(editForm.skills || []).includes(skill)).slice(0, 8).map(skill => (
                           <button
                             key={skill}
                             onClick={() => addSkill(skill)}
@@ -930,7 +969,7 @@ export default function ProfilePage() {
                     </label>
                     {!isEditing ? (
                       <div className="flex flex-wrap gap-2">
-                        {profile.favorite_games.map((game, index) => (
+                        {(profile.favorite_games || []).map((game, index) => (
                           <span key={index} className="bg-yellow-600/50 text-yellow-200 px-3 py-1 rounded-full text-sm">
                             {game}
                           </span>

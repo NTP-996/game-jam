@@ -10,8 +10,10 @@ interface ProjectData {
   githubUrl: string
   demoUrl: string
   videoUrl: string
-  screenshots: File[]
-  gameFile: File | null
+  screenshotUrls: string[]
+  gameHostUrl: string
+  bannerUrl: string
+  logoUrl: string
   techStack: string[]
   teamMembers: string[]
   challenges: string
@@ -32,8 +34,10 @@ export default function ProjectPage() {
     githubUrl: '',
     demoUrl: '',
     videoUrl: '',
-    screenshots: [],
-    gameFile: null,
+    screenshotUrls: ['', '', ''],
+    gameHostUrl: '',
+    bannerUrl: '',
+    logoUrl: '',
     techStack: [],
     teamMembers: [],
     challenges: '',
@@ -50,6 +54,9 @@ export default function ProjectPage() {
     githubUrl: 'https://github.com/team/solanaquest-rpg',
     demoUrl: 'https://solanaquest.vercel.app',
     videoUrl: 'https://youtube.com/watch?v=demo',
+    gameHostUrl: 'https://solanaquest.vercel.app/play',
+    bannerUrl: '/assets/mentors/belac.jpg',
+    logoUrl: '/assets/mentors/belac.jpg',
     techStack: ['Unity', 'Rust', 'Solana', 'Anchor', 'React', 'TypeScript'],
     features: [
       'NFT Character System',
@@ -79,10 +86,40 @@ export default function ProjectPage() {
     'Other'
   ]
 
-  const techOptions = [
-    'Unity', 'Unreal Engine', 'Rust', 'Solana', 'Anchor', 'React', 'TypeScript',
-    'JavaScript', 'Python', 'C#', 'C++', 'WebGL', 'Node.js', 'Next.js'
-  ]
+  const [techStackInput, setTechStackInput] = useState('')
+
+  const handleTechStackChange = (value: string) => {
+    setTechStackInput(value)
+    // Split by comma, trim whitespace, and filter out empty strings
+    const technologies = value.split(',').map(tech => tech.trim()).filter(tech => tech.length > 0)
+    setProjectData({...projectData, techStack: technologies})
+  }
+
+  const addScreenshotField = () => {
+    setProjectData({
+      ...projectData,
+      screenshotUrls: [...projectData.screenshotUrls, '']
+    })
+  }
+
+  const updateScreenshotUrl = (index: number, value: string) => {
+    const newUrls = [...projectData.screenshotUrls]
+    newUrls[index] = value
+    setProjectData({
+      ...projectData,
+      screenshotUrls: newUrls
+    })
+  }
+
+  const removeScreenshotField = (index: number) => {
+    if (projectData.screenshotUrls.length > 1) {
+      const newUrls = projectData.screenshotUrls.filter((_, i) => i !== index)
+      setProjectData({
+        ...projectData,
+        screenshotUrls: newUrls
+      })
+    }
+  }
 
   if (hasSubmission && !isEditing) {
     return (
@@ -181,14 +218,27 @@ export default function ProjectPage() {
                 </h3>
                 <div className="space-y-3">
                   <a
-                    href={existingProject.demoUrl}
+                    href={existingProject.gameHostUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-between p-3 bg-green-600 hover:bg-green-700 rounded-lg text-white transition-colors"
                   >
                     <div className="flex items-center space-x-3">
                       <span className="text-lg">🎮</span>
-                      <span className="font-semibold">Play Demo</span>
+                      <span className="font-semibold">Play Game</span>
+                    </div>
+                    <span>↗</span>
+                  </a>
+                  
+                  <a
+                    href={existingProject.demoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <span className="text-lg">🌐</span>
+                      <span className="font-semibold">Project Demo</span>
                     </div>
                     <span>↗</span>
                   </a>
@@ -288,7 +338,7 @@ export default function ProjectPage() {
               {isEditing ? 'Edit Project' : 'Submit Project'}
             </h1>
             <p className="text-purple-200">
-              Upload your game and provide project details for judging
+              Provide your hosted game links and project details for judging
             </p>
           </div>
           {isEditing && (
@@ -325,8 +375,8 @@ export default function ProjectPage() {
           </div>
           <div className="flex justify-between mt-4">
             <span className="text-sm text-purple-300">Project Info</span>
-            <span className="text-sm text-purple-300">Game Files</span>
-            <span className="text-sm text-purple-300">Media & Links</span>
+            <span className="text-sm text-purple-300">Game Links</span>
+            <span className="text-sm text-purple-300">Media & Assets</span>
             <span className="text-sm text-purple-300">Review & Submit</span>
           </div>
         </div>
@@ -400,25 +450,28 @@ export default function ProjectPage() {
                 <label className="block text-sm font-medium text-purple-300 mb-2">
                   Tech Stack
                 </label>
-                <div className="grid grid-cols-4 gap-3">
-                  {techOptions.map((tech) => (
-                    <label key={tech} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        className="text-blue-500 bg-purple-900 border-purple-500"
-                        checked={projectData.techStack.includes(tech)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setProjectData({...projectData, techStack: [...projectData.techStack, tech]})
-                          } else {
-                            setProjectData({...projectData, techStack: projectData.techStack.filter(t => t !== tech)})
-                          }
-                        }}
-                      />
-                      <span className="text-purple-200 text-sm">{tech}</span>
-                    </label>
-                  ))}
-                </div>
+                <p className="text-purple-400 text-sm mb-3">
+                  Enter technologies used in your project, separated by commas
+                </p>
+                <input
+                  type="text"
+                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                  placeholder="Unity, Solana, React, TypeScript, Anchor, Godot, Phaser..."
+                  value={techStackInput}
+                  onChange={(e) => handleTechStackChange(e.target.value)}
+                />
+                {projectData.techStack.length > 0 && (
+                  <div className="mt-3">
+                    <p className="text-purple-300 text-sm mb-2">Technologies ({projectData.techStack.length}):</p>
+                    <div className="flex flex-wrap gap-2">
+                      {projectData.techStack.map((tech, index) => (
+                        <span key={index} className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-sm">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -426,58 +479,92 @@ export default function ProjectPage() {
           {currentStep === 2 && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">
-                Game Files & Assets
+                Game Links & Hosting
               </h2>
 
-              <div>
-                <label className="block text-sm font-medium text-purple-300 mb-2">
-                  Game Build File *
-                </label>
-                <div className="border-2 border-dashed border-purple-500/50 rounded-lg p-8 text-center">
-                  <div className="text-4xl mb-4">🎮</div>
-                  <p className="text-white font-semibold mb-2">Upload your game build</p>
-                  <p className="text-purple-300 text-sm mb-4">
-                    Accepted formats: .zip, .rar, .tar.gz (max 500MB)
-                  </p>
-                  <input
-                    type="file"
-                    accept=".zip,.rar,.tar.gz"
-                    className="hidden"
-                    id="game-file"
-                  />
-                  <label
-                    htmlFor="game-file"
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold cursor-pointer transition-colors"
-                  >
-                    Choose File
-                  </label>
+              <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-6 mb-6">
+                <h3 className="text-lg font-bold text-blue-400 mb-3">
+                  🌐 Hosting Information
+                </h3>
+                <p className="text-blue-200 mb-3">
+                  Your game should be hosted online and accessible via browser. Popular hosting options include:
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                  <div className="bg-blue-600/20 rounded p-2 text-center">
+                    <div className="font-semibold text-blue-300">Vercel</div>
+                    <div className="text-blue-400">vercel.app</div>
+                  </div>
+                  <div className="bg-blue-600/20 rounded p-2 text-center">
+                    <div className="font-semibold text-blue-300">Netlify</div>
+                    <div className="text-blue-400">netlify.app</div>
+                  </div>
+                  <div className="bg-blue-600/20 rounded p-2 text-center">
+                    <div className="font-semibold text-blue-300">GitHub Pages</div>
+                    <div className="text-blue-400">github.io</div>
+                  </div>
+                  <div className="bg-blue-600/20 rounded p-2 text-center">
+                    <div className="font-semibold text-blue-300">Itch.io</div>
+                    <div className="text-blue-400">itch.io</div>
+                  </div>
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-purple-300 mb-2">
-                  Screenshots *
+                  Game Play URL *
                 </label>
-                <div className="border-2 border-dashed border-purple-500/50 rounded-lg p-8 text-center">
-                  <div className="text-4xl mb-4">📸</div>
-                  <p className="text-white font-semibold mb-2">Upload game screenshots</p>
-                  <p className="text-purple-300 text-sm mb-4">
-                    At least 3 screenshots (PNG, JPG - max 10MB each)
-                  </p>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="hidden"
-                    id="screenshots"
-                  />
-                  <label
-                    htmlFor="screenshots"
-                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold cursor-pointer transition-colors"
-                  >
-                    Choose Images
-                  </label>
-                </div>
+                <input
+                  type="url"
+                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                  placeholder="https://yourgame.vercel.app/play"
+                  value={projectData.gameHostUrl}
+                  onChange={(e) => setProjectData({...projectData, gameHostUrl: e.target.value})}
+                />
+                <p className="text-purple-400 text-xs mt-1">
+                  Direct link to play your game (this should work in any modern browser)
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-purple-300 mb-2">
+                  Project Demo URL
+                </label>
+                <input
+                  type="url"
+                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                  placeholder="https://yourgame.vercel.app"
+                  value={projectData.demoUrl}
+                  onChange={(e) => setProjectData({...projectData, demoUrl: e.target.value})}
+                />
+                <p className="text-purple-400 text-xs mt-1">
+                  Landing page or project showcase (can be the same as game URL)
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-purple-300 mb-2">
+                  GitHub Repository *
+                </label>
+                <input
+                  type="url"
+                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                  placeholder="https://github.com/username/your-game"
+                  value={projectData.githubUrl}
+                  onChange={(e) => setProjectData({...projectData, githubUrl: e.target.value})}
+                />
+                <p className="text-purple-400 text-xs mt-1">
+                  Public GitHub repository with your game's source code
+                </p>
+              </div>
+
+              <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4">
+                <h4 className="text-yellow-400 font-semibold mb-2">⚠️ Important Notes:</h4>
+                <ul className="text-yellow-200 text-sm space-y-1">
+                  <li>• Your game must be playable directly in a web browser</li>
+                  <li>• Ensure all links are publicly accessible (not behind authentication)</li>
+                  <li>• Test your game URL in an incognito/private browser window</li>
+                  <li>• GitHub repository must be public for judges to review</li>
+                </ul>
               </div>
             </div>
           )}
@@ -485,51 +572,95 @@ export default function ProjectPage() {
           {currentStep === 3 && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">
-                Links & Media
+                Media & Assets
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-purple-300 mb-2">
-                    GitHub Repository *
+                    Game Banner URL *
                   </label>
                   <input
                     type="url"
                     className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
-                    placeholder="https://github.com/..."
-                    value={projectData.githubUrl}
-                    onChange={(e) => setProjectData({...projectData, githubUrl: e.target.value})}
+                    placeholder="https://imgur.com/banner.png"
+                    value={projectData.bannerUrl}
+                    onChange={(e) => setProjectData({...projectData, bannerUrl: e.target.value})}
                   />
+                  <p className="text-purple-400 text-xs mt-1">
+                    Wide banner image (1920x1080 or 16:9 ratio recommended)
+                  </p>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-purple-300 mb-2">
-                    Live Demo URL
+                    Game Logo URL *
                   </label>
                   <input
                     type="url"
                     className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
-                    placeholder="https://yourgame.com"
-                    value={projectData.demoUrl}
-                    onChange={(e) => setProjectData({...projectData, demoUrl: e.target.value})}
+                    placeholder="https://imgur.com/logo.png"
+                    value={projectData.logoUrl}
+                    onChange={(e) => setProjectData({...projectData, logoUrl: e.target.value})}
                   />
+                  <p className="text-purple-400 text-xs mt-1">
+                    Square logo image (512x512 recommended, transparent background preferred)
+                  </p>
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-purple-300 mb-2">
-                  Demo Video URL
+                  Demo Video URL *
                 </label>
                 <input
                   type="url"
                   className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
-                  placeholder="https://youtube.com/watch?v=..."
+                  placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
                   value={projectData.videoUrl}
                   onChange={(e) => setProjectData({...projectData, videoUrl: e.target.value})}
                 />
                 <p className="text-purple-400 text-xs mt-1">
-                  Upload a 2-5 minute video showcasing your game
+                  2-5 minute video showcasing your game (YouTube, Vimeo, or other video platform)
                 </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-purple-300 mb-2">
+                  Screenshot URLs *
+                </label>
+                <p className="text-purple-400 text-sm mb-3">
+                  Provide direct image URLs (imgur, GitHub, or image hosting service). At least 3 screenshots required.
+                </p>
+                <div className="space-y-3">
+                  {projectData.screenshotUrls.map((url, index) => (
+                    <div key={index} className="flex gap-3">
+                      <input
+                        type="url"
+                        className="flex-1 bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                        placeholder={`https://imgur.com/screenshot${index + 1}.png`}
+                        value={url}
+                        onChange={(e) => updateScreenshotUrl(index, e.target.value)}
+                      />
+                      {projectData.screenshotUrls.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeScreenshotField(index)}
+                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm transition-colors"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addScreenshotField}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    + Add Another Screenshot
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -539,10 +670,34 @@ export default function ProjectPage() {
                 <textarea
                   rows={4}
                   className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
-                  placeholder="What challenges did you face and how did you solve them?"
+                  placeholder="What challenges did you face during development and how did you solve them?"
                   value={projectData.challenges}
                   onChange={(e) => setProjectData({...projectData, challenges: e.target.value})}
                 />
+              </div>
+
+              <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4">
+                <h4 className="text-purple-300 font-semibold mb-2">💡 Tips for Great Visual Assets:</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <h5 className="text-purple-200 font-medium mb-2">Banner & Logo:</h5>
+                    <ul className="text-purple-200 space-y-1">
+                      <li>• Banner: Use 16:9 ratio (1920x1080 ideal)</li>
+                      <li>• Logo: Square format (512x512 recommended)</li>
+                      <li>• PNG format with transparent backgrounds preferred</li>
+                      <li>• High contrast for readability in catalogues</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 className="text-purple-200 font-medium mb-2">Screenshots:</h5>
+                    <ul className="text-purple-200 space-y-1">
+                      <li>• Show gameplay in action, not menus</li>
+                      <li>• Include UI elements and game features</li>
+                      <li>• Showcase your Solana integration</li>
+                      <li>• Upload to imgur.com or GitHub for hosting</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -564,6 +719,22 @@ export default function ProjectPage() {
                     <p className="text-purple-300 text-sm">Category</p>
                     <p className="text-white font-semibold">{projectData.category || 'Not selected'}</p>
                   </div>
+                  <div>
+                    <p className="text-purple-300 text-sm">Game URL</p>
+                    <p className="text-white font-semibold break-all">{projectData.gameHostUrl || 'Not provided'}</p>
+                  </div>
+                  <div>
+                    <p className="text-purple-300 text-sm">Tech Stack</p>
+                    <p className="text-white font-semibold">{projectData.techStack.length} technologies selected</p>
+                  </div>
+                  <div>
+                    <p className="text-purple-300 text-sm">Banner Image</p>
+                    <p className="text-white font-semibold">{projectData.bannerUrl ? '✓ Provided' : 'Not provided'}</p>
+                  </div>
+                  <div>
+                    <p className="text-purple-300 text-sm">Logo Image</p>
+                    <p className="text-white font-semibold">{projectData.logoUrl ? '✓ Provided' : 'Not provided'}</p>
+                  </div>
                 </div>
               </div>
 
@@ -572,11 +743,13 @@ export default function ProjectPage() {
                   ⚠️ Before Submitting
                 </h3>
                 <ul className="space-y-2 text-yellow-200">
-                  <li>• Ensure your game build is functional and playable</li>
-                  <li>• Verify all links are working and accessible</li>
-                  <li>• Double-check that your GitHub repository is public</li>
-                  <li>• Make sure your demo video clearly shows gameplay</li>
-                  <li>• Confirm your Solana integration is properly documented</li>
+                  <li>• Test your game URL in a private browser window to ensure it works</li>
+                  <li>• Verify all links are working and publicly accessible</li>
+                  <li>• Confirm your GitHub repository is public and contains your code</li>
+                  <li>• Check that your demo video clearly shows gameplay and Solana features</li>
+                  <li>• Ensure your banner and logo images display correctly and are high quality</li>
+                  <li>• Verify all screenshot URLs display correctly</li>
+                  <li>• Ensure your Solana integration is properly documented in your README</li>
                 </ul>
               </div>
 
