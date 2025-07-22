@@ -85,6 +85,7 @@ body {
   overflow-y: auto;
   min-height: 100vh;
   width: 100%;
+  max-width: 100vw;
   position: relative;
   margin: 0;
   padding: 0;
@@ -351,35 +352,76 @@ p {
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   :root {
-    --font-size-xl: 1.8rem;
+    --font-size-xl: 2.2rem;
+    --font-size-lg: 1.8rem;
+    --font-size-base: 1.2rem;
     --space-xl: 2.5rem;
+    --space-lg: 1.75rem;
+  }
+  
+  .section {
+    padding: var(--space-xl) var(--space-md);
   }
 }
 
 @media (max-width: 768px) {
   .section {
-    padding: var(--space-lg) 0;
+    padding: var(--space-lg) var(--space-sm);
+    overflow-x: hidden;
   }
   
   .container,
   .container-narrow {
     padding: 0 var(--space-sm);
+    max-width: 100%;
   }
 
   :root {
-    --font-size-xl: 2rem;
+    --font-size-xl: 1.8rem;
+    --font-size-lg: 1.6rem;
     --font-size-base: 1.1rem;
+    --font-size-sm: 0.95rem;
     --space-lg: 1.5rem;
     --space-xl: 2rem;
+    --space-md: 1.25rem;
   }
 }
 
 @media (max-width: 480px) {
+  .section {
+    padding: var(--space-md) var(--space-xs);
+  }
+  
+  .container,
+  .container-narrow {
+    padding: 0 var(--space-xs);
+  }
+
   :root {
     --font-size-xl: 1.5rem;
+    --font-size-lg: 1.4rem;
     --font-size-base: 1rem;
     --font-size-sm: 0.85rem;
+    --font-size-xs: 0.7rem;
     --space-lg: 1.25rem;
     --space-xl: 1.5rem;
+    --space-md: 1rem;
+    --space-sm: 0.75rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .section {
+    padding: var(--space-sm) var(--space-xs);
+  }
+
+  :root {
+    --font-size-xl: 1.3rem;
+    --font-size-lg: 1.2rem;
+    --font-size-base: 0.9rem;
+    --font-size-sm: 0.8rem;
+    --space-lg: 1rem;
+    --space-xl: 1.25rem;
+    --space-md: 0.75rem;
   }
 }

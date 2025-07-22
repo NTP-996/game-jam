@@ -93,6 +93,8 @@ const POPULAR_SKILLS = [
 export default function ProfilePage() {
   const { user, signOut, loading } = useAuth()
   const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [profileLoading, setProfileLoading] = useState(true)
+  const [profileExists, setProfileExists] = useState<boolean | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
@@ -149,11 +151,28 @@ export default function ProfilePage() {
     if (!user) return
 
     try {
+      setProfileLoading(true)
+      
+      // Add a small delay to ensure auth session is properly established
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
       const response = await ApiClient.get('/api/profile')
       const data = await response.json()
 
       if (response.ok && data.profile) {
         setProfile(data.profile)
+        setProfileExists(true)
+        
+        // Check if profile is complete (has essential fields)
+        const isProfileComplete = data.profile.full_name && 
+                                 data.profile.username && 
+                                 (data.profile.bio || data.profile.job_title || data.profile.skills?.length > 0)
+        
+        // If profile is not complete, start in editing mode
+        if (!isProfileComplete) {
+          setIsEditing(true)
+        }
+        
         setEditForm({
           full_name: data.profile.full_name || '',
           username: data.profile.username || '',
@@ -182,11 +201,88 @@ export default function ProfilePage() {
           favorite_games: data.profile.favorite_games || [],
           game_dev_experience: data.profile.game_dev_experience || '',
         })
+      } else if (response.status === 401) {
+        // User not authenticated, redirect to signin
+        console.error('User not authenticated, redirecting to signin')
+        window.location.href = '/auth/signin'
+        return
       } else {
+        // Profile doesn't exist, user needs to create one
         console.error('Failed to load profile:', data.error)
+        setProfileExists(false)
+        
+        // Initialize form with basic user data
+        const defaultForm = {
+          full_name: user?.user_metadata?.full_name || '',
+          username: user?.email?.split('@')[0] || '',
+          bio: '',
+          github_url: '',
+          twitter_url: '',
+          discord_username: '',
+          telegram_username: '',
+          website_url: '',
+          location: '',
+          timezone: 'UTC+8',
+          birth_date: '',
+          phone: '',
+          job_title: '',
+          company: '',
+          experience_level: '',
+          education: '',
+          skills: [],
+          interests: [],
+          programming_languages: [],
+          frameworks: [],
+          previous_hackathons: 0,
+          preferred_role: '',
+          availability: '',
+          looking_for_team: false,
+          favorite_games: [],
+          game_dev_experience: '',
+        }
+        setEditForm(defaultForm)
       }
     } catch (error) {
       console.error('Error loading profile:', error)
+      if (error instanceof Error && error.message === 'Not authenticated') {
+        // Redirect to signin if not authenticated
+        window.location.href = '/auth/signin'
+        return
+      }
+      setProfileExists(false)
+      
+      // Initialize form with default data
+      const defaultForm = {
+        full_name: user?.user_metadata?.full_name || '',
+        username: user?.email?.split('@')[0] || '',
+        bio: '',
+        github_url: '',
+        twitter_url: '',
+        discord_username: '',
+        telegram_username: '',
+        website_url: '',
+        location: '',
+        timezone: 'UTC+8',
+        birth_date: '',
+        phone: '',
+        job_title: '',
+        company: '',
+        experience_level: '',
+        education: '',
+        skills: [],
+        interests: [],
+        programming_languages: [],
+        frameworks: [],
+        previous_hackathons: 0,
+        preferred_role: '',
+        availability: '',
+        looking_for_team: false,
+        favorite_games: [],
+        game_dev_experience: '',
+      }
+      setEditForm(defaultForm)
+    } finally {
+      setProfileLoading(false)
     }
   }
 
@@ -199,15 +295,21 @@ export default function ProfilePage() {
 
       if (response.ok && data.profile) {
         setProfile(data.profile)
+        setProfileExists(true)
         setIsEditing(false)
-        alert('Profile updated successfully!')
+        alert(profileExists ? 'Profile updated successfully!' : 'Profile created successfully!')
       } else {
-        console.error('Failed to update profile:', data.error)
-        alert(`Failed to update profile: ${data.error}`)
+        console.error('Failed to save profile:', data.error)
+        alert(`Failed to save profile: ${data.error}`)
       }
     } catch (error) {
-      console.error('Error updating profile:', error)
-      alert('An error occurred while updating your profile')
+      console.error('Error saving profile:', error)
+      if (error instanceof Error && error.message === 'Not authenticated') {
+        alert('You need to sign in first. Redirecting...')
+        window.location.href = '/auth/signin'
+      } else {
+        alert('An error occurred while saving your profile. Please try again.')
+      }
     } finally {
       setIsSaving(false)
     }
@@ -281,14 +383,15 @@ export default function ProfilePage() {
     await signOut()
   }
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
-      <div className="ml-0 lg:ml-64 p-6 transition-all duration-300">
+      <div className="ml-0 lg:ml-64 p-4 md:p-6 transition-all duration-300">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-8">
+          <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-6 md:p-8">
             <div className="animate-pulse">
-              <div className="h-8 bg-purple-600/50 rounded w-1/4 mb-4"></div>
-              <div className="h-4 bg-purple-600/50 rounded w-1/2"></div>
+              <div className="h-6 md:h-8 bg-purple-600/50 rounded w-1/4 mb-4"></div>
+              <div className="h-3 md:h-4 bg-purple-600/50 rounded w-1/2 mb-2"></div>
+              <div className="h-3 md:h-4 bg-purple-600/50 rounded w-1/3"></div>
             </div>
           </div>
         </div>
@@ -298,20 +401,20 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="ml-0 lg:ml-64 p-6 transition-all duration-300">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-8 text-center">
-            <h1 className="text-2xl font-bold text-white font-pixelify mb-4">
+      <div className="ml-0 lg:ml-64 p-4 md:p-6 transition-all duration-300">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-6 md:p-8 text-center">
+            <h1 className="text-xl md:text-2xl font-bold text-white font-pixelify mb-4">
               Please Sign In
             </h1>
-            <p className="text-purple-200 mb-6">
+            <p className="text-purple-200 mb-6 text-sm md:text-base">
               You need to be signed in to view your profile.
             </p>
             <Link
               href="/auth/signin"
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center space-x-2"
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 md:px-6 rounded-lg font-semibold transition-colors inline-flex items-center space-x-2 text-sm md:text-base"
             >
-              <User size={20} />
+              <User size={18} />
               <span>Sign In</span>
             </Link>
           </div>
@@ -320,42 +423,231 @@ export default function ProfilePage() {
     )
   }
 
+  // Show profile creation prompt for users without profiles (unless they're editing)
+  if (profileExists === false && !isEditing) {
+    return (
+      <div className="ml-0 lg:ml-64 p-4 md:p-6 transition-all duration-300">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 backdrop-blur-sm border border-blue-500/30 rounded-lg p-6 md:p-8 text-center">
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+              <User size={32} className="text-white" />
+            </div>
+            <h1 className="text-xl md:text-3xl font-bold text-white font-pixelify mb-3 md:mb-4">
+              Welcome to Solana Game Jam! 🎮
+            </h1>
+            <p className="text-blue-200 mb-4 md:mb-6 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+              Let's set up your profile so teammates can find you and learn about your skills. 
+              This will help you connect with other developers and join exciting projects!
+            </p>
+            
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 md:p-6 mb-6 text-left">
+              <h3 className="text-base md:text-lg font-semibold text-blue-300 mb-3 font-pixelify">
+                ✨ Setting up your profile helps you:
+              </h3>
+              <ul className="space-y-2 text-xs md:text-sm text-blue-200">
+                <li className="flex items-start space-x-2">
+                  <span className="text-green-400 mt-0.5">•</span>
+                  <span>Get discovered by teams looking for your skills</span>
+                </li>
+                <li className="flex items-start space-x-2">
+                  <span className="text-green-400 mt-0.5">•</span>
+                  <span>Find teammates with complementary expertise</span>
+                </li>
+                <li className="flex items-start space-x-2">
+                  <span className="text-green-400 mt-0.5">•</span>
+                  <span>Showcase your previous work and experience</span>
+                </li>
+                <li className="flex items-start space-x-2">
+                  <span className="text-green-400 mt-0.5">•</span>
+                  <span>Connect through Discord, GitHub, and other platforms</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
+              <button
+                onClick={() => {
+                  console.log('Create My Profile clicked')
+                  setIsEditing(true)
+                  setProfileExists(true) // Set this to true so the form shows
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 md:px-8 rounded-lg font-semibold transition-colors inline-flex items-center justify-center space-x-2 text-sm md:text-base"
+              >
+                <Edit3 size={18} />
+                <span>Create My Profile</span>
+              </button>
+              <Link
+                href="/dashboard"
+                className="bg-purple-700 hover:bg-purple-600 text-white px-6 py-3 md:px-8 rounded-lg font-semibold transition-colors inline-flex items-center justify-center space-x-2 text-sm md:text-base"
+              >
+                <span>Skip for Now</span>
+              </Link>
+            </div>
+            
+            <p className="text-xs md:text-sm text-blue-300 mt-4">
+              Don't worry, you can always complete your profile later!
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Handle profile creation scenario (when user clicks "Create My Profile")
+  if (profileExists === false && isEditing) {
+    return (
+      <div className="ml-0 lg:ml-64 p-4 md:p-6 transition-all duration-300 pb-20 lg:pb-6">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Profile Creation Header */}
+          <div className="text-center">
+            <h1 className="text-2xl md:text-3xl font-bold text-white font-pixelify mb-2">
+              Create Your Profile ✨
+            </h1>
+            <p className="text-purple-200 text-sm md:text-base">
+              Let's set up your profile so other developers can find and connect with you!
+            </p>
+          </div>
+
+          {/* Basic Profile Creation Form */}
+          <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-4 md:p-6">
+            <h3 className="text-lg md:text-xl font-bold text-white font-pixelify mb-4">
+              Essential Information
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-purple-300 mb-2">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  value={editForm.full_name}
+                  onChange={(e) => setEditForm({...editForm, full_name: e.target.value})}
+                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 text-white placeholder-purple-400 text-sm md:text-base"
+                  placeholder="Your full name"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-purple-300 mb-2">
+                  Username *
+                </label>
+                <input
+                  type="text"
+                  value={editForm.username}
+                  onChange={(e) => setEditForm({...editForm, username: e.target.value})}
+                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 text-white placeholder-purple-400 text-sm md:text-base"
+                  placeholder="Choose a username"
+                  required
+                />
+              </div>
+              
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-purple-300 mb-2">
+                  Bio
+                </label>
+                <textarea
+                  rows={3}
+                  value={editForm.bio}
+                  onChange={(e) => setEditForm({...editForm, bio: e.target.value})}
+                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 text-white placeholder-purple-400 text-sm md:text-base resize-none"
+                  placeholder="Tell others about yourself and your interests..."
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-purple-300 mb-2">
+                  Job Title
+                </label>
+                <input
+                  type="text"
+                  value={editForm.job_title}
+                  onChange={(e) => setEditForm({...editForm, job_title: e.target.value})}
+                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 text-white placeholder-purple-400 text-sm md:text-base"
+                  placeholder="e.g., Full Stack Developer"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-purple-300 mb-2">
+                  Experience Level
+                </label>
+                <select
+                  value={editForm.experience_level}
+                  onChange={(e) => setEditForm({...editForm, experience_level: e.target.value})}
+                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 text-white text-sm md:text-base"
+                >
+                  <option value="">Select Level</option>
+                  {EXPERIENCE_LEVELS.map(level => (
+                    <option key={level} value={level}>{level}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 mt-6">
+              <button
+                onClick={handleSaveProfile}
+                disabled={isSaving}
+                className="bg-green-600 hover:bg-green-700 disabled:bg-green-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 text-sm md:text-base"
+              >
+                <Save size={16} />
+                <span>{isSaving ? 'Creating Profile...' : 'Create Profile'}</span>
+              </button>
+              <button
+                onClick={() => {
+                  setIsEditing(false)
+                  setProfileExists(false)
+                }}
+                className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 text-sm md:text-base"
+              >
+                <X size={16} />
+                <span>Cancel</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="ml-0 lg:ml-64 p-6 transition-all duration-300">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="ml-0 lg:ml-64 p-4 md:p-6 transition-all duration-300 pb-20 lg:pb-6">
+      <div className="max-w-6xl mx-auto space-y-6 md:space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
           <div>
-            <h1 className="text-4xl font-bold text-white font-pixelify mb-2">
+            <h1 className="text-2xl md:text-4xl font-bold text-white font-pixelify mb-1 md:mb-2">
               Profile Settings
             </h1>
-            <p className="text-purple-200">
+            <p className="text-purple-200 text-sm md:text-base">
               Manage your account and showcase your skills to potential teammates
             </p>
           </div>
           
-          <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full md:w-auto">
             {!isEditing ? (
               <button
                 onClick={() => setIsEditing(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center space-x-2"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 text-sm md:text-base"
               >
                 <Edit3 size={16} />
                 <span>Edit Profile</span>
               </button>
             ) : (
-              <div className="flex space-x-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <button
                   onClick={handleSaveProfile}
                   disabled={isSaving}
-                  className="bg-green-600 hover:bg-green-700 disabled:bg-green-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center space-x-2"
+                  className="bg-green-600 hover:bg-green-700 disabled:bg-green-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 text-sm md:text-base"
                 >
                   <Save size={16} />
                   <span>{isSaving ? 'Saving...' : 'Save'}</span>
                 </button>
                 <button
                   onClick={() => setIsEditing(false)}
-                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center space-x-2"
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 text-sm md:text-base"
                 >
                   <X size={16} />
                   <span>Cancel</span>
@@ -366,9 +658,9 @@ export default function ProfilePage() {
         </div>
 
         {profile && (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 md:gap-8">
             {/* Profile Card - Left Column */}
-            <div className="lg:col-span-1 space-y-6">
+            <div className="lg:col-span-1 space-y-4 md:space-y-6">
               {/* Basic Profile */}
               <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-6 text-center">
                 <div className="relative inline-block mb-4">
@@ -523,16 +815,16 @@ export default function ProfilePage() {
             </div>
 
             {/* Main Content - Right Columns */}
-            <div className="lg:col-span-3 space-y-6">
+            <div className="lg:col-span-3 space-y-4 md:space-y-6">
               
               {/* Contact Information */}
-              <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-6">
-                <h3 className="text-xl font-bold text-white font-pixelify mb-4 flex items-center space-x-2">
-                  <Mail size={20} />
+              <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-4 md:p-6">
+                <h3 className="text-lg md:text-xl font-bold text-white font-pixelify mb-3 md:mb-4 flex items-center space-x-2">
+                  <Mail size={18} />
                   <span>Contact Information</span>
                 </h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                   <div>
                     <label className="block text-sm font-medium text-purple-300 mb-2">
                       Email Address

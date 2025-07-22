@@ -113,6 +113,11 @@ export default function ProjectPage() {
     }
   }, [user])
 
+  // Auto-scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [currentStep])
+
   const loadUserProject = async () => {
     try {
       setLoading(true)
@@ -239,6 +244,14 @@ export default function ProjectPage() {
     try {
       setSaving(true)
       setError(null)
+      
+      // Check if user is authenticated
+      if (!user) {
+        setError('You must be logged in to save a project')
+        return
+      }
+      
+      console.log('Current user:', user)
 
       // Validate required fields for draft
       if (!formData.project_name.trim()) {
@@ -251,22 +264,50 @@ export default function ProjectPage() {
         screenshot_urls: formData.screenshot_urls.filter(url => url.trim().length > 0)
       }
 
+      console.log('Attempting to save project with data:', projectData)
+      console.log('Existing project:', existingProject)
+      
       let response
-      if (existingProject) {
+      if (existingProject && existingProject.id) {
         // Update existing project
-        response = await ApiClient.put(`/api/projects/${existingProject.id}`, projectData)
+        const updateUrl = `/api/projects/${existingProject.id}`
+        console.log('Updating existing project with URL:', updateUrl)
+        response = await ApiClient.put(updateUrl, projectData)
       } else {
         // Create new project
-        response = await ApiClient.post('/api/projects', projectData)
+        const createUrl = '/api/projects'
+        console.log('Creating new project with URL:', createUrl)
+        response = await ApiClient.post(createUrl, projectData)
       }
+      
+      console.log('Save response status:', response.status)
+      console.log('Save response headers:', Object.fromEntries(response.headers.entries()))
 
       if (response.ok) {
-        const data = await response.json()
-        setExistingProject(data.project)
-        alert('Project saved as draft successfully!')
+        try {
+          const data = await response.json()
+          setExistingProject(data.project)
+          alert('Project saved as draft successfully!')
+        } catch (jsonError) {
+          console.error('Failed to parse save response:', jsonError)
+          // If JSON parsing fails but response was ok, assume success
+          alert('Project saved as draft successfully!')
+          // Reload the project data
+          loadUserProject()
+        }
       } else {
-        const errorData = await response.json()
-        setError(errorData.error || 'Failed to save project')
+        // Get response text first to debug
+        const responseText = await response.text()
+        console.error('Save error response text:', responseText)
+        
+        try {
+          const errorData = JSON.parse(responseText)
+          setError(errorData.error || `Failed to save project (Status: ${response.status})`)
+        } catch (jsonError) {
+          console.error('Failed to parse error response as JSON:', jsonError)
+          // Use response text if it exists, otherwise generic error
+          setError(responseText || `Failed to save project (Status: ${response.status})`)
+        }
       }
     } catch (err) {
       console.error('Error saving project:', err)
@@ -280,6 +321,14 @@ export default function ProjectPage() {
     try {
       setSubmitting(true)
       setError(null)
+      
+      // Check if user is authenticated
+      if (!user) {
+        setError('You must be logged in to submit a project')
+        return
+      }
+      
+      console.log('Current user for submit:', user)
 
       // Validate all required fields
       const requiredFields = [
@@ -317,34 +366,76 @@ export default function ProjectPage() {
         // Create project first
         const createResponse = await ApiClient.post('/api/projects', projectData)
         if (!createResponse.ok) {
-          const errorData = await createResponse.json()
-          setError(errorData.error || 'Failed to create project')
+          const responseText = await createResponse.text()
+          console.error('Create error response text:', responseText)
+          
+          try {
+            const errorData = JSON.parse(responseText)
+            setError(errorData.error || `Failed to create project (Status: ${createResponse.status})`)
+          } catch (jsonError) {
+            console.error('Failed to parse create error response as JSON:', jsonError)
+            setError(responseText || `Failed to create project (Status: ${createResponse.status})`)
+          }
           return
         }
-        const createData = await createResponse.json()
-        projectId = createData.project.id
-        setExistingProject(createData.project)
+        try {
+          const createData = await createResponse.json()
+          projectId = createData.project.id
+          setExistingProject(createData.project)
+        } catch (jsonError) {
+          console.error('Failed to parse create response:', jsonError)
+          setError('Failed to create project - invalid response format')
+          return
+        }
       } else {
         // Update existing project
         const updateResponse = await ApiClient.put(`/api/projects/${existingProject.id}`, projectData)
         if (!updateResponse.ok) {
-          const errorData = await updateResponse.json()
-          setError(errorData.error || 'Failed to update project')
+          const responseText = await updateResponse.text()
+          console.error('Update error response text:', responseText)
+          
+          try {
+            const errorData = JSON.parse(responseText)
+            setError(errorData.error || `Failed to update project (Status: ${updateResponse.status})`)
+          } catch (jsonError) {
+            console.error('Failed to parse update error response as JSON:', jsonError)
+            setError(responseText || `Failed to update project (Status: ${updateResponse.status})`)
+          }
           return
         }
       }
 
       // Now submit the project
+      console.log('Submitting project with ID:', projectId)
       const submitResponse = await ApiClient.post(`/api/projects/${projectId}/submit`, {})
+      console.log('Submit response status:', submitResponse.status)
+      console.log('Submit response headers:', Object.fromEntries(submitResponse.headers.entries()))
       
       if (submitResponse.ok) {
-        const data = await submitResponse.json()
-        setExistingProject(data.project)
-        setIsEditing(false)
-        alert('Project submitted successfully!')
+        try {
+          const data = await submitResponse.json()
+          setExistingProject(data.project)
+          setIsEditing(false)
+          alert('Project submitted successfully!')
+        } catch (jsonError) {
+          console.error('Failed to parse success response:', jsonError)
+          // If JSON parsing fails but response was ok, assume success
+          setIsEditing(false)
+          alert('Project submitted successfully!')
+          // Reload the project data
+          loadUserProject()
+        }
       } else {
-        const errorData = await submitResponse.json()
-        setError(errorData.error || 'Failed to submit project')
+        const responseText = await submitResponse.text()
+        console.error('Submit error response text:', responseText)
+        
+        try {
+          const errorData = JSON.parse(responseText)
+          setError(errorData.error || `Failed to submit project (Status: ${submitResponse.status})`)
+        } catch (jsonError) {
+          console.error('Failed to parse submit error response as JSON:', jsonError)
+          setError(responseText || `Failed to submit project (Status: ${submitResponse.status})`)
+        }
       }
     } catch (err) {
       console.error('Error submitting project:', err)
@@ -382,12 +473,12 @@ export default function ProjectPage() {
 
   if (loading) {
     return (
-      <div className="ml-0 lg:ml-64 p-6 transition-all duration-300">
+      <div className="ml-0 lg:ml-64 p-4 md:p-6 transition-all duration-300 pb-20 lg:pb-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-center min-h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-              <p className="text-purple-200">Loading project data...</p>
+              <p className="text-purple-200 text-sm md:text-base">Loading project data...</p>
             </div>
           </div>
         </div>
@@ -400,7 +491,7 @@ export default function ProjectPage() {
     return (
       <div className="ml-0 lg:ml-64 min-h-screen bg-gradient-to-b from-purple-900/20 via-transparent to-blue-900/20">
         {/* Hero Section - Game Banner */}
-        <div className="relative aspect-[21/9] max-h-[40vh] overflow-hidden mx-auto">
+        <div className="relative aspect-[16/9] md:aspect-[21/9] max-h-[30vh] md:max-h-[40vh] overflow-hidden mx-auto">
           {existingProject.banner_url ? (
             <div className="absolute inset-0">
               <Image
@@ -419,12 +510,12 @@ export default function ProjectPage() {
 
           {/* Hero Content */}
           <div className="relative h-full flex items-end">
-            <div className="w-full max-w-7xl mx-auto px-6 pb-16">
-              <div className="flex flex-col lg:flex-row items-end gap-8">
+            <div className="w-full max-w-7xl mx-auto px-4 md:px-6 pb-8 md:pb-16">
+              <div className="flex flex-col lg:flex-row items-center lg:items-end gap-4 md:gap-8">
                 {/* Game Logo */}
                 {existingProject.logo_url && (
                   <div className="flex-shrink-0">
-                    <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 backdrop-blur-sm">
+                    <div className="w-20 h-20 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-xl md:rounded-2xl overflow-hidden shadow-2xl border-2 md:border-4 border-white/20 backdrop-blur-sm">
                       <Image
                         src={existingProject.logo_url}
                         alt="Game logo"
@@ -437,12 +528,12 @@ export default function ProjectPage() {
                 )}
 
                 {/* Game Info */}
-                <div className="flex-1 space-y-4">
-                  <div className="flex items-center gap-4 flex-wrap">
-                    <h1 className="text-4xl lg:text-6xl font-bold text-white pixelify-sans drop-shadow-2xl">
+                <div className="flex-1 space-y-2 md:space-y-4 text-center lg:text-left">
+                  <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
+                    <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold text-white pixelify-sans drop-shadow-2xl">
                       {existingProject.project_name}
-              </h1>
-                    <div className={`px-4 py-2 rounded-full backdrop-blur-sm border font-bold text-sm lg:text-base ${
+                    </h1>
+                    <div className={`px-3 md:px-4 py-1 md:py-2 rounded-full backdrop-blur-sm border font-bold text-xs md:text-sm lg:text-base mx-auto lg:mx-0 w-fit ${
                       existingProject.status === 'submitted' 
                         ? 'bg-green-500/20 border-green-400/50 text-green-400' 
                         : existingProject.status === 'approved'
@@ -455,15 +546,15 @@ export default function ProjectPage() {
                        : existingProject.status === 'approved' ? '✅ Approved'
                        : existingProject.status === 'featured' ? '🌟 Featured'
                        : '❌ Rejected'}
-            </div>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-6 text-white/90">
-                    <span className="bg-purple-600/30 backdrop-blur-sm px-3 py-1 rounded-lg border border-purple-400/30">
+                  <div className="flex flex-col md:flex-row items-center gap-2 md:gap-6 text-white/90 text-sm md:text-base">
+                    <span className="bg-purple-600/30 backdrop-blur-sm px-2 md:px-3 py-1 rounded-lg border border-purple-400/30">
                       {existingProject.category}
                     </span>
-                    <span className="text-lg">•</span>
-                    <span>
+                    <span className="hidden md:inline text-lg">•</span>
+                    <span className="text-center">
                       {existingProject.submitted_at 
                         ? `Submitted ${new Date(existingProject.submitted_at).toLocaleDateString()}`
                         : `Updated ${new Date(existingProject.updated_at).toLocaleDateString()}`
@@ -472,14 +563,14 @@ export default function ProjectPage() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex flex-wrap gap-4 pt-4">
+                  <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-2 md:pt-4">
                     <a
                       href={existingProject.game_host_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center gap-3"
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold text-base md:text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 md:gap-3"
                     >
-                      <span className="text-2xl">🎮</span>
+                      <span className="text-xl md:text-2xl">🎮</span>
                       PLAY NOW
                     </a>
                     
@@ -488,31 +579,33 @@ export default function ProjectPage() {
                         href={existingProject.video_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white px-6 py-4 rounded-xl font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center gap-3"
+                        className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 md:gap-3"
                       >
-                        <span className="text-xl">▶️</span>
-                        Watch Trailer
+                        <span className="text-lg md:text-xl">▶️</span>
+                        <span className="hidden sm:inline">Watch Trailer</span>
+                        <span className="sm:hidden">Trailer</span>
                       </a>
                     )}
 
                     {existingProject.status === 'submitted' && (
-              <button
-                onClick={() => setIsEditing(true)}
-                        className="bg-blue-500/20 backdrop-blur-sm border border-blue-400/50 hover:bg-blue-500/30 text-blue-400 px-6 py-4 rounded-xl font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center gap-3"
-              >
-                        <span className="text-xl">✏️</span>
-                Edit Submission
-              </button>
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="bg-blue-500/20 backdrop-blur-sm border border-blue-400/50 hover:bg-blue-500/30 text-blue-400 px-4 md:px-6 py-3 md:py-4 rounded-xl font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 md:gap-3"
+                      >
+                        <span className="text-lg md:text-xl">✏️</span>
+                        <span className="hidden sm:inline">Edit Submission</span>
+                        <span className="sm:hidden">Edit</span>
+                      </button>
                     )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-              </div>
-              </div>
-            </div>
-          </div>
+        </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 space-y-6 md:space-y-8">
 
           {error && (
             <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4">
@@ -520,125 +613,125 @@ export default function ProjectPage() {
                 </div>
           )}
 
-          {/* Epic Game Content - Steam Style */}
-          <div className="space-y-12">
-            {/* Steam-Style Media Player */}
-            {((existingProject.screenshot_urls && existingProject.screenshot_urls.filter(url => url.trim()).length > 0) || existingProject.video_url) && (
-              <div className="bg-gray-900 rounded-lg overflow-hidden">
-                {/* Main Media Display */}
-                <div className="aspect-video bg-black relative">
-                  {selectedMedia.type === 'video' && existingProject.video_url ? (
-                    existingProject.video_url.includes('youtube.com') || existingProject.video_url.includes('youtu.be') ? (
-                      <iframe
-                        src={existingProject.video_url.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
-                        title="Game Trailer"
-                        className="w-full h-full"
-                        allowFullScreen
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      />
-                    ) : (
-                      <video
-                        src={existingProject.video_url}
-                        controls
-                        className="w-full h-full object-cover"
-                        poster={existingProject.banner_url}
-                      />
-                    )
-                  ) : (
-                    <Image
-                      src={selectedMedia.url}
-                      alt="Game media"
-                      fill
-                      className="object-contain"
-                    />
-                  )}
-                </div>
-
-                {/* Media Thumbnails */}
-                <div className="bg-gray-800 p-4">
-                  <div className="flex gap-2 overflow-x-auto">
-                    {/* Video Thumbnail */}
-                    {existingProject.video_url && (
-                      <div
-                        onClick={() => setSelectedMedia({ type: 'video', url: existingProject.video_url })}
-                        className={`relative w-24 h-16 bg-black rounded cursor-pointer flex-shrink-0 border-2 transition-all ${
-                          selectedMedia.type === 'video' ? 'border-blue-500' : 'border-gray-600 hover:border-gray-400'
-                        }`}
-                      >
-                        <Image
-                          src={existingProject.banner_url || '/api/placeholder/96/64'}
-                          alt="Video thumbnail"
-                          fill
-                          className="object-contain rounded"
+                      {/* Epic Game Content - Steam Style */}
+            <div className="space-y-8 md:space-y-12">
+              {/* Steam-Style Media Player */}
+              {((existingProject.screenshot_urls && existingProject.screenshot_urls.filter(url => url.trim()).length > 0) || existingProject.video_url) && (
+                <div className="bg-gray-900 rounded-lg md:rounded-xl overflow-hidden">
+                  {/* Main Media Display */}
+                  <div className="aspect-video bg-black relative">
+                    {selectedMedia.type === 'video' && existingProject.video_url ? (
+                      existingProject.video_url.includes('youtube.com') || existingProject.video_url.includes('youtu.be') ? (
+                        <iframe
+                          src={existingProject.video_url.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                          title="Game Trailer"
+                          className="w-full h-full"
+                          allowFullScreen
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-6 h-6 bg-white/80 rounded-full flex items-center justify-center">
-                            <span className="text-black text-xs">▶</span>
+                      ) : (
+                        <video
+                          src={existingProject.video_url}
+                          controls
+                          className="w-full h-full object-cover"
+                          poster={existingProject.banner_url}
+                        />
+                      )
+                    ) : (
+                      <Image
+                        src={selectedMedia.url}
+                        alt="Game media"
+                        fill
+                        className="object-contain"
+                      />
+                    )}
+                  </div>
+
+                  {/* Media Thumbnails */}
+                  <div className="bg-gray-800 p-3 md:p-4">
+                    <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+                      {/* Video Thumbnail */}
+                      {existingProject.video_url && (
+                        <div
+                          onClick={() => setSelectedMedia({ type: 'video', url: existingProject.video_url })}
+                          className={`relative w-20 h-12 md:w-24 md:h-16 bg-black rounded cursor-pointer flex-shrink-0 border-2 transition-all ${
+                            selectedMedia.type === 'video' ? 'border-blue-500' : 'border-gray-600 hover:border-gray-400'
+                          }`}
+                        >
+                          <Image
+                            src={existingProject.banner_url || '/api/placeholder/96/64'}
+                            alt="Video thumbnail"
+                            fill
+                            className="object-contain rounded"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-5 h-5 md:w-6 md:h-6 bg-white/80 rounded-full flex items-center justify-center">
+                              <span className="text-black text-xs">▶</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                    
-                    {/* Screenshot Thumbnails */}
-                    {existingProject.screenshot_urls && existingProject.screenshot_urls.filter(url => url.trim()).map((url, index) => (
-                      <div
-                        key={index}
-                        onClick={() => setSelectedMedia({ type: 'image', url: url })}
-                        className={`relative w-24 h-16 bg-gray-700 rounded cursor-pointer flex-shrink-0 border-2 transition-all ${
-                          selectedMedia.type === 'image' && selectedMedia.url === url ? 'border-blue-500' : 'border-gray-600 hover:border-gray-400'
-                        }`}
-                      >
-                                                  <Image
+                      )}
+                      
+                      {/* Screenshot Thumbnails */}
+                      {existingProject.screenshot_urls && existingProject.screenshot_urls.filter(url => url.trim()).map((url, index) => (
+                        <div
+                          key={index}
+                          onClick={() => setSelectedMedia({ type: 'image', url: url })}
+                          className={`relative w-20 h-12 md:w-24 md:h-16 bg-gray-700 rounded cursor-pointer flex-shrink-0 border-2 transition-all ${
+                            selectedMedia.type === 'image' && selectedMedia.url === url ? 'border-blue-500' : 'border-gray-600 hover:border-gray-400'
+                          }`}
+                        >
+                          <Image
                             src={url}
                             alt={`Screenshot ${index + 1}`}
                             fill
                             className="object-contain rounded"
                           />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Game Description & Features - Split Layout */}
-            <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
-              {/* Main Content */}
-              <div className="xl:col-span-3 space-y-8">
-                {/* About Section */}
-                <div className="bg-gradient-to-br from-gray-900/90 via-gray-800/90 to-gray-900/90 backdrop-blur-xl border border-gray-700/50 rounded-3xl overflow-hidden">
-                  <div className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 p-6 border-b border-gray-700/50">
-                    <h2 className="text-3xl font-bold text-white pixelify-sans flex items-center gap-4">
-                      <span className="text-4xl">🎮</span>
-                      About This Game
-                    </h2>
-                  </div>
-                  <div className="p-8">
-                    <p className="text-gray-300 text-lg leading-relaxed mb-8 font-medium">
-                      {existingProject.project_description}
-                    </p>
-                    
-                    {/* Key Features Grid */}
-                    {existingProject.features && existingProject.features.length > 0 && (
-                      <div className="space-y-6">
-                        <h3 className="text-2xl font-bold text-white pixelify-sans flex items-center gap-3">
-                          <span className="text-2xl">⭐</span>
-                          Key Features
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {existingProject.features.map((feature, index) => (
-                            <div key={index} className="flex items-start gap-3 p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
-                              <div className="w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <span className="text-white text-sm font-bold">✓</span>
-                              </div>
-                              <span className="text-gray-200 font-medium">{feature}</span>
-                      </div>
-                    ))}
                         </div>
-                      </div>
-                    )}
+                      ))}
+                    </div>
                   </div>
                 </div>
+              )}
+
+                          {/* Game Description & Features - Split Layout */}
+              <div className="grid grid-cols-1 xl:grid-cols-5 gap-6 md:gap-8">
+                              {/* Main Content */}
+                <div className="xl:col-span-3 space-y-6 md:space-y-8">
+                  {/* About Section */}
+                  <div className="bg-gradient-to-br from-gray-900/90 via-gray-800/90 to-gray-900/90 backdrop-blur-xl border border-gray-700/50 rounded-2xl md:rounded-3xl overflow-hidden">
+                    <div className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 p-4 md:p-6 border-b border-gray-700/50">
+                      <h2 className="text-xl md:text-3xl font-bold text-white pixelify-sans flex items-center gap-3 md:gap-4">
+                        <span className="text-2xl md:text-4xl">🎮</span>
+                        About This Game
+                      </h2>
+                    </div>
+                    <div className="p-4 md:p-8">
+                      <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-6 md:mb-8 font-medium">
+                        {existingProject.project_description}
+                      </p>
+                      
+                      {/* Key Features Grid */}
+                      {existingProject.features && existingProject.features.length > 0 && (
+                        <div className="space-y-4 md:space-y-6">
+                          <h3 className="text-lg md:text-2xl font-bold text-white pixelify-sans flex items-center gap-2 md:gap-3">
+                            <span className="text-xl md:text-2xl">⭐</span>
+                            Key Features
+                          </h3>
+                          <div className="grid grid-cols-1 gap-3 md:gap-4">
+                            {existingProject.features.map((feature, index) => (
+                              <div key={index} className="flex items-start gap-3 p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
+                                <div className="w-5 h-5 md:w-6 md:h-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                  <span className="text-white text-xs md:text-sm font-bold">✓</span>
+                                </div>
+                                <span className="text-gray-200 font-medium text-sm md:text-base">{feature}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
                 {/* Solana Integration Showcase */}
                 <div className="relative bg-gradient-to-br from-purple-900/90 via-blue-900/90 to-purple-900/90 backdrop-blur-xl border border-purple-500/30 rounded-3xl overflow-hidden">
@@ -674,28 +767,28 @@ export default function ProjectPage() {
               </div>
 
               {/* Epic Sidebar */}
-              <div className="xl:col-span-2 space-y-6">
+              <div className="xl:col-span-2 space-y-4 md:space-y-6">
                 {/* Game Stats Card */}
-                <div className="bg-gradient-to-br from-gray-900/90 via-gray-800/90 to-gray-900/90 backdrop-blur-xl border border-gray-700/50 rounded-3xl overflow-hidden">
-                  <div className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 p-6 border-b border-gray-700/50">
-                    <h3 className="text-2xl font-bold text-white pixelify-sans flex items-center gap-3">
-                      <span className="text-3xl">📊</span>
+                <div className="bg-gradient-to-br from-gray-900/90 via-gray-800/90 to-gray-900/90 backdrop-blur-xl border border-gray-700/50 rounded-2xl md:rounded-3xl overflow-hidden">
+                  <div className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 p-4 md:p-6 border-b border-gray-700/50">
+                    <h3 className="text-lg md:text-2xl font-bold text-white pixelify-sans flex items-center gap-2 md:gap-3">
+                      <span className="text-2xl md:text-3xl">📊</span>
                       Game Info
                     </h3>
                   </div>
-                  <div className="p-6 space-y-6">
+                  <div className="p-4 md:p-6 space-y-4 md:space-y-6">
                     {/* Category */}
-                    <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
-                      <span className="text-gray-400 font-medium">Genre</span>
-                      <span className="bg-purple-600/30 text-purple-300 px-3 py-1 rounded-full text-sm font-bold">
+                    <div className="flex items-center justify-between p-3 md:p-4 bg-white/5 rounded-xl border border-white/10">
+                      <span className="text-gray-400 font-medium text-sm md:text-base">Genre</span>
+                      <span className="bg-purple-600/30 text-purple-300 px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-bold">
                         {existingProject.category}
                       </span>
-                  </div>
+                    </div>
                     
                     {/* Submission Date */}
-                    <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
-                      <span className="text-gray-400 font-medium">Submitted</span>
-                      <span className="text-white font-semibold">
+                    <div className="flex items-center justify-between p-3 md:p-4 bg-white/5 rounded-xl border border-white/10">
+                      <span className="text-gray-400 font-medium text-sm md:text-base">Submitted</span>
+                      <span className="text-white font-semibold text-sm md:text-base text-right">
                         {existingProject.submitted_at 
                           ? new Date(existingProject.submitted_at).toLocaleDateString('en-US', { 
                               month: 'short', 
@@ -712,9 +805,9 @@ export default function ProjectPage() {
                     </div>
 
                     {/* Status */}
-                    <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
-                      <span className="text-gray-400 font-medium">Status</span>
-                      <div className={`px-3 py-1 rounded-full text-sm font-bold ${
+                    <div className="flex items-center justify-between p-3 md:p-4 bg-white/5 rounded-xl border border-white/10">
+                      <span className="text-gray-400 font-medium text-sm md:text-base">Status</span>
+                      <div className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-bold ${
                         existingProject.status === 'submitted' 
                           ? 'bg-yellow-500/20 text-yellow-400' 
                           : existingProject.status === 'approved'
@@ -728,34 +821,34 @@ export default function ProjectPage() {
                          : existingProject.status === 'featured' ? 'Featured'
                          : 'Rejected'}
                       </div>
-                </div>
+                    </div>
               </div>
             </div>
 
                 {/* Quick Actions */}
-                <div className="bg-gradient-to-br from-gray-900/90 via-gray-800/90 to-gray-900/90 backdrop-blur-xl border border-gray-700/50 rounded-3xl overflow-hidden">
-                  <div className="bg-gradient-to-r from-blue-600/20 to-cyan-600/20 p-6 border-b border-gray-700/50">
-                    <h3 className="text-2xl font-bold text-white pixelify-sans flex items-center gap-3">
-                      <span className="text-3xl">🚀</span>
+                <div className="bg-gradient-to-br from-gray-900/90 via-gray-800/90 to-gray-900/90 backdrop-blur-xl border border-gray-700/50 rounded-2xl md:rounded-3xl overflow-hidden">
+                  <div className="bg-gradient-to-r from-blue-600/20 to-cyan-600/20 p-4 md:p-6 border-b border-gray-700/50">
+                    <h3 className="text-lg md:text-2xl font-bold text-white pixelify-sans flex items-center gap-2 md:gap-3">
+                      <span className="text-2xl md:text-3xl">🚀</span>
                       Quick Actions
-                </h3>
+                    </h3>
                   </div>
-                  <div className="p-6 space-y-4">
-                  <a
+                  <div className="p-4 md:p-6 space-y-3 md:space-y-4">
+                    <a
                       href={existingProject.github_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                      className="flex items-center gap-4 p-4 bg-gradient-to-r from-gray-700/50 to-gray-600/50 hover:from-gray-600/50 hover:to-gray-500/50 rounded-2xl border border-gray-600/50 hover:border-gray-500/50 transition-all duration-300 hover:scale-105 group"
-                  >
-                      <div className="w-12 h-12 bg-gray-700 group-hover:bg-gray-600 rounded-xl flex items-center justify-center transition-colors">
-                        <span className="text-xl">📂</span>
-                    </div>
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-gradient-to-r from-gray-700/50 to-gray-600/50 hover:from-gray-600/50 hover:to-gray-500/50 rounded-xl md:rounded-2xl border border-gray-600/50 hover:border-gray-500/50 transition-all duration-300 hover:scale-105 group"
+                    >
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-700 group-hover:bg-gray-600 rounded-lg md:rounded-xl flex items-center justify-center transition-colors">
+                        <span className="text-lg md:text-xl">📂</span>
+                      </div>
                       <div className="flex-1">
-                        <p className="text-white font-bold">Source Code</p>
-                        <p className="text-gray-400 text-sm">View on GitHub</p>
+                        <p className="text-white font-bold text-sm md:text-base">Source Code</p>
+                        <p className="text-gray-400 text-xs md:text-sm">View on GitHub</p>
                       </div>
                       <div className="text-gray-400 group-hover:text-white transition-colors">
-                        <span className="text-xl">→</span>
+                        <span className="text-lg md:text-xl">→</span>
                       </div>
                     </a>
 
@@ -1050,22 +1143,22 @@ export default function ProjectPage() {
 
   // Submission form
   return (
-    <div className="ml-0 lg:ml-64 p-6 transition-all duration-300">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="ml-0 lg:ml-64 p-4 md:p-6 transition-all duration-300 pb-20 lg:pb-6">
+      <div className="max-w-4xl mx-auto space-y-6 md:space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
           <div>
-            <h1 className="text-4xl font-bold text-white pixelify-sans mb-2">
+            <h1 className="text-2xl md:text-4xl font-bold text-white pixelify-sans mb-1 md:mb-2">
               {isEditing ? 'Edit Project' : 'Submit Project'}
             </h1>
-            <p className="text-purple-200">
+            <p className="text-purple-200 text-sm md:text-base">
               Provide your hosted game links and project details for judging
             </p>
           </div>
           {isEditing && (
             <button
               onClick={() => setIsEditing(false)}
-              className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              className="bg-gray-600 hover:bg-gray-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg font-semibold transition-colors text-sm md:text-base w-fit"
             >
               Cancel
             </button>
@@ -1073,11 +1166,11 @@ export default function ProjectPage() {
         </div>
 
         {/* Progress Steps */}
-        <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-6">
+        <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-4 md:p-6">
           <div className="flex items-center justify-between">
             {Array.from({ length: totalSteps }, (_, i) => (
               <div key={i} className="flex items-center">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-bold text-sm md:text-base ${
                   currentStep > i + 1 
                     ? 'bg-green-500 text-white' 
                     : currentStep === i + 1 
@@ -1087,37 +1180,37 @@ export default function ProjectPage() {
                   {currentStep > i + 1 ? '✓' : i + 1}
                 </div>
                 {i < totalSteps - 1 && (
-                  <div className={`w-16 h-1 mx-4 ${
+                  <div className={`w-8 md:w-16 h-1 mx-2 md:mx-4 ${
                     currentStep > i + 1 ? 'bg-green-500' : 'bg-purple-600'
                   }`}></div>
                 )}
               </div>
             ))}
           </div>
-          <div className="flex justify-between mt-4">
-            <span className="text-sm text-purple-300">Project Info</span>
-            <span className="text-sm text-purple-300">Game Links</span>
-            <span className="text-sm text-purple-300">Media & Assets</span>
-            <span className="text-sm text-purple-300">Review & Submit</span>
+          <div className="grid grid-cols-2 md:flex md:justify-between mt-3 md:mt-4 gap-2 md:gap-0">
+            <span className="text-xs md:text-sm text-purple-300 text-center md:text-left">Project Info</span>
+            <span className="text-xs md:text-sm text-purple-300 text-center md:text-left">Game Links</span>
+            <span className="text-xs md:text-sm text-purple-300 text-center md:text-left">Media & Assets</span>
+            <span className="text-xs md:text-sm text-purple-300 text-center md:text-left">Review & Submit</span>
           </div>
         </div>
 
         {/* Form Content */}
-        <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-8">
+        <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-4 md:p-8">
           {currentStep === 1 && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">
+            <div className="space-y-4 md:space-y-6">
+              <h2 className="text-xl md:text-2xl font-bold text-white pixelify-sans mb-4 md:mb-6">
                 Project Information
               </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div>
                   <label className="block text-sm font-medium text-purple-300 mb-2">
                     Project Name *
                   </label>
                   <input
                     type="text"
-                    className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                    className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 md:px-4 py-2 md:py-3 text-white placeholder-purple-400 text-sm md:text-base"
                     placeholder="Enter your game name"
                     value={formData.project_name}
                     onChange={(e) => setFormData({...formData, project_name: e.target.value})}
@@ -1129,7 +1222,7 @@ export default function ProjectPage() {
                     Category *
                   </label>
                   <select 
-                    className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white"
+                    className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 md:px-4 py-2 md:py-3 text-white text-sm md:text-base"
                     value={formData.category}
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
                   >
@@ -1146,8 +1239,8 @@ export default function ProjectPage() {
                   Project Description *
                 </label>
                 <textarea
-                  rows={6}
-                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                  rows={5}
+                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 md:px-4 py-2 md:py-3 text-white placeholder-purple-400 text-sm md:text-base resize-none"
                   placeholder="Describe your game, its mechanics, and what makes it unique..."
                   value={formData.project_description}
                   onChange={(e) => setFormData({...formData, project_description: e.target.value})}
@@ -1160,7 +1253,7 @@ export default function ProjectPage() {
                 </label>
                 <textarea
                   rows={4}
-                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 md:px-4 py-2 md:py-3 text-white placeholder-purple-400 text-sm md:text-base resize-none"
                   placeholder="Explain how your game uses Solana blockchain technology..."
                   value={formData.solana_integration}
                   onChange={(e) => setFormData({...formData, solana_integration: e.target.value})}
@@ -1171,26 +1264,26 @@ export default function ProjectPage() {
                 <label className="block text-sm font-medium text-purple-300 mb-2">
                   Tech Stack
                 </label>
-                <p className="text-purple-400 text-sm mb-3">
+                <p className="text-purple-400 text-xs md:text-sm mb-3">
                   Enter technologies used in your project, separated by commas
                 </p>
-                      <input
+                <input
                   type="text"
-                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                  className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 md:px-4 py-2 md:py-3 text-white placeholder-purple-400 text-sm md:text-base"
                   placeholder="Unity, Solana, React, TypeScript, Anchor, Godot, Phaser..."
                   value={techStackInput}
                   onChange={(e) => handleTechStackChange(e.target.value)}
                 />
                 {formData.tech_stack.length > 0 && (
                   <div className="mt-3">
-                    <p className="text-purple-300 text-sm mb-2">Technologies ({formData.tech_stack.length}):</p>
+                    <p className="text-purple-300 text-xs md:text-sm mb-2">Technologies ({formData.tech_stack.length}):</p>
                     <div className="flex flex-wrap gap-2">
                       {formData.tech_stack.map((tech, index) => (
-                        <span key={index} className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-sm">
+                        <span key={index} className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs md:text-sm">
                           {tech}
                         </span>
-                  ))}
-                </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -1490,41 +1583,43 @@ export default function ProjectPage() {
           )}
 
           {/* Navigation Buttons */}
-          <div className="flex justify-between pt-8 border-t border-purple-500/30">
+          <div className="flex flex-col sm:flex-row gap-3 sm:justify-between pt-6 md:pt-8 border-t border-purple-500/30">
             <button
               onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
               disabled={currentStep === 1}
-              className="bg-purple-700 hover:bg-purple-600 disabled:bg-purple-800 disabled:text-purple-400 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              className="bg-purple-700 hover:bg-purple-600 disabled:bg-purple-800 disabled:text-purple-400 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg font-semibold transition-colors text-sm md:text-base order-2 sm:order-1"
             >
               Previous
             </button>
             
-            {currentStep < totalSteps ? (
-              <button
-                onClick={() => setCurrentStep(Math.min(totalSteps, currentStep + 1))}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-              >
-                Next Step
-              </button>
-            ) : (
-              <button
-                onClick={handleSaveDraft}
-                disabled={saving}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-              >
-                {saving ? 'Saving...' : 'Save Draft'}
-              </button>
-            )}
+            <div className="flex flex-col sm:flex-row gap-3 order-1 sm:order-2">
+              {currentStep < totalSteps ? (
+                <button
+                  onClick={() => setCurrentStep(Math.min(totalSteps, currentStep + 1))}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg font-semibold transition-colors text-sm md:text-base"
+                >
+                  Next Step
+                </button>
+              ) : (
+                <button
+                  onClick={handleSaveDraft}
+                  disabled={saving}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg font-semibold transition-colors text-sm md:text-base"
+                >
+                  {saving ? 'Saving...' : 'Save Draft'}
+                </button>
+              )}
 
-            {currentStep === totalSteps && (
-              <button
-                onClick={handleSubmitProject}
-                disabled={submitting}
-                className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-              >
-                {submitting ? 'Submitting...' : '🚀 Submit Project'}
-              </button>
-            )}
+              {currentStep === totalSteps && (
+                <button
+                  onClick={handleSubmitProject}
+                  disabled={submitting}
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 md:px-8 py-2 md:py-3 rounded-lg font-semibold transition-colors text-sm md:text-base"
+                >
+                  {submitting ? 'Submitting...' : '🚀 Submit Project'}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

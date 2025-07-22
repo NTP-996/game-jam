@@ -53,10 +53,12 @@ export async function GET(
       // Public access - only allow viewing submitted/approved projects
       const supabase = createClient(supabaseUrl, supabaseAnonKey)
       
+      // First get the project
       const { data: project, error } = await supabase
-        .from('project_catalogue')
+        .from('projects')
         .select('*')
         .eq('id', projectId)
+        .in('status', ['submitted', 'approved', 'featured'])
         .single()
 
       if (error) {
@@ -71,6 +73,129 @@ export async function GET(
           { error: 'Failed to fetch project' },
           { status: 500 }
         )
+      }
+
+      // Enrich with team data if it's a team project
+      if (project.team_id) {
+        const { data: team } = await supabase
+          .from('teams')
+          .select('*')
+          .eq('id', project.team_id)
+          .single()
+
+        if (team) {
+          // Get team members first
+          const { data: teamMemberships, error: membersError } = await supabase
+            .from('team_memberships')
+            .select('*')
+            .eq('team_id', project.team_id)
+            .eq('status', 'active')
+
+          console.log('Team memberships query result:', { teamMemberships, membersError })
+          console.log('Team ID being queried:', project.team_id)
+
+          if (membersError) {
+            console.error('Error fetching team memberships:', membersError)
+            team.members = []
+          } else if (teamMemberships && teamMemberships.length > 0) {
+            // Get profile for each member separately
+            const membersWithProfiles = []
+            
+            for (const membership of teamMemberships) {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select(`
+                  id,
+                  full_name,
+                  username,
+                  avatar_url,
+                  bio,
+                  job_title,
+                  experience_level,
+                  skills,
+                  programming_languages,
+                  frameworks,
+                  github_url,
+                  twitter_url,
+                  discord_username,
+                  website_url,
+                  location
+                `)
+                .eq('id', membership.user_id)
+                .single()
+
+              if (profile) {
+                membersWithProfiles.push({
+                  ...membership,
+                  profiles: profile
+                })
+              } else {
+                // Include membership even without profile
+                membersWithProfiles.push({
+                  ...membership,
+                  profiles: null
+                })
+              }
+            }
+            
+            team.members = membersWithProfiles
+          } else {
+            team.members = []
+          }
+
+          // If no members found but creator exists, add creator as team leader
+          if (team.members.length === 0 && project.creator_id) {
+            const { data: creatorProfile } = await supabase
+              .from('profiles')
+              .select(`
+                id,
+                full_name,
+                username,
+                avatar_url,
+                bio,
+                job_title,
+                experience_level,
+                skills,
+                programming_languages,
+                frameworks,
+                github_url,
+                twitter_url,
+                discord_username,
+                website_url,
+                location
+              `)
+              .eq('id', project.creator_id)
+              .single()
+
+            if (creatorProfile) {
+              team.members = [{
+                id: 'creator-fallback',
+                user_id: project.creator_id,
+                role: 'Leader',
+                status: 'active',
+                can_invite: true,
+                can_manage_submissions: true,
+                joined_at: team.created_at,
+                profiles: creatorProfile
+              }]
+            }
+          }
+
+          project.team = team
+        }
+      }
+
+      // Get creator profile if it's an individual project
+      if (!project.team_id && project.creator_id) {
+        const { data: creatorProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', project.creator_id)
+          .single()
+
+        if (creatorProfile) {
+          project.creator_profile = creatorProfile
+        }
       }
 
       return NextResponse.json({ project })
@@ -105,6 +230,129 @@ export async function GET(
         { error: 'Project not found' },
         { status: 404 }
       )
+    }
+
+    // Enrich with team data if it's a team project
+    if (project.team_id) {
+      const { data: team } = await supabase
+        .from('teams')
+        .select('*')
+        .eq('id', project.team_id)
+        .single()
+
+      if (team) {
+        // Get team members first (authenticated)
+        const { data: teamMemberships, error: membersError } = await supabase
+          .from('team_memberships')
+          .select('*')
+          .eq('team_id', project.team_id)
+          .eq('status', 'active')
+
+        console.log('Authenticated team memberships query result:', { teamMemberships, membersError })
+        console.log('Authenticated Team ID being queried:', project.team_id)
+
+        if (membersError) {
+          console.error('Error fetching authenticated team memberships:', membersError)
+          team.members = []
+        } else if (teamMemberships && teamMemberships.length > 0) {
+          // Get profile for each member separately (authenticated)
+          const membersWithProfiles = []
+          
+          for (const membership of teamMemberships) {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select(`
+                id,
+                full_name,
+                username,
+                avatar_url,
+                bio,
+                job_title,
+                experience_level,
+                skills,
+                programming_languages,
+                frameworks,
+                github_url,
+                twitter_url,
+                discord_username,
+                website_url,
+                location
+              `)
+              .eq('id', membership.user_id)
+              .single()
+
+            if (profile) {
+              membersWithProfiles.push({
+                ...membership,
+                profiles: profile
+              })
+            } else {
+              // Include membership even without profile
+              membersWithProfiles.push({
+                ...membership,
+                profiles: null
+              })
+            }
+          }
+          
+          team.members = membersWithProfiles
+        } else {
+          team.members = []
+        }
+
+        // If no members found but creator exists, add creator as team leader (authenticated)
+        if (team.members.length === 0 && project.creator_id) {
+          const { data: creatorProfile } = await supabase
+            .from('profiles')
+            .select(`
+              id,
+              full_name,
+              username,
+              avatar_url,
+              bio,
+              job_title,
+              experience_level,
+              skills,
+              programming_languages,
+              frameworks,
+              github_url,
+              twitter_url,
+              discord_username,
+              website_url,
+              location
+            `)
+            .eq('id', project.creator_id)
+            .single()
+
+          if (creatorProfile) {
+            team.members = [{
+              id: 'creator-fallback',
+              user_id: project.creator_id,
+              role: 'Leader',
+              status: 'active',
+              can_invite: true,
+              can_manage_submissions: true,
+              joined_at: team.created_at,
+              profiles: creatorProfile
+            }]
+          }
+        }
+
+        project.team = team
+      }
+    }
+
+    // Get creator profile if it's an individual project
+    if (!project.team_id && project.creator_id) {
+      const { data: creatorProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', project.creator_id)
+        .single()
+
+      if (creatorProfile) {
+        project.creator_profile = creatorProfile
+      }
     }
 
     return NextResponse.json({ project })

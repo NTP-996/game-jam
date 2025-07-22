@@ -205,6 +205,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create team' }, { status: 500 })
     }
 
+    // Add the team leader as a member
+    const { error: membershipError } = await supabase
+      .from('team_memberships')
+      .insert({
+        team_id: team.id,
+        user_id: user.id,
+        role: 'Leader',
+        status: 'active',
+        can_invite: true,
+        can_manage_submissions: true
+      })
+
+    if (membershipError) {
+      console.error('Failed to add leader as team member:', membershipError)
+      // Don't fail the entire team creation, but log the error
+      // The team exists, but leader won't show up in members list
+    }
+
     return NextResponse.json({ team, message: 'Team created successfully' })
   } catch (error) {
     console.error('Team creation API error:', error)

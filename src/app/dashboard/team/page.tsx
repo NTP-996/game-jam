@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { ApiClient } from '@/lib/apiClient'
+import FixMembershipButton from './fix-membership'
 
 interface TeamMember {
   user_id: string
@@ -127,6 +128,8 @@ export default function TeamPage() {
       loadInitialData()
     }
   }, [user])
+
+
 
   const loadInitialData = async () => {
     try {
@@ -850,6 +853,11 @@ export default function TeamPage() {
             </div>
           </div>
         </div>
+
+        {/* Fix membership button if user is team leader but no members showing */}
+        {userTeam.leader_id === user?.id && (!userTeam.members || userTeam.members.length === 0) && (
+          <FixMembershipButton />
+        )}
 
         {/* Team Members & Actions Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
