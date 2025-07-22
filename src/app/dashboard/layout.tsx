@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import DashboardNav from '@/components/dashboard/DashboardNav'
+import MobileBottomNav from '@/components/dashboard/MobileBottomNav'
 import ProfileButton from '@/components/ProfileButton'
 import FloatingElements from '@/components/FloatingElements/FloatingElements'
 
@@ -27,6 +28,9 @@ export default function DashboardLayout({
       
       {/* Profile Button */}
       <ProfileButton />
+      
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
     </div>
   )
 } 

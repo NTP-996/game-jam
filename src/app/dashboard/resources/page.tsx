@@ -9,7 +9,9 @@ const ResourcesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const categories = [
-    { id: 'all', name: 'All Resources', icon: <BookOpen className="w-4 h-4" />, count: 25 },
+    { id: 'all', name: 'All Resources', icon: <BookOpen className="w-4 h-4" />, count: 36 },
+    { id: 'sponsors', name: 'Sponsor Resources', icon: <Trophy className="w-4 h-4" />, count: 3 },
+    { id: 'partners', name: 'Partners', icon: <Users className="w-4 h-4" />, count: 5 },
     { id: 'guides', name: 'Official Guides', icon: <BookOpen className="w-4 h-4" />, count: 1 },
     { id: 'jonas', name: 'SolPlay Jonas Resources', icon: <Star className="w-4 h-4" />, count: 15 },
     { id: 'videos', name: 'Video Tutorials', icon: <Play className="w-4 h-4" />, count: 1 },
@@ -267,6 +269,121 @@ const ResourcesPage = () => {
       content: "💡 Pro tip: Focus on gameplay first, blockchain second. The best Web3 games are great games that happen to use blockchain, not blockchain demos with game elements.",
       timestamp: "1 day ago",
       category: "Design Advice"
+    }
+  ];
+
+  const sponsorResources = [
+    {
+      id: 1,
+      name: "PlaySolana",
+      title: "PSG1 Console Development Kit",
+      description: "Unity SDK for seamless integration with PSG1 console. Build games with custom input system support and device simulator. Hackathon projects eligible for preinstallation.",
+      logo: "/assets/sponsor/PlaySolana.png",
+      category: "SDK",
+      links: [
+        { title: "Developer Guide", url: "https://developers.playsolana.com/" },
+        { title: "GitHub SDK", url: "https://github.com/playsolana/PlaySolana.Unity-SDK" }
+      ],
+      features: ["Unity Integration", "PSG1 Console Support", "7,000+ Player Distribution", "Preinstallation Opportunity"]
+    },
+    {
+      id: 2,
+      name: "Civic Auth",
+      title: "Embedded Wallet & Authentication",
+      description: "Skip wallet setup with email or social login. Embedded Solana wallets with no seed phrases. $10k in platform credits for Game Jam projects.",
+      logo: "/assets/sponsor/civic.jpg",
+      category: "Authentication",
+      links: [
+        { title: "Documentation", url: "https://docs.civic.com/" }
+      ],
+      features: ["Social Login", "No Seed Phrases", "5 Minute Integration", "$10k Credits for Jam Projects"]
+    },
+    {
+      id: 3,
+      name: "Solana Foundation",
+      title: "Developer Resources & Grants",
+      description: "Official Solana documentation, grants program, and developer support. Access comprehensive tools and resources for building on Solana.",
+      logo: "/assets/sponsor/solanafoundation.svg",
+      category: "Documentation",
+      links: [
+        { title: "Developer Docs", url: "https://docs.solana.com/" },
+        { title: "Grants Program", url: "https://solana.org/grants" },
+        { title: "Website", url: "https://solana.org/" }
+      ],
+      features: ["Official Documentation", "Grant Opportunities", "Technical Support", "Community Events"]
+    }
+  ];
+
+  const partnerResources = [
+    {
+      id: 1,
+      name: "SEND Arcade",
+      title: "Web3 Gaming Platform",
+      description: "Web3 gaming platform connecting players and developers in the Solana ecosystem. Community-driven gaming experiences and innovative initiatives.",
+      logo: "/assets/partner/sendlogo.png",
+      category: "Platform",
+      links: [
+        { title: "Website", url: "http://sendarcade.xyz/" },
+        { title: "Twitter", url: "https://x.com/SENDArcadeX" }
+      ],
+      features: ["Web3 Gaming Platform", "Community Building", "Developer Ecosystem", "Solana Integration"]
+    },
+    {
+      id: 2,
+      name: "Honeycomb Protocol",
+      title: "Blockchain Game Development SDK",
+      description: "Enables rapid deployment of on-chain games with 500x fee reduction via State-Compression. No blockchain coding experience required.",
+      logo: "/assets/sponsor/honeycomb.jpg",
+      category: "SDK",
+      links: [
+        { title: "Documentation", url: "https://docs.honeycombprotocol.com/" },
+        { title: "GitHub", url: "https://github.com/honeycomb-protocol" },
+        { title: "Twitter", url: "https://x.com/honeycomb_prtcl" }
+      ],
+      features: ["500x Fee Reduction", "Multi-Engine Support", "On-chain Games", "No Smart Contract Coding"]
+    },
+    {
+      id: 3,
+      name: "Superteam Vietnam",
+      title: "Local Developer Community",
+      description: "Vietnam's local hub driving Solana ecosystem growth through community building, educational resources, and developer support.",
+      logo: "/assets/logos/superteam.svg",
+      category: "Community",
+      links: [
+        { title: "Website", url: "https://vn.superteam.fun/" },
+        { title: "Telegram", url: "https://t.me/solanainvietnam" },
+        { title: "Twitter", url: "https://x.com/SuperteamVN" }
+      ],
+      features: ["Local Community", "Educational Workshops", "Developer Mentorship", "Global Network Connection"]
+    },
+    {
+      id: 4,
+      name: "BIC & Superteam Korea",
+      title: "Korea's Premier Indie Game Festival",
+      description: "Korea's major indie game festival showcasing innovative games and connecting developers with the global gaming industry. Bridges traditional indie gaming with Web3 innovation.",
+      logo: "/assets/partner/STKRlogo.png",
+      category: "Festival",
+      links: [
+        { title: "BIC Festival", url: "https://bicfest.org/" },
+        { title: "BIC Twitter", url: "https://x.com/BIC_Festival" },
+        { title: "Superteam Korea", url: "https://x.com/SuperteamKorea" }
+      ],
+      features: ["Indie Game Festival", "Publisher Meetings", "Industry Networking", "Web3 Innovation"]
+    },
+    {
+      id: 5,
+      name: "Superteam Hub Jogja (Obelisk)",
+      title: "Web3 Development Studio & Coworking Space",
+      description: "Comprehensive Web3 development and marketing studio that builds games, DeFi, and infrastructure on Solana. Provides coworking space for Solana builders in Yogyakarta.",
+      logo: "/assets/partner/obelisklogo.png",
+      category: "Studio",
+      links: [
+        { title: "Website", url: "https://www.obeliskprotocol.io/" },
+        { title: "Hub Portal", url: "https://hub.obeliskprotocol.io/" },
+        { title: "Discord", url: "https://discord.com/invite/uMRnMbMtgQ" },
+        { title: "Twitter", url: "https://x.com/ObeliskProtocol" }
+      ],
+      features: ["AI-Native Development", "Physical Coworking Space", "Full-Stack Web3", "Games & DeFi"]
     }
   ];
 
@@ -674,6 +791,106 @@ const ResourcesPage = () => {
     </div>
   );
 
+  const renderSponsorResources = () => (
+    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      {sponsorResources.map((sponsor) => (
+        <div key={sponsor.id} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 hover:bg-white/15 transition-all duration-200">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/10 flex items-center justify-center">
+              <Image
+                src={sponsor.logo}
+                alt={sponsor.name}
+                width={48}
+                height={48}
+                className="w-full h-full object-cover rounded-xl"
+              />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white pixelify-sans">{sponsor.name}</h3>
+              <span className="text-purple-300 text-sm">{sponsor.category}</span>
+            </div>
+          </div>
+          
+          <h4 className="text-white font-semibold mb-2">{sponsor.title}</h4>
+          <p className="text-purple-200 text-sm mb-4 line-clamp-3">{sponsor.description}</p>
+          
+          <div className="flex flex-wrap gap-2 mb-4">
+            {sponsor.features.map((feature, idx) => (
+              <span key={idx} className="bg-purple-600/50 text-purple-200 px-2 py-1 rounded text-xs">
+                {feature}
+              </span>
+            ))}
+          </div>
+          
+          <div className="flex flex-col gap-2">
+            {sponsor.links.map((link, idx) => (
+              <a
+                key={idx}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between bg-purple-600/20 hover:bg-purple-600/40 text-purple-200 hover:text-white px-3 py-2 rounded-lg text-sm transition-colors"
+              >
+                <span>{link.title}</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderPartnerResources = () => (
+    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      {partnerResources.map((partner) => (
+        <div key={partner.id} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 hover:bg-white/15 transition-all duration-200">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/10 flex items-center justify-center">
+              <Image
+                src={partner.logo}
+                alt={partner.name}
+                width={48}
+                height={48}
+                className="w-full h-full object-cover rounded-xl"
+              />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white pixelify-sans">{partner.name}</h3>
+              <span className="text-purple-300 text-sm">{partner.category}</span>
+            </div>
+          </div>
+          
+          <h4 className="text-white font-semibold mb-2">{partner.title}</h4>
+          <p className="text-purple-200 text-sm mb-4 line-clamp-3">{partner.description}</p>
+          
+          <div className="flex flex-wrap gap-2 mb-4">
+            {partner.features.map((feature, idx) => (
+              <span key={idx} className="bg-blue-600/50 text-blue-200 px-2 py-1 rounded text-xs">
+                {feature}
+              </span>
+            ))}
+          </div>
+          
+          <div className="flex flex-col gap-2">
+            {partner.links.map((link, idx) => (
+              <a
+                key={idx}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between bg-blue-600/20 hover:bg-blue-600/40 text-blue-200 hover:text-white px-3 py-2 rounded-lg text-sm transition-colors"
+              >
+                <span>{link.title}</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
   const renderContent = () => {
     switch (activeCategory) {
       case 'guides': return renderGuides();
@@ -682,9 +899,19 @@ const ResourcesPage = () => {
       case 'obelisk': return renderObeliskVideos();
       case 'superteamvn': return renderSuperteamVNVideos();
       case 'social': return renderSocialContent();
+      case 'sponsors': return renderSponsorResources();
+      case 'partners': return renderPartnerResources();
       default: 
         return (
           <div className="space-y-12">
+            <div>
+              <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">🏆 Sponsor Resources</h2>
+              {renderSponsorResources()}
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">🤝 Partners</h2>
+              {renderPartnerResources()}
+            </div>
             <div>
               <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">📘 Official Solana Guide</h2>
               {renderGuides()}
@@ -711,7 +938,7 @@ const ResourcesPage = () => {
   };
 
   return (
-    <div className="ml-0 lg:ml-64 p-6 transition-all duration-300">
+    <div className="ml-0 lg:ml-64 p-6 pb-20 lg:pb-6 transition-all duration-300">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center mb-12">

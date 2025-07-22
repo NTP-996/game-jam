@@ -31,7 +31,7 @@ export default function DashboardHomePage() {
   }
 
   return (
-    <div className="ml-0 lg:ml-64 transition-all duration-300">      
+    <div className="ml-0 lg:ml-64 pb-20 lg:pb-0 transition-all duration-300">      
       <main className="main">
         <Hero />
         <About />

@@ -200,27 +200,27 @@ export default function CataloguePage() {
     })
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-800">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-800 pb-20 lg:pb-6">
       {/* Header */}
       <div className="relative overflow-hidden bg-gradient-to-r from-purple-900/90 to-blue-900/90 border-b border-purple-500/30">
-        <div className="container mx-auto px-6 py-16">
+        <div className="container mx-auto px-4 md:px-6 py-8 md:py-16">
           <div className="relative z-10">
-            <h1 className="text-6xl font-bold text-white mb-4 font-pixelify tracking-wider">
+            <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold text-white mb-2 md:mb-4 font-pixelify tracking-wider break-words">
               Game Catalogue
             </h1>
-            <p className="text-xl text-purple-200 max-w-2xl">
+            <p className="text-sm md:text-lg lg:text-xl text-purple-200 max-w-2xl">
               Discover amazing games, teams, and projects from our hackathons
             </p>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-4 md:px-6 py-4 md:py-8">
         {/* Navigation Tabs */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-col sm:flex-row gap-2 mb-6 md:mb-8">
           <button
             onClick={() => setActiveTab('games')}
-            className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+            className={`px-4 py-3 rounded-lg font-semibold transition-all text-sm md:text-base ${
               activeTab === 'games'
                 ? 'bg-purple-600 text-white shadow-lg'
                 : 'bg-purple-800/50 text-purple-200 hover:bg-purple-700/50 hover:text-white'
@@ -230,7 +230,7 @@ export default function CataloguePage() {
           </button>
           <button
             onClick={() => setActiveTab('teams')}
-            className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+            className={`px-4 py-3 rounded-lg font-semibold transition-all text-sm md:text-base ${
               activeTab === 'teams'
                 ? 'bg-purple-600 text-white shadow-lg'
                 : 'bg-purple-800/50 text-purple-200 hover:bg-purple-700/50 hover:text-white'
@@ -240,7 +240,7 @@ export default function CataloguePage() {
           </button>
           <button
             onClick={() => setActiveTab('supergamejam2024')}
-            className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+            className={`px-4 py-3 rounded-lg font-semibold transition-all text-sm md:text-base ${
               activeTab === 'supergamejam2024'
                 ? 'bg-purple-600 text-white shadow-lg'
                 : 'bg-purple-800/50 text-purple-200 hover:bg-purple-700/50 hover:text-white'

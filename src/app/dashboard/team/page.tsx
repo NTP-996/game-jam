@@ -461,8 +461,8 @@ export default function TeamPage() {
 
   if (loading) {
     return (
-      <div className="ml-0 lg:ml-64 p-6 transition-all duration-300">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-800 pb-20 lg:pb-6">
+        <div className="container mx-auto px-4 md:px-6 py-4 md:py-8">
           <div className="flex items-center justify-center min-h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
@@ -476,8 +476,8 @@ export default function TeamPage() {
 
   if (!user) {
     return (
-      <div className="ml-0 lg:ml-64 p-6 transition-all duration-300">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-800 pb-20 lg:pb-6">
+        <div className="container mx-auto px-4 md:px-6 py-4 md:py-8">
           <div className="text-center py-12">
             <p className="text-purple-200 mb-4">Please sign in to access team management.</p>
             <Link href="/auth/signin" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg">
@@ -534,21 +534,21 @@ export default function TeamPage() {
   // User doesn't have a team - show team finding interface
   if (!userTeam) {
     return (
-      <div className="ml-0 lg:ml-64 p-6 transition-all duration-300">
-        <div className="max-w-7xl mx-auto space-y-8">
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-800 pb-20 lg:pb-6">
+        <div className="container mx-auto px-4 md:px-6 py-4 md:py-8 space-y-4 md:space-y-8">
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
             <div>
-              <h1 className="text-4xl font-bold text-white pixelify-sans mb-2">
+              <h1 className="text-lg md:text-4xl font-bold text-white pixelify-sans mb-1 md:mb-2">
                 Team Management
               </h1>
-              <p className="text-purple-200">
-                Form a team or join existing teams to participate in the hackathon
+              <p className="text-purple-200 text-xs md:text-base">
+                Form teams to participate
               </p>
             </div>
             <button
               onClick={() => setShowCreateForm(true)}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 md:px-6 md:py-3 rounded font-semibold transition-colors text-xs md:text-base w-full md:w-auto"
             >
               🚀 Create Team
             </button>
@@ -563,29 +563,29 @@ export default function TeamPage() {
           <InvitationsSection />
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-blue-500/20 backdrop-blur-sm border border-blue-500/30 rounded-lg p-6">
-              <div className="text-2xl text-blue-400 mb-2">👥</div>
-              <h3 className="text-lg font-bold text-blue-400 pixelify-sans">{teamStats.totalTeams}</h3>
-              <p className="text-sm text-purple-200">Teams Formed</p>
+          <div className="grid grid-cols-3 gap-2 md:gap-6">
+            <div className="bg-blue-500/20 backdrop-blur-sm border border-blue-500/30 rounded p-3 md:p-6">
+              <div className="text-lg md:text-2xl text-blue-400 mb-1">👥</div>
+              <h3 className="text-sm md:text-lg font-bold text-blue-400 pixelify-sans">{teamStats.totalTeams}</h3>
+              <p className="text-xs text-purple-200">Teams</p>
             </div>
-            <div className="bg-green-500/20 backdrop-blur-sm border border-green-500/30 rounded-lg p-6">
-              <div className="text-2xl text-green-400 mb-2">🔍</div>
-              <h3 className="text-lg font-bold text-green-400 pixelify-sans">{teamStats.recruitingTeams}</h3>
-              <p className="text-sm text-purple-200">Looking for Members</p>
+            <div className="bg-green-500/20 backdrop-blur-sm border border-green-500/30 rounded p-3 md:p-6">
+              <div className="text-lg md:text-2xl text-green-400 mb-1">🔍</div>
+              <h3 className="text-sm md:text-lg font-bold text-green-400 pixelify-sans">{teamStats.recruitingTeams}</h3>
+              <p className="text-xs text-purple-200">Recruiting</p>
             </div>
-            <div className="bg-yellow-500/20 backdrop-blur-sm border border-yellow-500/30 rounded-lg p-6">
-              <div className="text-2xl text-yellow-400 mb-2">⏰</div>
-              <h3 className="text-lg font-bold text-yellow-400 pixelify-sans">{teamStats.daysUntilLock} days</h3>
-              <p className="text-sm text-purple-200">Until Team Lock</p>
+            <div className="bg-yellow-500/20 backdrop-blur-sm border border-yellow-500/30 rounded p-3 md:p-6">
+              <div className="text-lg md:text-2xl text-yellow-400 mb-1">⏰</div>
+              <h3 className="text-sm md:text-lg font-bold text-yellow-400 pixelify-sans">{teamStats.daysUntilLock}</h3>
+              <p className="text-xs text-purple-200">Days</p>
             </div>
           </div>
 
           {/* Toggle Between Create and Join */}
-          <div className="flex space-x-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
             <button
               onClick={() => { setShowCreateForm(true); setShowJoinTeams(false) }}
-              className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+              className={`px-4 py-3 rounded-lg font-semibold transition-colors text-sm ${
                 showCreateForm 
                   ? 'bg-green-600 text-white' 
                   : 'bg-purple-800/50 text-purple-300 hover:text-white'
@@ -595,7 +595,7 @@ export default function TeamPage() {
             </button>
             <button
               onClick={() => { setShowCreateForm(false); setShowJoinTeams(true) }}
-              className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+              className={`px-4 py-3 rounded-lg font-semibold transition-colors text-sm ${
                 showJoinTeams 
                   ? 'bg-blue-600 text-white' 
                   : 'bg-purple-800/50 text-purple-300 hover:text-white'
@@ -607,11 +607,11 @@ export default function TeamPage() {
 
           {/* Create Team Form */}
           {showCreateForm && (
-            <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-8">
-              <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">
+            <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-4 md:p-8">
+              <h2 className="text-xl md:text-2xl font-bold text-white pixelify-sans mb-4 md:mb-6">
                 Create Your Team
               </h2>
-              <form onSubmit={handleCreateTeam} className="space-y-6">
+              <form onSubmit={handleCreateTeam} className="space-y-4 md:space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-purple-300 mb-2">
                     Team Name *
@@ -621,7 +621,7 @@ export default function TeamPage() {
                     required
                     value={createTeamData.name}
                     onChange={(e) => setCreateTeamData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                    className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 md:px-4 md:py-3 text-white placeholder-purple-400 text-sm md:text-base"
                     placeholder="Enter your team name"
                   />
                 </div>
@@ -631,11 +631,11 @@ export default function TeamPage() {
                     Description *
                   </label>
                   <textarea
-                    rows={4}
+                    rows={3}
                     required
                     value={createTeamData.description}
                     onChange={(e) => setCreateTeamData(prev => ({ ...prev, description: e.target.value }))}
-                    className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                    className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 md:px-4 md:py-3 text-white placeholder-purple-400 text-sm md:text-base"
                     placeholder="Describe your project idea and goals"
                   />
                 </div>
@@ -648,12 +648,12 @@ export default function TeamPage() {
                     type="text"
                     value={createTeamData.looking_for}
                     onChange={(e) => setCreateTeamData(prev => ({ ...prev, looking_for: e.target.value }))}
-                    className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                    className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 md:px-4 md:py-3 text-white placeholder-purple-400 text-sm md:text-base"
                     placeholder="e.g., Unity Developer, Smart Contract Developer, UI/UX Designer (comma separated)"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-purple-300 mb-2">
                       Max Team Size
@@ -661,7 +661,7 @@ export default function TeamPage() {
                     <select 
                       value={createTeamData.max_members}
                       onChange={(e) => setCreateTeamData(prev => ({ ...prev, max_members: parseInt(e.target.value) }))}
-                      className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white"
+                      className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 md:px-4 md:py-3 text-white text-sm md:text-base"
                     >
                       <option value={2}>2 members</option>
                       <option value={3}>3 members</option>
@@ -682,7 +682,7 @@ export default function TeamPage() {
                     <select 
                       value={createTeamData.is_public ? 'public' : 'private'}
                       onChange={(e) => setCreateTeamData(prev => ({ ...prev, is_public: e.target.value === 'public' }))}
-                      className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white"
+                      className="w-full bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 md:px-4 md:py-3 text-white text-sm md:text-base"
                     >
                       <option value="public">Public (anyone can join)</option>
                       <option value="private">Private (invite only)</option>
@@ -690,17 +690,17 @@ export default function TeamPage() {
                   </div>
                 </div>
 
-                <div className="flex space-x-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <button
                     type="submit"
-                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors text-sm md:text-base"
                   >
                     Create Team
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowCreateForm(false)}
-                    className="bg-purple-700 hover:bg-purple-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+                    className="bg-purple-700 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors text-sm md:text-base"
                   >
                     Cancel
                   </button>
@@ -711,23 +711,23 @@ export default function TeamPage() {
 
           {/* Browse Teams */}
           {showJoinTeams && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <h2 className="text-2xl font-bold text-white pixelify-sans">
+            <div className="space-y-4 md:space-y-6">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <h2 className="text-xl md:text-2xl font-bold text-white pixelify-sans">
                   Available Teams ({filteredTeams.length})
                 </h2>
-                <div className="flex space-x-4">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                   <input
                     type="text"
                     placeholder="Search teams..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-2 text-white placeholder-purple-400"
+                    className="bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 md:px-4 text-white placeholder-purple-400 text-sm md:text-base flex-1 sm:w-48"
                   />
                   <select 
                     value={skillFilter}
                     onChange={(e) => setSkillFilter(e.target.value)}
-                    className="bg-purple-900/50 border border-purple-500/50 rounded-lg px-4 py-2 text-white"
+                    className="bg-purple-900/50 border border-purple-500/50 rounded-lg px-3 py-2 md:px-4 text-white text-sm md:text-base flex-1 sm:w-auto"
                   >
                     <option value="">All Skills</option>
                     <option value="Unity">Unity Developer</option>
@@ -741,7 +741,7 @@ export default function TeamPage() {
               </div>
 
               {filteredTeams.length === 0 ? (
-                <div className="text-center py-12">
+                <div className="text-center py-8 md:py-12">
                   <p className="text-purple-200 mb-4">No teams found matching your criteria.</p>
                   <button
                     onClick={() => { setSearchTerm(''); setSkillFilter('') }}
@@ -751,19 +751,19 @@ export default function TeamPage() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                   {filteredTeams.map((team) => (
-                    <div key={team.id} className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-6">
+                    <div key={team.id} className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-4 md:p-6">
                       <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <h3 className="text-xl font-bold text-white pixelify-sans">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg md:text-xl font-bold text-white pixelify-sans truncate">
                             {team.name}
                           </h3>
                           <p className="text-sm text-purple-300">
                             {team.member_count}/{team.max_members} members
                           </p>
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-sm ${
+                        <span className={`px-2 py-1 rounded-full text-xs flex-shrink-0 ml-2 ${
                           team.member_count < team.max_members
                             ? 'bg-green-500/20 text-green-400'
                             : 'bg-gray-500/20 text-gray-400'
@@ -772,16 +772,16 @@ export default function TeamPage() {
                         </span>
                       </div>
 
-                      <p className="text-purple-200 mb-4">
+                      <p className="text-purple-200 mb-4 text-sm md:text-base">
                         {team.description}
                       </p>
 
                       {team.looking_for && Array.isArray(team.looking_for) && team.looking_for.length > 0 && (
                         <div className="mb-4">
                           <h4 className="text-sm font-semibold text-purple-300 mb-2">Looking for:</h4>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-1 md:gap-2">
                                                       {team.looking_for.map((skill, index) => (
-                            <span key={index} className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-sm">
+                            <span key={index} className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs">
                               {skill || 'Unknown Skill'}
                             </span>
                           ))}
@@ -793,7 +793,7 @@ export default function TeamPage() {
                         <button 
                           onClick={() => handleJoinTeam(team.id)}
                           disabled={team.member_count >= team.max_members}
-                          className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-2 rounded-lg font-semibold transition-colors"
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-2 rounded-lg font-semibold transition-colors text-sm"
                         >
                           {team.member_count >= team.max_members ? 'Team Full' : 'Request to Join'}
                         </button>
@@ -811,8 +811,8 @@ export default function TeamPage() {
 
   // User has a team - show team dashboard
   return (
-    <div className="ml-0 lg:ml-64 p-6 transition-all duration-300">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-800 pb-20 lg:pb-6">
+      <div className="container mx-auto px-4 md:px-6 py-4 md:py-8 space-y-4 md:space-y-8">
         {error && (
           <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4">
             <p className="text-red-400">{error}</p>
@@ -820,66 +820,68 @@ export default function TeamPage() {
         )}
 
         {/* Team Header */}
-        <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-8">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-white pixelify-sans mb-2">
-                {userTeam.name}
-              </h1>
-              <p className="text-purple-200 mb-4">
-                {userTeam.description}
-              </p>
-              <div className="flex items-center space-x-4">
-                <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm">
-                  Active Team
-                </span>
-                <span className="text-purple-300 text-sm">
-                  {userTeam.member_count}/{userTeam.max_members} members
-                </span>
-                <span className="text-purple-300 text-sm">
-                  Created {new Date(userTeam.created_at).toLocaleDateString()}
-                </span>
+        <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-4 md:p-8">
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-3 sm:space-y-0">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl md:text-4xl font-bold text-white pixelify-sans mb-2 break-words">
+                  {userTeam.name}
+                </h1>
+                <p className="text-purple-200 mb-3 text-sm md:text-base break-words">
+                  {userTeam.description}
+                </p>
+              </div>
+              <div className="flex justify-start sm:justify-end flex-shrink-0">
+                <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+                  Leave Team
+                </button>
               </div>
             </div>
-            <div className="flex space-x-3">
-              <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
-                Leave Team
-              </button>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm w-fit">
+                Active Team
+              </span>
+              <span className="text-purple-300 text-sm">
+                {userTeam.member_count}/{userTeam.max_members} members
+              </span>
+              <span className="text-purple-300 text-sm">
+                Created {new Date(userTeam.created_at).toLocaleDateString()}
+              </span>
             </div>
           </div>
         </div>
 
         {/* Team Members & Actions Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
           {/* Team Members */}
-          <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-6">
-            <h2 className="text-xl font-bold text-white pixelify-sans mb-6">
+          <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-4 md:p-6">
+            <h2 className="text-lg md:text-xl font-bold text-white pixelify-sans mb-4 md:mb-6">
               Team Members ({userTeam.member_count})
             </h2>
             
             {userTeam.members && userTeam.members.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 {userTeam.members.map((member) => (
-                  <div key={member.user_id} className="flex items-center justify-between p-4 bg-purple-700/30 rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 rounded-full bg-purple-600 overflow-hidden">
+                  <div key={member.user_id} className="flex items-center justify-between gap-3 p-3 bg-purple-700/30 rounded-lg">
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-purple-600 overflow-hidden flex-shrink-0">
                         {member.avatar_url ? (
                           <Image
                             src={member.avatar_url}
                             alt={member.name}
-                            width={48}
-                            height={48}
+                            width={40}
+                            height={40}
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-white font-bold">
+                          <div className="w-full h-full flex items-center justify-center text-white font-bold text-sm">
                             {member.name ? member.name.charAt(0).toUpperCase() : '?'}
                           </div>
                         )}
                       </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-white">{member.name || 'Unknown Member'}</h3>
-                        <p className="text-purple-300 text-sm">{member.role || 'Member'}</p>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-white text-sm truncate">{member.name || 'Unknown Member'}</h3>
+                        <p className="text-purple-300 text-xs">{member.role || 'Member'}</p>
                       </div>
                     </div>
                     
@@ -887,7 +889,7 @@ export default function TeamPage() {
                     {userTeam.leader_id === user?.id && member.user_id !== user?.id && (
                       <button 
                         onClick={() => handleRemoveMember(member.user_id, member.name)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors flex-shrink-0"
                       >
                         Remove
                       </button>
@@ -896,7 +898,7 @@ export default function TeamPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-purple-300 text-center py-8">
+              <p className="text-purple-300 text-center py-6 md:py-8 text-sm">
                 Loading team members...
               </p>
             )}
@@ -906,7 +908,7 @@ export default function TeamPage() {
                 onClick={() => {
                   setShowInviteModal(true)
                 }}
-                className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition-colors"
+                className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition-colors text-sm"
               >
                 + Invite Member
               </button>
@@ -914,22 +916,22 @@ export default function TeamPage() {
           </div>
 
           {/* Quick Actions */}
-          <div className="space-y-6">
-            <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-6">
-              <h2 className="text-xl font-bold text-white pixelify-sans mb-4">
+          <div className="space-y-4 md:space-y-6">
+            <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-4 md:p-6">
+              <h2 className="text-lg md:text-xl font-bold text-white pixelify-sans mb-4">
                 Team Actions
               </h2>
               <div className="space-y-3">
                 {!teamSubmission && (
                   <Link
                     href="/dashboard/project"
-                    className="flex items-center justify-between p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"
+                    className="flex items-center justify-between p-3 md:p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"
                   >
                     <div className="flex items-center space-x-3">
-                      <span className="text-xl">🎮</span>
-                      <span className="font-semibold">Project Submission</span>
+                      <span className="text-lg md:text-xl">🎮</span>
+                      <span className="font-semibold text-sm md:text-base">Project Submission</span>
                     </div>
-                    <span>→</span>
+                    <span className="text-lg md:text-xl">→</span>
                   </Link>
                 )}
               </div>
@@ -938,22 +940,22 @@ export default function TeamPage() {
         </div>
 
         {/* Project Submission Status */}
-        <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-8">
-          <h2 className="text-2xl font-bold text-white pixelify-sans mb-6">
+        <div className="bg-purple-800/50 backdrop-blur-sm border border-purple-500/30 rounded-lg p-4 md:p-8">
+          <h2 className="text-lg md:text-2xl font-bold text-white pixelify-sans mb-4 md:mb-6">
             Team Project Submission
           </h2>
 
           {teamSubmission ? (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Simple Project Card */}
               <Link
                 href="/dashboard/project"
-                className="block bg-white/10 hover:bg-white/15 backdrop-blur-sm border border-white/20 hover:border-white/30 rounded-xl p-6 transition-all duration-200 hover:transform hover:scale-[1.02]"
+                className="block bg-white/10 hover:bg-white/15 backdrop-blur-sm border border-white/20 hover:border-white/30 rounded-xl p-4 md:p-6 transition-all duration-200 hover:transform hover:scale-[1.02]"
               >
-                <div className="flex items-center gap-6">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 md:gap-6">
                   {/* Project Logo */}
                   {teamSubmission.logo_url && (
-                    <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/10 border border-purple-500/30 p-2 flex-shrink-0">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden bg-white/10 border border-purple-500/30 p-2 flex-shrink-0 mx-auto sm:mx-0">
                       <Image
                         src={teamSubmission.logo_url}
                         alt={`${teamSubmission.project_name} logo`}
@@ -969,13 +971,13 @@ export default function TeamPage() {
                   )}
 
                   {/* Project Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-2xl font-bold text-white pixelify-sans">
+                  <div className="flex-1 min-w-0 text-center sm:text-left">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 mb-2">
+                      <h3 className="text-lg md:text-2xl font-bold text-white pixelify-sans break-words">
                         {teamSubmission.project_name}
                       </h3>
                       {/* Status Badge */}
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      <span className={`px-2 py-1 rounded-full text-xs md:text-sm font-medium inline-block mt-1 sm:mt-0 ${
                         teamSubmission.status === 'submitted' 
                           ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
                           : teamSubmission.status === 'approved'
@@ -993,10 +995,10 @@ export default function TeamPage() {
                          : 'Rejected'}
                       </span>
                     </div>
-                    <p className="text-purple-200 text-lg mb-3 line-clamp-2">
+                    <p className="text-purple-200 text-sm md:text-lg mb-3 line-clamp-2 break-words">
                       {teamSubmission.project_description}
                     </p>
-                    <div className="flex items-center gap-3 text-sm text-purple-300">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-xs md:text-sm text-purple-300">
                       <span className="bg-purple-600/30 px-2 py-1 rounded">
                         {teamSubmission.category}
                       </span>
@@ -1015,29 +1017,29 @@ export default function TeamPage() {
                   </div>
 
                   {/* Arrow Icon */}
-                  <div className="text-purple-300 text-2xl flex-shrink-0">
+                  <div className="text-purple-300 text-xl md:text-2xl flex-shrink-0 mx-auto sm:mx-0">
                     →
                   </div>
                 </div>
               </Link>
             </div>
           ) : (
-            <div className="text-center py-16">
-              <div className="text-8xl mb-6">🚀</div>
-              <h3 className="text-3xl font-bold text-white mb-4 pixelify-sans">Ready to Submit Your Project?</h3>
-              <p className="text-xl text-purple-200 mb-8 max-w-2xl mx-auto">
+            <div className="text-center py-8 md:py-16">
+              <div className="text-4xl md:text-8xl mb-4 md:mb-6">🚀</div>
+              <h3 className="text-xl md:text-3xl font-bold text-white mb-3 md:mb-4 pixelify-sans">Ready to Submit Your Project?</h3>
+              <p className="text-sm md:text-xl text-purple-200 mb-6 md:mb-8 max-w-2xl mx-auto px-4">
                 Upload your game, provide project details, and showcase your Solana integration to compete for amazing prizes!
               </p>
               
               {/* Temporary fix button */}
-              <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-6 mb-8 max-w-2xl mx-auto">
-                <h4 className="text-yellow-400 font-semibold mb-2">🔧 Already have a project?</h4>
-                <p className="text-yellow-200 text-sm mb-4">
+              <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 md:p-6 mb-6 md:mb-8 max-w-2xl mx-auto">
+                <h4 className="text-yellow-400 font-semibold mb-2 text-sm md:text-base">🔧 Already have a project?</h4>
+                <p className="text-yellow-200 text-xs md:text-sm mb-4">
                   If you already submitted a project but it's not showing here, it might be linked as an individual project instead of a team project. Click below to fix this:
                 </p>
                 <button
                   onClick={fixProjectTeamAssignment}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors mr-4"
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold transition-colors text-sm md:text-base"
                 >
                   🔧 Convert Individual Project to Team Project
                 </button>
@@ -1045,7 +1047,7 @@ export default function TeamPage() {
               
               <Link
                 href="/dashboard/project"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all transform hover:scale-105 inline-flex items-center gap-3"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 md:px-10 md:py-4 rounded-xl font-bold text-sm md:text-lg transition-all transform hover:scale-105 inline-flex items-center gap-2 md:gap-3"
               >
                 <span>🎮</span>
                 Start Project Submission
@@ -1056,11 +1058,11 @@ export default function TeamPage() {
 
         {/* Invite Member Modal */}
         {showInviteModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
-            <div className="bg-purple-900 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-white pixelify-sans">
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 md:p-4 z-50">
+            <div className="bg-purple-900 rounded-lg max-w-2xl w-full max-h-[90vh] md:max-h-[80vh] overflow-y-auto">
+              <div className="p-4 md:p-6">
+                <div className="flex items-center justify-between mb-4 md:mb-6">
+                  <h2 className="text-lg md:text-2xl font-bold text-white pixelify-sans">
                     Invite Team Member
                   </h2>
                   <button
@@ -1070,16 +1072,16 @@ export default function TeamPage() {
                       setSearchResults([])
                       setInviteMessage('')
                     }}
-                    className="text-gray-400 hover:text-white"
+                    className="text-gray-400 hover:text-white flex-shrink-0 ml-2"
                   >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
                 </div>
 
                 {/* Search Section */}
-                <div className="mb-6">
+                <div className="mb-4 md:mb-6">
                   <label className="block text-sm font-medium text-purple-300 mb-2">
                     Search for developers
                   </label>
@@ -1091,7 +1093,7 @@ export default function TeamPage() {
                       searchUsers(e.target.value)
                     }}
                     placeholder="Search by name, skills, or username..."
-                    className="w-full bg-purple-800/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                    className="w-full bg-purple-800/50 border border-purple-500/50 rounded-lg px-3 py-2 md:px-4 md:py-3 text-white placeholder-purple-400 text-sm md:text-base"
                   />
                   {isSearching && (
                     <p className="text-purple-300 text-sm mt-2">Searching...</p>
@@ -1100,11 +1102,11 @@ export default function TeamPage() {
 
                 {/* Looking For Skills */}
                 {userTeam?.looking_for && Array.isArray(userTeam.looking_for) && userTeam.looking_for.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-white mb-2">Looking for:</h3>
-                    <div className="flex flex-wrap gap-2">
+                  <div className="mb-4 md:mb-6">
+                    <h3 className="text-base md:text-lg font-semibold text-white mb-2">Looking for:</h3>
+                    <div className="flex flex-wrap gap-1 md:gap-2">
                       {userTeam.looking_for.map((skill, index) => (
-                        <span key={index} className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">
+                        <span key={index} className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full text-xs md:text-sm">
                           {skill || 'Unknown Skill'}
                         </span>
                       ))}
@@ -1113,7 +1115,7 @@ export default function TeamPage() {
                 )}
 
                 {/* Custom Message */}
-                <div className="mb-6">
+                <div className="mb-4 md:mb-6">
                   <label className="block text-sm font-medium text-purple-300 mb-2">
                     Invitation Message (Optional)
                   </label>
@@ -1122,20 +1124,20 @@ export default function TeamPage() {
                     onChange={(e) => setInviteMessage(e.target.value)}
                     placeholder={`Hi! We'd love for you to join our team ${userTeam?.name}. We're working on an exciting project and think you'd be a great fit!`}
                     rows={3}
-                    className="w-full bg-purple-800/50 border border-purple-500/50 rounded-lg px-4 py-3 text-white placeholder-purple-400"
+                    className="w-full bg-purple-800/50 border border-purple-500/50 rounded-lg px-3 py-2 md:px-4 md:py-3 text-white placeholder-purple-400 text-sm md:text-base"
                   />
                 </div>
 
                 {/* Search Results */}
-                <div className="space-y-4">
+                <div className="space-y-3 md:space-y-4">
                   {searchResults.length > 0 && (
-                    <h3 className="text-lg font-semibold text-white">Search Results ({searchResults.length})</h3>
+                    <h3 className="text-base md:text-lg font-semibold text-white">Search Results ({searchResults.length})</h3>
                   )}
                   
                   {searchResults.map((profile) => (
-                    <div key={profile.id} className="bg-purple-800/30 rounded-lg p-4 flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 rounded-full bg-purple-600 overflow-hidden">
+                    <div key={profile.id} className="bg-purple-800/30 rounded-lg p-3 md:p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-purple-600 overflow-hidden flex-shrink-0">
                           {profile.avatar_url ? (
                             <Image
                               src={profile.avatar_url}
@@ -1145,57 +1147,61 @@ export default function TeamPage() {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-white font-bold">
+                            <div className="w-full h-full flex items-center justify-center text-white font-bold text-sm">
                               {(profile.full_name || profile.username || 'U').charAt(0).toUpperCase()}
                             </div>
                           )}
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-white">
-                            {profile.full_name || profile.username}
-                          </h4>
-                          {profile.job_title && (
-                            <p className="text-purple-300 text-sm">{profile.job_title}</p>
-                          )}
-                          {profile.skills && Array.isArray(profile.skills) && profile.skills.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {profile.skills.slice(0, 5).map((skill: string, index: number) => (
-                                <span key={index} className="bg-purple-600/50 text-purple-200 px-2 py-1 rounded text-xs">
-                                  {skill || 'Unknown Skill'}
-                                </span>
-                              ))}
-                              {profile.skills.length > 5 && (
-                                <span className="text-purple-400 text-xs">+{profile.skills.length - 5} more</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-semibold text-white text-sm truncate">
+                                {profile.full_name || profile.username}
+                              </h4>
+                              {profile.job_title && (
+                                <p className="text-purple-300 text-xs">{profile.job_title}</p>
+                              )}
+                              {profile.skills && Array.isArray(profile.skills) && profile.skills.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {profile.skills.slice(0, 3).map((skill: string, index: number) => (
+                                    <span key={index} className="bg-purple-600/50 text-purple-200 px-2 py-1 rounded text-xs">
+                                      {skill || 'Unknown Skill'}
+                                    </span>
+                                  ))}
+                                  {profile.skills.length > 3 && (
+                                    <span className="text-purple-400 text-xs">+{profile.skills.length - 3} more</span>
+                                  )}
+                                </div>
+                              )}
+                              {profile.experience_level && (
+                                <p className="text-purple-400 text-xs mt-1">
+                                  {profile.experience_level} level
+                                </p>
                               )}
                             </div>
-                          )}
-                          {profile.experience_level && (
-                            <p className="text-purple-400 text-xs mt-1">
-                              {profile.experience_level} level
-                            </p>
-                          )}
+                            <button
+                              onClick={() => handleInviteUser(profile.id, profile.full_name || profile.username)}
+                              className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors flex-shrink-0 w-full sm:w-auto"
+                            >
+                              Send Invite
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <button
-                        onClick={() => handleInviteUser(profile.id, profile.full_name || profile.username)}
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
-                      >
-                        Send Invite
-                      </button>
                     </div>
                   ))}
 
                   {searchTerm2.length >= 2 && !isSearching && searchResults.length === 0 && (
-                    <div className="text-center py-8">
-                      <p className="text-purple-300">No users found matching your search.</p>
-                      <p className="text-purple-400 text-sm mt-1">Try searching for different keywords or skills.</p>
+                    <div className="text-center py-6 md:py-8">
+                      <p className="text-purple-300 text-sm">No users found matching your search.</p>
+                      <p className="text-purple-400 text-xs mt-1">Try searching for different keywords or skills.</p>
                     </div>
                   )}
 
                   {searchTerm2.length < 2 && (
-                    <div className="text-center py-8">
-                      <p className="text-purple-300">Start typing to search for developers...</p>
-                      <p className="text-purple-400 text-sm mt-1">Search by name, skills, or experience level.</p>
+                    <div className="text-center py-6 md:py-8">
+                      <p className="text-purple-300 text-sm">Start typing to search for developers...</p>
+                      <p className="text-purple-400 text-xs mt-1">Search by name, skills, or experience level.</p>
                     </div>
                   )}
                 </div>

@@ -82,7 +82,7 @@ export default function DashboardNav() {
   }
 
   return (
-    <div className={`fixed inset-y-0 left-0 z-30 ${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300`}>
+    <div className={`hidden lg:block fixed inset-y-0 left-0 z-30 ${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300`}>
       <div className="flex h-full flex-col bg-purple-900/80 backdrop-blur-sm border-r border-purple-500/30">
         {/* Logo */}
         <div className="flex h-16 items-center justify-between px-4 border-b border-purple-500/30">
