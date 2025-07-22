@@ -492,14 +492,14 @@ export default function CataloguePage() {
 
                             {/* Tech Stack */}
                             <div className="flex flex-wrap gap-1 mb-4">
-                              {project.tech_stack.slice(0, 3).map((tech, idx) => (
+                              {(project.tech_stack || []).slice(0, 3).map((tech, idx) => (
                                 <span key={idx} className="bg-slate-700/50 text-slate-300 px-2 py-1 rounded text-xs">
                                   {tech}
                                 </span>
                               ))}
-                              {project.tech_stack.length > 3 && (
+                              {(project.tech_stack || []).length > 3 && (
                                 <span className="bg-slate-700/30 text-slate-400 px-2 py-1 rounded text-xs">
-                                  +{project.tech_stack.length - 3}
+                                  +{(project.tech_stack || []).length - 3}
                                 </span>
                               )}
                             </div>
@@ -698,14 +698,14 @@ export default function CataloguePage() {
 
                             {/* Tech Stack */}
                             <div className="flex flex-wrap gap-1 mb-4">
-                              {project.tech_stack.slice(0, 3).map((tech, idx) => (
+                              {(project.tech_stack || []).slice(0, 3).map((tech, idx) => (
                                 <span key={idx} className="bg-slate-700/50 text-slate-300 px-2 py-1 rounded text-xs">
                                   {tech}
                                 </span>
                               ))}
-                              {project.tech_stack.length > 3 && (
+                              {(project.tech_stack || []).length > 3 && (
                                 <span className="bg-slate-700/30 text-slate-400 px-2 py-1 rounded text-xs">
-                                  +{project.tech_stack.length - 3}
+                                  +{(project.tech_stack || []).length - 3}
                                 </span>
                               )}
                             </div>
