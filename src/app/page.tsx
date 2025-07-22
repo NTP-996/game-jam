@@ -17,14 +17,8 @@ export default function Home() {
   const [showLanding, setShowLanding] = useState(false)
 
   useEffect(() => {
-    // Check if user wants to see the landing page (you can add logic here)
-    // For now, let's show the landing page by default
-    // Comment out the redirect to show the landing page
-    
-    // Uncomment the line below to redirect to dashboard instead
-    // router.replace('/dashboard')
-    
-    setShowLanding(true)
+    // Redirect to dashboard as the main landing page
+    router.replace('/dashboard')
   }, [router])
 
   if (!showLanding) {
