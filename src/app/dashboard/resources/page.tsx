@@ -81,6 +81,12 @@ const ResourcesPage = () => {
         description: "Lightweight game engine that lets you build and deploy Solana Rust games directly in the browser. Capable of on-chain games!",
         url: "https://turbo.computer",
         category: "Rust"
+      },
+      {
+        name: "Honeycomb Protocol SDK",
+        description: "Simplifies game development with no need to write contracts and dramatically reduces on-chain fees (~500x) via State-Compression. Supports Unity, Unreal, Godot with simple JS/TS SDK.",
+        url: "https://docs.honeycombprotocol.com/",
+        category: "Multi-Engine"
       }
     ],
     videos: [
