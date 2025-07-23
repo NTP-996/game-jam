@@ -27,9 +27,7 @@ export default function Header() {
             <a href="#about" className="text-purple-200 hover:text-yellow-400 transition-colors">
               About
             </a>
-            <a href="#prizes" className="text-purple-200 hover:text-yellow-400 transition-colors">
-              Prizes
-            </a>
+
             <a href="#schedule" className="text-purple-200 hover:text-yellow-400 transition-colors">
               Schedule
             </a>
@@ -76,9 +74,7 @@ export default function Header() {
               <a href="#about" className="text-purple-200 hover:text-yellow-400 transition-colors">
                 About
               </a>
-              <a href="#prizes" className="text-purple-200 hover:text-yellow-400 transition-colors">
-                Prizes
-              </a>
+
               <a href="#schedule" className="text-purple-200 hover:text-yellow-400 transition-colors">
                 Schedule
               </a>

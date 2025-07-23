@@ -34,7 +34,7 @@ export default function Mentors() {
           <Image src="/assets/mentors/thomukas1.svg" alt="Mentor: Thomukas1" width={350} height={450} />
         </div>
         <div className="mentors__card">
-          <Image src="/assets/mentors/belac.svg" alt="Belac - Founder Obelisk Protocol / SuperTeam hub Jogja" width={350} height={450} />
+          <Image src="/assets/mentors/Belac.svg" alt="Belac - Founder Obelisk Protocol / SuperTeam hub Jogja" width={350} height={450} />
         </div>
       </div>
 

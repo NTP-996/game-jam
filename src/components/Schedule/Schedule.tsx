@@ -16,7 +16,7 @@ export default function Schedule() {
         <Image src="/assets/text/schedule.svg" alt="SCHEDULE" width={600} height={120} />
       </h2>
       <p className="schedule__description">
-        2 weeks of in-person 2-3 hour training
+        4 weeks of workshops and training
       </p>
 
       <div className="schedule__container">

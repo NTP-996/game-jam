@@ -46,7 +46,7 @@ export default function ProfileButton() {
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-purple-600 border-2 border-purple-400 overflow-hidden">
                 <Image
-                  src={user.user_metadata?.avatar_url || '/assets/mentors/belac.jpg'}
+                  src={user.user_metadata?.avatar_url || '/next.svg'}
                   alt="Profile"
                   width={40}
                   height={40}
@@ -93,7 +93,7 @@ export default function ProfileButton() {
         className="w-12 h-12 bg-purple-600 hover:bg-purple-700 rounded-full overflow-hidden shadow-lg transition-all duration-300 hover:scale-110 border-2 border-purple-400"
       >
         <Image
-          src={user.user_metadata?.avatar_url || '/assets/mentors/belac.jpg'}
+          src={user.user_metadata?.avatar_url || '/next.svg'}
           alt="Profile"
           width={48}
           height={48}

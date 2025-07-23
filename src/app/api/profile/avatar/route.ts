@@ -218,7 +218,7 @@ export async function DELETE(request: NextRequest) {
     const { error: updateError } = await supabase
       .from('profiles')
       .update({ 
-        avatar_url: '/assets/mentors/Belac.svg', // Default avatar
+        avatar_url: '/next.svg', // Default avatar - simple icon
         updated_at: new Date().toISOString()
       })
       .eq('id', user.id)

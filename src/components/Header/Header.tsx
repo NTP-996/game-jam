@@ -92,11 +92,7 @@ export default function Header() {
                   Overview
                 </a>
               </li>
-              <li>
-                <a href="#prizes" onClick={handleNavClick}>
-                  Prizes
-                </a>
-              </li>
+
               <li>
                 <a href="#schedule" onClick={handleNavClick}>
                   Schedule

@@ -3,7 +3,7 @@
 import Header from "@/components/Header/Header";
 import Hero from "@/components/Hero/Hero";
 import About from "@/components/About/About";
-import Prizes from "@/components/Prizes/Prizes";
+
 import Schedule from "@/components/Schedule/Schedule";
 import Mentors from "@/components/Mentors/Mentors";
 import FAQ from "@/components/FAQ/FAQ";
@@ -17,7 +17,7 @@ export default function DashboardHomePage() {
   // Dashboard state
   const user = {
     name: 'Developer',
-    avatar: '/assets/mentors/belac.jpg',
+    avatar: '/next.svg',
     role: 'Participant',
     team: null,
     projectSubmitted: false
@@ -48,7 +48,7 @@ export default function DashboardHomePage() {
           </div>
         </section>
 
-        <Prizes />
+
         <Schedule />
         <Mentors />
 

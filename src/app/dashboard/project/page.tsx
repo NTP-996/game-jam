@@ -6,6 +6,7 @@ import { ApiClient } from '@/lib/apiClient'
 import Image from 'next/image'
 import ImageUpload from '@/components/uploads/ImageUpload'
 import VideoUrlInput from '@/components/uploads/VideoUrlInput'
+import useFormPersistence from '@/hooks/useFormPersistence'
 
 interface Project {
   id: string
@@ -106,6 +107,28 @@ export default function ProjectPage() {
 
   const [techStackInput, setTechStackInput] = useState('')
   const [selectedMedia, setSelectedMedia] = useState({ type: 'image', url: '' })
+
+  // Form persistence hook
+  const { loadPersistedData, clearPersistedData } = useFormPersistence({
+    key: `project_${user?.id || 'anonymous'}`,
+    data: formData,
+    enabled: isEditing && !existingProject, // Only persist for new projects being edited
+    debounceMs: 500
+  })
+
+  // Load persisted data on mount
+  useEffect(() => {
+    if (user && !existingProject && isEditing) {
+      const persisted = loadPersistedData()
+      if (persisted) {
+        setFormData(persisted)
+        // Also restore tech stack input if available
+        if (persisted.tech_stack && Array.isArray(persisted.tech_stack)) {
+          setTechStackInput(persisted.tech_stack.join(', '))
+        }
+      }
+    }
+  }, [user, existingProject, isEditing])
 
   useEffect(() => {
     if (user) {
@@ -287,10 +310,14 @@ export default function ProjectPage() {
         try {
           const data = await response.json()
           setExistingProject(data.project)
+          // Clear persisted data on successful save
+          clearPersistedData()
           alert('Project saved as draft successfully!')
         } catch (jsonError) {
           console.error('Failed to parse save response:', jsonError)
           // If JSON parsing fails but response was ok, assume success
+          // Clear persisted data on successful save
+          clearPersistedData()
           alert('Project saved as draft successfully!')
           // Reload the project data
           loadUserProject()
@@ -416,11 +443,15 @@ export default function ProjectPage() {
           const data = await submitResponse.json()
           setExistingProject(data.project)
           setIsEditing(false)
+          // Clear persisted data on successful submit
+          clearPersistedData()
           alert('Project submitted successfully!')
         } catch (jsonError) {
           console.error('Failed to parse success response:', jsonError)
           // If JSON parsing fails but response was ok, assume success
           setIsEditing(false)
+          // Clear persisted data on successful submit
+          clearPersistedData()
           alert('Project submitted successfully!')
           // Reload the project data
           loadUserProject()

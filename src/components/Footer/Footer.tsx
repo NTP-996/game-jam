@@ -24,7 +24,7 @@ export default function Footer() {
         <nav className="footer__nav" aria-label="Footer navigation">
           <a href="#home" onClick={handleNavClick}>Home</a>
           <a href="#overview" onClick={handleNavClick}>Overview</a>
-          <a href="#prizes" onClick={handleNavClick}>Prizes</a>
+
           <a href="#schedule" onClick={handleNavClick}>Schedule</a>
           <a href="#judging" onClick={handleNavClick}>Judging Criteria</a>
           <a href="#faq" onClick={handleNavClick}>FAQ</a>
@@ -43,24 +43,24 @@ export default function Footer() {
           <div className="footer__sponsors-grid">
             <div className="footer__sponsor-item">
               <Image
-                src="/assets/sponsor/MainLogoPlaySolana.png"
-                alt="Play Solana"
+                src="/assets/logos/superteam.svg"
+                alt="Superteam"
                 width={150}
                 height={60}
               />
             </div>
             <div className="footer__sponsor-item">
               <Image
-                src="https://cdn.prod.website-files.com/6721152f5cf7d1402980ed13/6724ff46d44044c6b1599154_civic-logo-white.svg"
-                alt="Civic"
+                src="/assets/sponsor/honeycomb.jpg"
+                alt="Honeycomb Protocol"
                 width={120}
                 height={40}
               />
             </div>
             <div className="footer__sponsor-item">
               <Image
-                src="/assets/sponsor/solanafoundation.svg"
-                alt="Solana Foundation"
+                src="/assets/partner/sendlogo.png"
+                alt="Send Arcade"
                 width={150}
                 height={60}
               />

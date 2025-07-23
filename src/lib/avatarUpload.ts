@@ -105,7 +105,7 @@ export class AvatarUploadService {
    */
   static getAvatarUrl(userId: string, filename?: string): string {
     if (!filename) {
-      return '/assets/mentors/Belac.svg' // Default avatar
+      return '/next.svg' // Default avatar - simple icon
     }
 
     const { data } = supabase.storage

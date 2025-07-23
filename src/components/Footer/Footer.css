@@ -49,6 +49,7 @@
 
 .footer__sponsors-title {
   margin-bottom: var(--space-lg);
+  text-align: center;
 }
 
 .footer__sponsors-grid {

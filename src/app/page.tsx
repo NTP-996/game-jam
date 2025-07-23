@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Hero from '@/components/Hero/Hero'
 import About from '@/components/About/About'
 import Schedule from '@/components/Schedule/Schedule'
-import Prizes from '@/components/Prizes/Prizes'
+
 import Mentors from '@/components/Mentors/Mentors'
 import FAQ from '@/components/FAQ/FAQ'
 import Footer from '@/components/Footer/Footer'
@@ -40,7 +40,7 @@ export default function Home() {
         <Hero />
         <About />
         <Schedule />
-        <Prizes />
+
         <Mentors />
         <FAQ />
       </main>

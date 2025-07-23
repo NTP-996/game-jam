@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { ApiClient } from '@/lib/apiClient'
+import useFormPersistence from '@/hooks/useFormPersistence'
 import FixMembershipButton from './fix-membership'
 
 interface TeamMember {
@@ -122,6 +123,24 @@ export default function TeamPage() {
     max_members: 4,
     is_public: true
   })
+
+  // Form persistence hook for team creation
+  const { loadPersistedData, clearPersistedData } = useFormPersistence({
+    key: `team_create_${user?.id || 'anonymous'}`,
+    data: createTeamData,
+    enabled: showCreateForm && !userTeam, // Only persist when creating new team
+    debounceMs: 500
+  })
+
+  // Load persisted data when starting to create a team
+  useEffect(() => {
+    if (user && showCreateForm && !userTeam) {
+      const persisted = loadPersistedData()
+      if (persisted) {
+        setCreateTeamData(persisted)
+      }
+    }
+  }, [user, showCreateForm, userTeam])
 
   useEffect(() => {
     if (user) {
@@ -292,6 +311,8 @@ export default function TeamPage() {
         const data = await response.json()
         setUserTeam(data.team)
         setShowCreateForm(false)
+        // Clear persisted data on successful team creation
+        clearPersistedData()
         setCreateTeamData({
           name: '',
           description: '',
@@ -497,38 +518,66 @@ export default function TeamPage() {
     if (pendingInvitations.length === 0) return null
 
     return (
-      <div className="bg-yellow-500/20 backdrop-blur-sm border border-yellow-500/30 rounded-lg p-6 mb-8">
-        <h2 className="text-xl font-bold text-yellow-400 pixelify-sans mb-4">
-          Pending Invitations ({pendingInvitations.length})
-        </h2>
-        <div className="space-y-3">
+      <div className="bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-yellow-500/20 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-6 mb-8 shadow-xl">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center animate-pulse">
+            <span className="text-xl">📧</span>
+          </div>
+          <h2 className="text-xl md:text-2xl font-bold text-yellow-400 pixelify-sans">
+            Team Invitations ({pendingInvitations.length})
+          </h2>
+        </div>
+        <div className="space-y-4">
           {pendingInvitations.map((invitation) => (
-            <div key={invitation.id} className="flex items-center justify-between bg-yellow-500/10 rounded-lg p-4">
-              <div>
-                <h3 className="font-semibold text-white">{invitation.team_name}</h3>
-                <p className="text-yellow-200 text-sm">
-                  Invited by {invitation.invited_by_name}
-                </p>
-                <p className="text-yellow-300 text-xs">
-                  Expires: {new Date(invitation.expires_at).toLocaleDateString()}
-                </p>
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => handleInvitationResponse(invitation.id, 'accept')}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                >
-                  Accept
-                </button>
-                <button
-                  onClick={() => handleInvitationResponse(invitation.id, 'decline')}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                >
-                  Decline
-                </button>
+            <div key={invitation.id} className="bg-gradient-to-r from-yellow-500/10 via-orange-500/10 to-yellow-500/10 backdrop-blur-sm border border-yellow-400/30 rounded-xl p-5 hover:border-yellow-400/50 transition-all duration-300">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">👥</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-white text-lg">{invitation.team_name}</h3>
+                      <p className="text-yellow-200 text-sm">
+                        Invited by <span className="font-semibold">{invitation.invited_by_name}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="ml-13">
+                    <p className="text-yellow-300 text-sm flex items-center gap-1">
+                      <span>⏰</span>
+                      Expires: {new Date(invitation.expires_at).toLocaleDateString()}
+                    </p>
+                    <p className="text-gray-300 text-xs mt-1">
+                      Created: {new Date(invitation.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => handleInvitationResponse(invitation.id, 'accept')}
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
+                  >
+                    <span>✅</span>
+                    Accept
+                  </button>
+                  <button
+                    onClick={() => handleInvitationResponse(invitation.id, 'decline')}
+                    className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
+                  >
+                    <span>❌</span>
+                    Decline
+                  </button>
+                </div>
               </div>
             </div>
           ))}
+        </div>
+        <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-400/20 rounded-lg">
+          <p className="text-yellow-200 text-sm flex items-center gap-2">
+            <span>💡</span>
+            <span>You can only be a member of one team at a time. Accepting an invitation will leave your current team.</span>
+          </p>
         </div>
       </div>
     )
@@ -537,7 +586,7 @@ export default function TeamPage() {
   // User doesn't have a team - show team finding interface
   if (!userTeam) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-800 pb-20 lg:pb-6">
+      <div className="ml-0 lg:ml-64 min-h-screen bg-gradient-to-b from-purple-900/20 via-transparent to-blue-900/20 pb-20 lg:pb-6">
         <div className="container mx-auto px-4 md:px-6 py-4 md:py-8 space-y-4 md:space-y-8">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
@@ -814,7 +863,7 @@ export default function TeamPage() {
 
   // User has a team - show team dashboard
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-800 pb-20 lg:pb-6">
+    <div className="ml-0 lg:ml-64 min-h-screen bg-gradient-to-b from-purple-900/20 via-transparent to-blue-900/20 pb-20 lg:pb-6">
       <div className="container mx-auto px-4 md:px-6 py-4 md:py-8 space-y-4 md:space-y-8">
         {error && (
           <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4">
@@ -1066,13 +1115,18 @@ export default function TeamPage() {
 
         {/* Invite Member Modal */}
         {showInviteModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 md:p-4 z-50">
-            <div className="bg-purple-900 rounded-lg max-w-2xl w-full max-h-[90vh] md:max-h-[80vh] overflow-y-auto">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 md:p-4 z-50">
+            <div className="bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900 border border-purple-500/30 rounded-xl max-w-2xl w-full max-h-[90vh] md:max-h-[80vh] overflow-y-auto shadow-2xl">
               <div className="p-4 md:p-6">
                 <div className="flex items-center justify-between mb-4 md:mb-6">
-                  <h2 className="text-lg md:text-2xl font-bold text-white pixelify-sans">
-                    Invite Team Member
-                  </h2>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-lg">👥</span>
+                    </div>
+                    <h2 className="text-lg md:text-2xl font-bold text-white pixelify-sans">
+                      Invite Team Member
+                    </h2>
+                  </div>
                   <button
                     onClick={() => {
                       setShowInviteModal(false)
@@ -1080,12 +1134,18 @@ export default function TeamPage() {
                       setSearchResults([])
                       setInviteMessage('')
                     }}
-                    className="text-gray-400 hover:text-white flex-shrink-0 ml-2"
+                    className="text-gray-400 hover:text-white transition-colors flex-shrink-0 ml-2 p-1 rounded-lg hover:bg-white/10"
                   >
                     <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
+                </div>
+                
+                {/* Team Info */}
+                <div className="bg-purple-500/20 border border-purple-400/30 rounded-lg p-4 mb-6">
+                  <h3 className="text-white font-semibold mb-1">Inviting to: <span className="text-purple-300">{userTeam?.name}</span></h3>
+                  <p className="text-purple-200 text-sm">Current members: {userTeam?.member_count || 0}/{userTeam?.max_members || 5}</p>
                 </div>
 
                 {/* Search Section */}

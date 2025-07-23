@@ -7,6 +7,7 @@ import AvatarUploadService from '@/lib/avatarUpload'
 import ApiClient from '@/lib/apiClient'
 import Image from 'next/image'
 import Link from 'next/link'
+import useFormPersistence from '@/hooks/useFormPersistence'
 import { 
   User, Mail, Settings, LogOut, Edit3, Save, X, Github, MessageCircle, 
   Calendar, MapPin, Briefcase, GraduationCap, Trophy, Code, Gamepad2,
@@ -139,6 +140,24 @@ export default function ProfilePage() {
     favorite_games: [] as string[],
     game_dev_experience: '',
   })
+
+  // Form persistence hook
+  const { loadPersistedData, clearPersistedData } = useFormPersistence({
+    key: `profile_${user?.id || 'anonymous'}`,
+    data: editForm,
+    enabled: isEditing && profileExists !== true, // Only persist when creating/editing new profile
+    debounceMs: 500
+  })
+
+  // Load persisted data when starting to edit a new profile
+  useEffect(() => {
+    if (user && isEditing && profileExists !== true) {
+      const persisted = loadPersistedData()
+      if (persisted) {
+        setEditForm(persisted)
+      }
+    }
+  }, [user, isEditing, profileExists])
 
   // Load user profile
   useEffect(() => {
@@ -297,6 +316,8 @@ export default function ProfilePage() {
         setProfile(data.profile)
         setProfileExists(true)
         setIsEditing(false)
+        // Clear persisted data on successful save
+        clearPersistedData()
         alert(profileExists ? 'Profile updated successfully!' : 'Profile created successfully!')
       } else {
         console.error('Failed to save profile:', data.error)
@@ -666,7 +687,7 @@ export default function ProfilePage() {
                 <div className="relative inline-block mb-4">
                   <div className="w-32 h-32 rounded-full bg-purple-600 border-4 border-purple-400 overflow-hidden mx-auto">
                     <Image
-                      src={profile.avatar_url || '/assets/mentors/Belac.svg'}
+                      src={profile.avatar_url || '/next.svg'}
                       alt="Profile"
                       width={128}
                       height={128}
