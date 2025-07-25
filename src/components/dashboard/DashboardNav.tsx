@@ -31,6 +31,7 @@ const navigation: NavItem[] = [
   { name: 'Home', href: '/dashboard', icon: '🏠' },
   // { name: 'Catalogue', href: '/dashboard/catalogue', icon: '🎮' },
   // { name: 'Team', href: '/dashboard/team', icon: '👥' },
+  { name: 'Judging Criteria', href: '/dashboard/judging-criteria', icon: '⚖️' },
   { name: 'Resources', href: '/dashboard/resources', icon: '📚' },
   { name: 'Partners', href: '/dashboard/partners', icon: '🤝' },
   { name: 'Sponsors', href: '/dashboard/sponsors', icon: '⭐' },

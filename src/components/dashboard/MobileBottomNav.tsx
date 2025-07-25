@@ -15,6 +15,7 @@ const mobileNavigation: NavItem[] = [
   { name: 'Home', href: '/dashboard', icon: '🏠' },
   // { name: 'Catalogue', href: '/dashboard/catalogue', icon: '🎮' },
   // { name: 'Team', href: '/dashboard/team', icon: '👥' },
+  { name: 'Criteria', href: '/dashboard/judging-criteria', icon: '⚖️' },
   { name: 'Resources', href: '/dashboard/resources', icon: '📚' },
   { name: 'Profile', href: '/dashboard/profile', icon: '👤' },
 ]
