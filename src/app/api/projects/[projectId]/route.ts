@@ -1,0 +1,572 @@
+import { createClient } from '@supabase/supabase-js'
+import { NextRequest, NextResponse } from 'next/server'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+// Helper function to create authenticated Supabase client
+async function createAuthenticatedClient(request: NextRequest) {
+  const authHeader = request.headers.get('authorization')
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    throw new Error('Unauthorized')
+  }
+
+  const token = authHeader.replace('Bearer ', '')
+  
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  })
+  
+  // Verify the JWT token and get user
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+  
+  if (authError || !user) {
+    throw new Error('Unauthorized')
+  }
+
+  return { supabase, user }
+}
+
+// GET /api/projects/[projectId] - Get specific project
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ projectId: string }> }
+) {
+  try {
+    const { projectId } = await params
+
+    if (!projectId) {
+      return NextResponse.json(
+        { error: 'Project ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Check if this is a public request (no auth header)
+    const authHeader = request.headers.get('authorization')
+    
+    if (!authHeader) {
+      // Public access - only allow viewing submitted/approved projects
+      const supabase = createClient(supabaseUrl, supabaseAnonKey)
+      
+      // First get the project
+      const { data: project, error } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('id', projectId)
+        .in('status', ['submitted', 'approved', 'featured'])
+        .single()
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return NextResponse.json(
+            { error: 'Project not found or not publicly available' },
+            { status: 404 }
+          )
+        }
+        console.error('Public project fetch error:', error)
+        return NextResponse.json(
+          { error: 'Failed to fetch project' },
+          { status: 500 }
+        )
+      }
+
+      // Enrich with team data if it's a team project
+      if (project.team_id) {
+        const { data: team } = await supabase
+          .from('teams')
+          .select('*')
+          .eq('id', project.team_id)
+          .single()
+
+        if (team) {
+          // Get team members first
+          const { data: teamMemberships, error: membersError } = await supabase
+            .from('team_memberships')
+            .select('*')
+            .eq('team_id', project.team_id)
+            .eq('status', 'active')
+
+          console.log('Team memberships query result:', { teamMemberships, membersError })
+          console.log('Team ID being queried:', project.team_id)
+
+          if (membersError) {
+            console.error('Error fetching team memberships:', membersError)
+            team.members = []
+          } else if (teamMemberships && teamMemberships.length > 0) {
+            // Get profile for each member separately
+            const membersWithProfiles = []
+            
+            for (const membership of teamMemberships) {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select(`
+                  id,
+                  full_name,
+                  username,
+                  avatar_url,
+                  bio,
+                  job_title,
+                  experience_level,
+                  skills,
+                  programming_languages,
+                  frameworks,
+                  github_url,
+                  twitter_url,
+                  discord_username,
+                  website_url,
+                  location
+                `)
+                .eq('id', membership.user_id)
+                .single()
+
+              if (profile) {
+                membersWithProfiles.push({
+                  ...membership,
+                  profiles: profile
+                })
+              } else {
+                // Include membership even without profile
+                membersWithProfiles.push({
+                  ...membership,
+                  profiles: null
+                })
+              }
+            }
+            
+            team.members = membersWithProfiles
+          } else {
+            team.members = []
+          }
+
+          // If no members found but creator exists, add creator as team leader
+          if (team.members.length === 0 && project.creator_id) {
+            const { data: creatorProfile } = await supabase
+              .from('profiles')
+              .select(`
+                id,
+                full_name,
+                username,
+                avatar_url,
+                bio,
+                job_title,
+                experience_level,
+                skills,
+                programming_languages,
+                frameworks,
+                github_url,
+                twitter_url,
+                discord_username,
+                website_url,
+                location
+              `)
+              .eq('id', project.creator_id)
+              .single()
+
+            if (creatorProfile) {
+              team.members = [{
+                id: 'creator-fallback',
+                user_id: project.creator_id,
+                role: 'Leader',
+                status: 'active',
+                can_invite: true,
+                can_manage_submissions: true,
+                joined_at: team.created_at,
+                profiles: creatorProfile
+              }]
+            }
+          }
+
+          project.team = team
+        }
+      }
+
+      // Get creator profile if it's an individual project
+      if (!project.team_id && project.creator_id) {
+        const { data: creatorProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', project.creator_id)
+          .single()
+
+        if (creatorProfile) {
+          project.creator_profile = creatorProfile
+        }
+      }
+
+      return NextResponse.json({ project })
+    }
+
+    // Authenticated access - can view own projects regardless of status
+    const { supabase, user } = await createAuthenticatedClient(request)
+
+    const { data: project, error } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('id', projectId)
+      .single()
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return NextResponse.json(
+          { error: 'Project not found' },
+          { status: 404 }
+        )
+      }
+      console.error('Project fetch error:', error)
+      return NextResponse.json(
+        { error: 'Failed to fetch project' },
+        { status: 500 }
+      )
+    }
+
+    // Check if user owns this project or if it's publicly viewable
+    if (project.creator_id !== user.id && !['submitted', 'approved', 'featured'].includes(project.status)) {
+      return NextResponse.json(
+        { error: 'Project not found' },
+        { status: 404 }
+      )
+    }
+
+    // Enrich with team data if it's a team project
+    if (project.team_id) {
+      const { data: team } = await supabase
+        .from('teams')
+        .select('*')
+        .eq('id', project.team_id)
+        .single()
+
+      if (team) {
+        // Get team members first (authenticated)
+        const { data: teamMemberships, error: membersError } = await supabase
+          .from('team_memberships')
+          .select('*')
+          .eq('team_id', project.team_id)
+          .eq('status', 'active')
+
+        console.log('Authenticated team memberships query result:', { teamMemberships, membersError })
+        console.log('Authenticated Team ID being queried:', project.team_id)
+
+        if (membersError) {
+          console.error('Error fetching authenticated team memberships:', membersError)
+          team.members = []
+        } else if (teamMemberships && teamMemberships.length > 0) {
+          // Get profile for each member separately (authenticated)
+          const membersWithProfiles = []
+          
+          for (const membership of teamMemberships) {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select(`
+                id,
+                full_name,
+                username,
+                avatar_url,
+                bio,
+                job_title,
+                experience_level,
+                skills,
+                programming_languages,
+                frameworks,
+                github_url,
+                twitter_url,
+                discord_username,
+                website_url,
+                location
+              `)
+              .eq('id', membership.user_id)
+              .single()
+
+            if (profile) {
+              membersWithProfiles.push({
+                ...membership,
+                profiles: profile
+              })
+            } else {
+              // Include membership even without profile
+              membersWithProfiles.push({
+                ...membership,
+                profiles: null
+              })
+            }
+          }
+          
+          team.members = membersWithProfiles
+        } else {
+          team.members = []
+        }
+
+        // If no members found but creator exists, add creator as team leader (authenticated)
+        if (team.members.length === 0 && project.creator_id) {
+          const { data: creatorProfile } = await supabase
+            .from('profiles')
+            .select(`
+              id,
+              full_name,
+              username,
+              avatar_url,
+              bio,
+              job_title,
+              experience_level,
+              skills,
+              programming_languages,
+              frameworks,
+              github_url,
+              twitter_url,
+              discord_username,
+              website_url,
+              location
+            `)
+            .eq('id', project.creator_id)
+            .single()
+
+          if (creatorProfile) {
+            team.members = [{
+              id: 'creator-fallback',
+              user_id: project.creator_id,
+              role: 'Leader',
+              status: 'active',
+              can_invite: true,
+              can_manage_submissions: true,
+              joined_at: team.created_at,
+              profiles: creatorProfile
+            }]
+          }
+        }
+
+        project.team = team
+      }
+    }
+
+    // Get creator profile if it's an individual project
+    if (!project.team_id && project.creator_id) {
+      const { data: creatorProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', project.creator_id)
+        .single()
+
+      if (creatorProfile) {
+        project.creator_profile = creatorProfile
+      }
+    }
+
+    return NextResponse.json({ project })
+
+  } catch (error) {
+    console.error('Project fetch API error:', error)
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+// PUT /api/projects/[projectId] - Update specific project
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ projectId: string }> }
+) {
+  try {
+    const { projectId } = await params
+    const { supabase, user } = await createAuthenticatedClient(request)
+
+    if (!projectId) {
+      return NextResponse.json(
+        { error: 'Project ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Check if project exists and user owns it
+    const { data: existingProject, error: fetchError } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('id', projectId)
+      .eq('creator_id', user.id)
+      .single()
+
+    if (fetchError || !existingProject) {
+      return NextResponse.json(
+        { error: 'Project not found or access denied' },
+        { status: 404 }
+      )
+    }
+
+    // Don't allow updates to final submissions unless it's just status change
+    const body = await request.json()
+    if (existingProject.is_final && existingProject.status !== 'draft' && !body.statusOnly) {
+      // Allow team assignment changes even for final submissions (administrative fix)
+      if (!body.convertToTeamProject) {
+        return NextResponse.json(
+          { error: 'Cannot modify final submissions' },
+          { status: 403 }
+        )
+      }
+    }
+
+    // Prepare update data
+    const updateData: any = {}
+
+    // Only update provided fields
+    if (body.project_name !== undefined) updateData.project_name = body.project_name
+    if (body.project_description !== undefined) updateData.project_description = body.project_description
+    if (body.category !== undefined) updateData.category = body.category
+    if (body.solana_integration !== undefined) updateData.solana_integration = body.solana_integration
+    if (body.github_url !== undefined) updateData.github_url = body.github_url
+    if (body.demo_url !== undefined) updateData.demo_url = body.demo_url
+    if (body.game_host_url !== undefined) updateData.game_host_url = body.game_host_url
+    if (body.video_url !== undefined) updateData.video_url = body.video_url
+    if (body.banner_url !== undefined) updateData.banner_url = body.banner_url
+    if (body.logo_url !== undefined) updateData.logo_url = body.logo_url
+    if (body.challenges !== undefined) updateData.challenges = body.challenges
+    if (body.features !== undefined) updateData.features = body.features
+
+    // Handle tech_stack
+    if (body.tech_stack !== undefined) {
+      let tech_stack = body.tech_stack
+      if (typeof tech_stack === 'string') {
+        tech_stack = tech_stack.split(',').map(tech => tech.trim()).filter(tech => tech.length > 0)
+      }
+      updateData.tech_stack = tech_stack
+    }
+
+    // Handle screenshot_urls
+    if (body.screenshot_urls !== undefined) {
+      const screenshot_urls = Array.isArray(body.screenshot_urls) 
+        ? body.screenshot_urls.filter(url => url && url.trim().length > 0)
+        : []
+      updateData.screenshot_urls = screenshot_urls
+    }
+
+    // Handle status changes
+    if (body.status !== undefined) {
+      updateData.status = body.status
+    }
+
+    // Handle team assignment - if user is in a team and project doesn't have team_id, assign it
+    if (body.convertToTeamProject === true && !existingProject.team_id) {
+      const { data: userMemberships } = await supabase
+        .from('team_memberships')
+        .select('team_id, can_manage_submissions, team:teams!inner(leader_id)')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .single()
+
+      // If user is in a team and can manage submissions or is the leader
+      if (userMemberships && (userMemberships.can_manage_submissions || (userMemberships.team as any)?.leader_id === user.id)) {
+        // Check if team already has a different project
+        const { data: existingTeamProject } = await supabase
+          .from('projects')
+          .select('id')
+          .eq('team_id', userMemberships.team_id)
+          .neq('id', projectId)
+          .single()
+
+        if (!existingTeamProject) {
+          updateData.team_id = userMemberships.team_id
+        }
+      }
+    }
+
+    const { data: project, error } = await supabase
+      .from('projects')
+      .update(updateData)
+      .eq('id', projectId)
+      .eq('creator_id', user.id)
+      .select('*')
+      .single()
+
+    if (error) {
+      console.error('Project update error:', error)
+      return NextResponse.json(
+        { error: 'Failed to update project' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      project,
+      message: 'Project updated successfully' 
+    })
+
+  } catch (error) {
+    console.error('Project update API error:', error)
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+// DELETE /api/projects/[projectId] - Delete specific project
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ projectId: string }> }
+) {
+  try {
+    const { projectId } = await params
+    const { supabase, user } = await createAuthenticatedClient(request)
+
+    if (!projectId) {
+      return NextResponse.json(
+        { error: 'Project ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Check if project exists and is a draft
+    const { data: existingProject, error: fetchError } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('id', projectId)
+      .eq('creator_id', user.id)
+      .single()
+
+    if (fetchError || !existingProject) {
+      return NextResponse.json(
+        { error: 'Project not found or access denied' },
+        { status: 404 }
+      )
+    }
+
+    // Only allow deletion of draft projects
+    if (existingProject.status !== 'draft') {
+      return NextResponse.json(
+        { error: 'Can only delete draft projects' },
+        { status: 403 }
+      )
+    }
+
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', projectId)
+      .eq('creator_id', user.id)
+
+    if (error) {
+      console.error('Project deletion error:', error)
+      return NextResponse.json(
+        { error: 'Failed to delete project' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ 
+      success: true,
+      message: 'Project deleted successfully' 
+    })
+
+  } catch (error) {
+    console.error('Project deletion API error:', error)
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+} 
