@@ -12,11 +12,11 @@ export default function JudgingCriteria() {
         width={50}
         height={50}
       />
-      
+
       <h2 className="section__title">
         <span className="judging-criteria__title-text">JUDGING CRITERIA</span>
       </h2>
-      
+
       <p className="section__description">
         100 points total scoring system for fair and comprehensive evaluation
       </p>
@@ -33,7 +33,7 @@ export default function JudgingCriteria() {
               <span className="judging-criteria__subcategory-points">10</span>
             </div>
             <div className="judging-criteria__subcategory">
-              <span className="judging-criteria__subcategory-name">D (Design)</span>
+              <span className="judging-criteria__subcategory-name">D (Dynamics)</span>
               <span className="judging-criteria__subcategory-points">10</span>
             </div>
             <div className="judging-criteria__subcategory">
